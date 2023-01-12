@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const SignUpNavigator: FC = () => {
+const tradingInProgressScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const SignUpNavigator: FC = () => {
   )
 }
 
-export default SignUpNavigator
+export default tradingInProgressScreen

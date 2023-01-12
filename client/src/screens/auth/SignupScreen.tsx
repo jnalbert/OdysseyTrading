@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const SignupScreen: FC = () => {
+const SignUpScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const SignupScreen: FC = () => {
   )
 }
 
-export default SignupScreen
+export default SignUpScreen

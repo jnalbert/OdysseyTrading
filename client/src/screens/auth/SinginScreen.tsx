@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const SinginScreen: FC = () => {
+const SingInScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const SinginScreen: FC = () => {
   )
 }
 
-export default SinginScreen
+export default SingInScreen
