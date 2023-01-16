@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const myCollection: FC = () => {
+const MainTabNavigator: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const myCollection: FC = () => {
   )
 }
 
-export default myCollection
+export default MainTabNavigator
