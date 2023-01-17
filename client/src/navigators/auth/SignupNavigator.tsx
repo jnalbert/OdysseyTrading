@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { backgroundColor } from "../../shared/colors";
 import StackHeaderBackButton from "../../shared/StackHeader/StackHeaderBackButton";
 import StackHeader from "../../shared/StackHeader/StackHeader";
-import SignUpScreen from "../../screens/auth/SignupScreen";
+import SignUpScreen from "../../screens/auth/SignUpScreen";
 import TermsOfService from "../../screens/auth/TermsOfService";
 
 const Stack = createStackNavigator();

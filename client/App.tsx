@@ -6,6 +6,7 @@ import { Grandstander_500Medium, Grandstander_600SemiBold, Grandstander_800Extra
 import { Mulish_500Medium, Mulish_700Bold } from "@expo-google-fonts/mulish";
 import { NavigationContainer } from "@react-navigation/native";
 import MainTabNavigator from "./src/navigators/main/MainTabNavigator";
+import AuthNavigator from "./src/navigators/auth/AuthNavigator";
 
 
 const AppWrapperView = styled.View`
@@ -26,7 +27,7 @@ const App: FC<any> = () => {
     <>
       <NavigationContainer>
         <AppWrapperView>
-            <MainTabNavigator/>
+            <AuthNavigator />
         </AppWrapperView>
       </NavigationContainer>
     </>

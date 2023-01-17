@@ -29,7 +29,7 @@ const AuthNavigator: FC = () => (
       component={IntroScreen}
       options={{
         headerTitle: () => <StackHeader name="" />,
-        // headerShown: false,
+        headerShown: false,
       }}
     />
 

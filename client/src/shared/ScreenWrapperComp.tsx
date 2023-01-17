@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { isAnonymous } from '../AppContext';
-import { backgroundColor } from "./colors";
+import { backgroundColor } from './colors';
 import IsProtectedComp from "./IsProtectedComp";
 
 const ScreenWrapper = styled.View`
@@ -10,7 +10,7 @@ const ScreenWrapper = styled.View`
   background-color: ${backgroundColor};
   flex-direction: column;
   align-items: center;
-  margin: 0px 24px;
+  margin: 0px 20px;
 `;
 
 const ScreenBackgroundColor = styled.View`
@@ -23,13 +23,17 @@ interface ScreenWrapperCompProps {
   scrollView?: boolean;
   refreshControl?: any;
   isScreenProtected?: boolean;
+  noMargin?: boolean;
+  backgroundColor?: string;
 }
 
 const ScreenWrapperComp: FC<ScreenWrapperCompProps> = ({
   children,
   scrollView,
   refreshControl,
-  isScreenProtected
+  isScreenProtected,
+  noMargin,
+  backgroundColor
 }) => {
 
   const [isProtected, setIsProtected] = useState(false);
@@ -43,6 +47,9 @@ const ScreenWrapperComp: FC<ScreenWrapperCompProps> = ({
     checkUser()
   }
 
+  const noMarginStyle = noMargin ? {marginLeft: 0, marginRight: 0} : {};
+  const backgroundColorStyle = backgroundColor ? {backgroundColor: backgroundColor} : {};
+
   return (
 
     <ScreenBackgroundColor>
@@ -52,10 +59,10 @@ const ScreenWrapperComp: FC<ScreenWrapperCompProps> = ({
           <>
              {scrollView ? (
                 <ScrollView refreshControl={refreshControl}>
-                  <ScreenWrapper>{children}</ScreenWrapper>
+                  <ScreenWrapper style={[noMarginStyle, backgroundColorStyle]}>{children}</ScreenWrapper>
                 </ScrollView>
               ) : (
-                <ScreenWrapper>{children}</ScreenWrapper>
+                <ScreenWrapper style={[noMarginStyle, backgroundColorStyle]}>{children}</ScreenWrapper>
               )}
           </>
       )
