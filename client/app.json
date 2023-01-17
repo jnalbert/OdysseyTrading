@@ -4,10 +4,10 @@
     "slug": "odyssey-trading",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/LogoSmall.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/LogoLarge.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
