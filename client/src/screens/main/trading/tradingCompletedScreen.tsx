@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const tradingCompletedScreen: FC = () => {
+const TradingCompletedScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const tradingCompletedScreen: FC = () => {
   )
 }
 
-export default tradingCompletedScreen
+export default TradingCompletedScreen

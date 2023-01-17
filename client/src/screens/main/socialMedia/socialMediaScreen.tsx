@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const socialMediaScreen: FC = () => {
+const SocialMediaScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const socialMediaScreen: FC = () => {
   )
 }
 
-export default socialMediaScreen
+export default SocialMediaScreen

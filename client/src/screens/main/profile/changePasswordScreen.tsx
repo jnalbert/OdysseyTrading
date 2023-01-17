@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const changePasswordScreen: FC = () => {
+const ChangePasswordScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const changePasswordScreen: FC = () => {
   )
 }
 
-export default changePasswordScreen
+export default ChangePasswordScreen

@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const shopScreen: FC = () => {
+const ShopScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const shopScreen: FC = () => {
   )
 }
 
-export default shopScreen
+export default ShopScreen

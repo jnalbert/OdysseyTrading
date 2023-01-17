@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const mainTradingScreen: FC = () => {
+const MainTradingScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const mainTradingScreen: FC = () => {
   )
 }
 
-export default mainTradingScreen
+export default MainTradingScreen

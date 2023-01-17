@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import styled from 'styled-components/native'
 
-const myCollectionScreen: FC = () => {
+const  MyCollectionScreen: FC = () => {
   return (
     <View>
-      
+      <Text>Test</Text>
     </View>
   )
 }
 
-export default myCollectionScreen
+export default MyCollectionScreen

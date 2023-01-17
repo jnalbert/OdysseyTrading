@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const tradingInProgressScreen: FC = () => {
+const TradingInProgressScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const tradingInProgressScreen: FC = () => {
   )
 }
 
-export default tradingInProgressScreen
+export default TradingInProgressScreen

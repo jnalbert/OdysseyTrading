@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
 
-const profileScreen: FC = () => {
+const ProfileScreen: FC = () => {
   return (
     <View>
       
@@ -10,4 +10,4 @@ const profileScreen: FC = () => {
   )
 }
 
-export default profileScreen
+export default ProfileScreen
