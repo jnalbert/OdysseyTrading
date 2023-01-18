@@ -2,26 +2,25 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
-import { BlueGreen } from './colors';
+import { BlueGreen, GrandstanderExtraBold } from './colors';
 // import { LinearGradient } from 'expo-linear-gradient';
 
 const TouchableButtonWrapper = styled.TouchableOpacity`
   align-items: center;
+  width: 100px;
   justify-content: center;
-  width: 50px;
   background-color: ${BlueGreen};
-  border-radius: 16px;
-  align-items: center;
+  border-radius: 12px;
   height: 50px;
 `
 
 const ButtonText = styled.Text`
   color: #FFFFFF;
   text-align: center;
-  font-family: "PoppinsBold";
+  font-family: ${GrandstanderExtraBold};
   font-size: 15px;
   font-weight: 600;
-  line-height: 24px;
+  /* line-height: 24px; */
 `
 const PaddedView = styled.View`
   padding: 11px 0px;

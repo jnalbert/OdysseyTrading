@@ -1,9 +1,12 @@
 import React, { FC, useState } from "react";
 import { View, Text, Dimensions } from "react-native";
 import styled from "styled-components/native";
-import { Peach } from "../../shared/colors";
+import { Peach, backgroundColor, Pink } from '../../shared/colors';
 import ScreenWrapperComp from "../../shared/ScreenWrapperComp";
 import Carousel from "react-native-reanimated-carousel";
+import IntroCarouselCard from "../../components/authComps/IntroScreen/IntroCarouselCard";
+import BasicButton from "../../shared/BasicButton";
+import { useNavigation } from "@react-navigation/native";
 
 const IntroScreenWrapper = styled.View`
   margin-top: 12%;
@@ -21,20 +24,31 @@ const IntroImage = styled.Image`
   width: 100%;
 `;
 
+const GetStartedButtonWrapper = styled.View`
+  width: 80%;
+  display: flex;
+  align-items: flex-end;
+`
+
 const IntroScreen: FC = () => {
 
     const width = Dimensions.get('window').width;
     const height = Dimensions.get('window').height;
 
-    console.log(width, height * 0.55)
-    const [carouselSlidesData, setCarouselSlidesData] = useState<string[]>([
-        "https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.pbs.org%2Fwnet%2Fnature%2Ffiles%2F2022%2F01%2FGAdUPy5-asset-mezzanine-16x9-fhYslY6.jpg&imgrefurl=https%3A%2F%2Fwww.pbs.org%2Fwnet%2Fnature%2Fgroup%2Famphibians-reptiles%2Fturtle-tortoise%2F&tbnid=prtL_xICpS9baM&vet=12ahUKEwixvuGzmc_8AhUuK0QIHX8pDwwQMygEegUIARDbAg..i&docid=QrdQY0J1kcPAYM&w=1920&h=1080&q=turtles%20pictures&ved=2ahUKEwixvuGzmc_8AhUuK0QIHX8pDwwQMygEegUIARDbAg",
+    const [carouselSlidesData, setCarouselSlidesData] = useState<NodeRequire[]>([
+        require("../../../assets/IntroCarousel/IntroSlide1.png"),
     ])
+    const navigator: any = useNavigation();
+    
+    const handGetStarted = () => {
+      navigator.navigate("SignInNav");
+    }
+  
   return (
     <ScreenWrapperComp noMargin backgroundColor={Peach}>
       <IntroScreenWrapper>
         {/* NEEEEDS TO BE CHANGED TODO */}
-        <IntroImage source={require("../../../assets/OdysseyAppIntro.png")} />
+        <IntroImage source={require("../../../assets/IntroCarousel/OdysseyAppIntro.png")} />
 
         <CarouselWrapper>
             <Carousel
@@ -42,26 +56,20 @@ const IntroScreen: FC = () => {
                 width={width}
                 height={height * 0.50}
                 autoPlay={true}
-                data={[...new Array(6).keys()]}
+                autoPlayInterval={3000}
+                data={carouselSlidesData}
                 scrollAnimationDuration={1000}
-                onSnapToItem={(index) => console.log('current index:', index)}
-                renderItem={({ index }) => (
-                    <View
-                        style={{
-                            flex: 1,
-                            borderWidth: 1,
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Text style={{ textAlign: 'center', fontSize: 30 }}>
-                            {index}
-                        </Text>
-                    </View>
+                overscrollEnabled={false}
+                // onSnapToItem={(index) => console.log('current index:', index)}
+                renderItem={( imageSrc ) => (
+                  <IntroCarouselCard imageSrc={imageSrc.item} />
                 )}
             />
         </CarouselWrapper>
+        <GetStartedButtonWrapper>
+          <BasicButton title="Get Started!" buttonTextStyle={{color: Peach, fontSize: 28}} style={{width: 225, backgroundColor: Pink, height: 56}} onPress={handGetStarted}/>
+        </GetStartedButtonWrapper>
       </IntroScreenWrapper>
-
     </ScreenWrapperComp>
   );
 };
