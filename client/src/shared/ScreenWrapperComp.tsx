@@ -52,7 +52,7 @@ const ScreenWrapperComp: FC<ScreenWrapperCompProps> = ({
 
   return (
 
-    <ScreenBackgroundColor>
+    <ScreenBackgroundColor style={[backgroundColorStyle]}>
       {isProtected ? (
         <IsProtectedComp/>
       ): (

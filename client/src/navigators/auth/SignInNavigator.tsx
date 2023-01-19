@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { backgroundColor } from "../../shared/colors";
+import { Peach } from "../../shared/colors";
 import StackHeaderBackButton from "../../shared/StackHeader/StackHeaderBackButton";
 import SignInScreen from "../../screens/auth/SignInScreen";
 import StackHeader from "../../shared/StackHeader/StackHeader";
@@ -14,8 +14,8 @@ const SignInNavigator: FC = () => (
   <Stack.Navigator
     screenOptions={{
       headerStyle: {
-        backgroundColor: backgroundColor,
-        borderBottomColor: backgroundColor,
+        backgroundColor: Peach,
+        // borderBottomColor: Peach,
         shadowColor: "transparent",
       },
       headerBackImage: () => <StackHeaderBackButton />,
