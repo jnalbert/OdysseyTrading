@@ -4,7 +4,7 @@ import { backgroundColor, logoutRed, MulishBold } from './colors';
 export const ErrorText = styled.Text`
   color: ${logoutRed};
   font-family: ${MulishBold};
-  font-size: 16px;
+  font-size: 14px;
 `
 
 export const StyledScrollView = styled.ScrollView`
