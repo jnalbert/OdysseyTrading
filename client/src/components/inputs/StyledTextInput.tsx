@@ -5,7 +5,13 @@ import { Controller } from "react-hook-form";
 import { ErrorText } from "../../shared/Styles";
 import { borderColor, MulishMedium, Text300 } from "../../shared/colors";
 import ShowHideButton from "./ShowHideButton";
-import { Message, Lock, User, Call, Paper } from "react-native-iconly";
+
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
+
 
 const TextInputWrapper = styled.View`
   width: 85%;
@@ -68,15 +74,15 @@ const StyledTextInput: FC<Props> = ({
 
   const renderIcon = () => {
     if (icon === "email")
-      return <Message set="light" size={20} primaryColor="#001833" />;
+        return <MaterialCommunityIcons name="email-outline" size={20} color="#001833" />
     if (icon === "password")
-      return <Lock set="light" size={20} primaryColor="#001833" />;
+      return <AntDesign name="lock" size={24} color="#001833" />;
     if (icon === "name")
-      return <User set="light" size={20} primaryColor="#001833" />;
+      return <FontAwesome name="user-o" size={20} color="#001833" />;
     if (icon === "PhoneNumber")
-      return <Call set="light" size={20} primaryColor="#001833" />;
+      return <Ionicons name="phone-portrait-outline" size={20} color="#001833" />;
     if (icon === "bio") 
-      return <Paper set="light" size={20} primaryColor="#001833" />;
+      return <FontAwesome name="paper-plane-o" size={20} color="#001833" />;
   };
 
   return (
