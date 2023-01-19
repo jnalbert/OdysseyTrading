@@ -5,7 +5,7 @@ import { Controller } from "react-hook-form";
 import { ErrorText } from "../../shared/Styles";
 import { borderColor, MulishMedium, Text300 } from "../../shared/colors";
 import ShowHideButton from "./ShowHideButton";
-import { Message, Lock, User, Call } from "react-native-iconly";
+import { Message, Lock, User, Call, Paper } from "react-native-iconly";
 
 const TextInputWrapper = styled.View`
   width: 85%;
@@ -21,7 +21,7 @@ const TextInputWrapper = styled.View`
 const IconWrapper = styled.View`
   border-right-width: 1px;
   border-right-color: ${borderColor};
-  height: 30px;
+  height: 75%;
   justify-content: center;
   padding-right: 8px;
 `;
@@ -31,8 +31,10 @@ const TextInputStyled = styled.TextInput`
   padding-left: 20px;
   font-family: ${MulishMedium};
   height: auto;
+  max-width: 100%;
   flex: 1;
   font-size: 16px;
+  /* align-self: start; */
 `;
 
 interface Props {
@@ -44,7 +46,7 @@ interface Props {
   hideText: boolean | undefined;
   styles?: {};
   otherOptions?: {};
-  icon: "email" | "password" | "name" | "PhoneNumber";
+  icon: "email" | "password" | "name" | "PhoneNumber" | "bio";
 }
 
 const StyledTextInput: FC<Props> = ({
@@ -73,6 +75,8 @@ const StyledTextInput: FC<Props> = ({
       return <User set="light" size={20} primaryColor="#001833" />;
     if (icon === "PhoneNumber")
       return <Call set="light" size={20} primaryColor="#001833" />;
+    if (icon === "bio") 
+      return <Paper set="light" size={20} primaryColor="#001833" />;
   };
 
   return (
