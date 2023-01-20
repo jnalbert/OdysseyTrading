@@ -19,6 +19,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import MainTabNavigator from "./src/navigators/main/MainTabNavigator";
 import AuthNavigator from "./src/navigators/auth/AuthNavigator";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
+import { AuthContext, AuthContextFunctionTypes, authReducer, AuthTypes, getTokenAsync, useMemoFunction } from './src/AppContext';
 
 const AppWrapperView = styled.View`
   flex: 1;
@@ -28,6 +29,23 @@ preventAutoHideAsync();
 
 const App: FC<any> = () => {
   const [isAppReady, setIsAppReady] = useState(false);
+
+  const [state, dispatch]: [AuthTypes, React.Dispatch<any>] = useReducer(
+    authReducer,
+    {
+      isLoading: true,
+      isSignout: false,
+      userUuid: null,
+    }
+  );
+
+  useEffect(() => {
+    getTokenAsync(dispatch);
+    // _deleteStoredUuid();
+  }, []);
+  
+  
+  const authContext = useMemo<AuthContextFunctionTypes>(() => useMemoFunction(dispatch, state), []);
 
   useEffect(() => {
     async function loadData() {
@@ -53,22 +71,30 @@ const App: FC<any> = () => {
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
-    if (isAppReady) {
+    if (isAppReady && !state.isLoading) {
       // Hides the splash screen
       await hideAsync();
     }
-  }, [isAppReady]);
+  }, [isAppReady, state.isLoading]);
 
-  if (!isAppReady) {
+  if (!isAppReady || state.isLoading) {
     return null;
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <AppWrapperView>
-        <AuthNavigator />
-      </AppWrapperView>
-    </NavigationContainer>
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer onReady={onLayoutRootView}>
+        <AppWrapperView>
+
+        {state?.userUuid === null ? (
+          <AuthNavigator />
+        ) : (
+          <MainTabNavigator />
+        )}
+        
+        </AppWrapperView>
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 };
 

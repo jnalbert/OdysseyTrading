@@ -20,6 +20,7 @@ import {
   FooterText,
 } from "./SignInScreen";
 import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
+import { AuthContext } from "../../AppContext";
 
 const ProfileWrapper = styled.View`
   margin-top: 5%;
@@ -53,6 +54,9 @@ export interface SignUpFormProps {
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 const SignUpScreen: FC<any> = ({ navigation }) => {
+
+  const { signUp } = React.useContext(AuthContext);
+  
   const {
     control,
     handleSubmit,
@@ -68,10 +72,10 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       setError("profilePhoto", errorConfig);
       return
     }
-    console.log(data);
+    // console.log(data);
 
-    // const response = await signUp(data)
-    const response = false;
+    const response = await signUp(data)
+    // const response = false;
 
     if (response) {
       const errorConfig = { type: "manual", message: response };

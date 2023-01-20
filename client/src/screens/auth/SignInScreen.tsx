@@ -1,7 +1,9 @@
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { FC } from 'react'
 import { useForm } from 'react-hook-form';
 import { TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native'
+import { AuthContext } from '../../AppContext';
 import StyledTextInput from '../../components/inputs/StyledTextInput';
 import BasicButton from '../../shared/BasicButton';
 import { Black, BlueGreen, GrandstanderSemiBold, MulishMedium, Peach, Text300, Text400 } from '../../shared/colors';
@@ -86,6 +88,8 @@ export interface SignInFormProps {
 
 const SignInScreen: FC<any> = ({navigation}) => {
 
+  const { signIn, guestSignIn } = React.useContext(AuthContext);
+
   const {
     control,
     handleSubmit,
@@ -96,8 +100,8 @@ const SignInScreen: FC<any> = ({navigation}) => {
   const onSubmit = async (data: SignInFormProps) => { 
     console.log(data);
 
-    // const response = await signIn(data)
-    const response = false
+    const response = await signIn(data)
+    console.log(response)
    
     if (response) {
       const errorConfig = {type: "manual", message: response}
@@ -114,7 +118,7 @@ const SignInScreen: FC<any> = ({navigation}) => {
   }
 
   const LoginAsGuest = async () => {
-    // await guestSignIn()
+    await guestSignIn()
   }
 
   
