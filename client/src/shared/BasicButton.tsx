@@ -12,6 +12,7 @@ const TouchableButtonWrapper = styled.TouchableOpacity`
   background-color: ${BlueGreen};
   border-radius: 12px;
   height: 50px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `
 
 const ButtonText = styled.Text`
@@ -19,11 +20,11 @@ const ButtonText = styled.Text`
   text-align: center;
   font-family: ${GrandstanderExtraBold};
   font-size: 15px;
-  font-weight: 600;
+  /* font-weight: 600; */
   /* line-height: 24px; */
 `
 const PaddedView = styled.View`
-  padding: 11px 0px;
+  /* padding: 11px 0px; */
 `
 
 interface BasicButtonProps {
@@ -33,13 +34,17 @@ interface BasicButtonProps {
   buttonTextStyle?: {};
   gradient?: boolean;
   isDisabled?: boolean;
+  boxShadow?: boolean;
+  border?: boolean;
 }
 
-const BasicButton: FC<BasicButtonProps> = ({ title, onPress, style, buttonTextStyle, isDisabled }) => {
+const BasicButton: FC<BasicButtonProps> = ({ title, onPress, style, buttonTextStyle, isDisabled, boxShadow, border }) => {
   
+  const isBorderStyles = border ? { borderColor: '#000000', borderWidth: 2 } : {};
+  const isBoxShadowStyles = boxShadow ? { boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)' } : {};
   const DisplayMeat = () => {
     return (
-        <TouchableButtonWrapper disabled={isDisabled} style={style} onPress={onPress}>
+        <TouchableButtonWrapper disabled={isDisabled} style={[style, isBorderStyles, isBoxShadowStyles]} onPress={onPress}>
           <ButtonText style={buttonTextStyle} >{title}</ButtonText>
         </TouchableButtonWrapper>
     )
