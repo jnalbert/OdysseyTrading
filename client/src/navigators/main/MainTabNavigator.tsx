@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Black, BlueGreen } from "../../shared/colors";
+import { Black, BlueGreen, backgroundColor, Peach, GrandstanderExtraBold, GrandstanderSemiBold } from '../../shared/colors';
 
 import { AntDesign, Feather } from "@expo/vector-icons";
 import CollectionStackNavigator from "./CollectionStackNavigator";
@@ -15,7 +15,17 @@ const Tab = createBottomTabNavigator();
 const MainTabNavigator: FC = () => {
   return (
     <Tab.Navigator
+    
       screenOptions={({ route }) => ({
+        headerStyle: {
+          backgroundColor: Peach,
+          borderStartColor: Peach,
+          shadowColor: "transparent",
+        },
+        headerTitleStyle: {
+          fontFamily: GrandstanderSemiBold,
+          fontSize: 20,
+        },
         tabBarActiveTintColor: BlueGreen,
         tabBarInactiveTintColor: Black,
         tabBarShowLabel: false,
