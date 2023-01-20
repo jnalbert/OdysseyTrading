@@ -8,9 +8,6 @@ import Constants from "expo-constants";
 
 // Initialize Firebase
 
-// HERHEREHREHRE
-// https://blog.logrocket.com/integrating-firebase-authentication-expo-mobile-app/
-
 const firebaseConfig = {
   apiKey: Constants?.manifest?.extra?.firebaseApiKey,
   authDomain: Constants?.manifest?.extra?.firebaseAuthDomain,

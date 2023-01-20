@@ -19,7 +19,14 @@ import { NavigationContainer } from "@react-navigation/native";
 import MainTabNavigator from "./src/navigators/main/MainTabNavigator";
 import AuthNavigator from "./src/navigators/auth/AuthNavigator";
 import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
-import { AuthContext, AuthContextFunctionTypes, authReducer, AuthTypes, getTokenAsync, useMemoFunction } from './src/AppContext';
+import {
+  AuthContext,
+  AuthContextFunctionTypes,
+  authReducer,
+  AuthTypes,
+  getTokenAsync,
+  useMemoFunction,
+} from "./src/AppContext";
 
 const AppWrapperView = styled.View`
   flex: 1;
@@ -39,13 +46,10 @@ const App: FC<any> = () => {
     }
   );
 
-  useEffect(() => {
-    getTokenAsync(dispatch);
-    // _deleteStoredUuid();
-  }, []);
-  
-  
-  const authContext = useMemo<AuthContextFunctionTypes>(() => useMemoFunction(dispatch, state), []);
+  const authContext = useMemo<AuthContextFunctionTypes>(
+    () => useMemoFunction(dispatch, state),
+    []
+  );
 
   useEffect(() => {
     async function loadData() {
@@ -60,6 +64,8 @@ const App: FC<any> = () => {
         });
         // do other fetches here
         // ***************
+        // const getOtherData = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+
       } catch (error) {
         console.warn(error);
       } finally {
@@ -68,6 +74,7 @@ const App: FC<any> = () => {
     }
 
     loadData();
+    getTokenAsync(dispatch);
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -85,13 +92,7 @@ const App: FC<any> = () => {
     <AuthContext.Provider value={authContext}>
       <NavigationContainer onReady={onLayoutRootView}>
         <AppWrapperView>
-
-        {state?.userUuid === null ? (
-          <AuthNavigator />
-        ) : (
-          <MainTabNavigator />
-        )}
-        
+          {state?.userUuid === null ? <AuthNavigator /> : <MainTabNavigator />}
         </AppWrapperView>
       </NavigationContainer>
     </AuthContext.Provider>
