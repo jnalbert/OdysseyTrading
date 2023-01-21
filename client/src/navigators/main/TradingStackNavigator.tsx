@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { backgroundColor } from "../../shared/colors";
+import { backgroundColor, GrandstanderSemiBold } from '../../shared/colors';
 import StackHeaderBackButton from "../../shared/StackHeader/StackHeaderBackButton";
 import MainTradingScreen from "../../screens/main/trading/MainTradingScreen";
 import TradingInProgressScreen from "../../screens/main/trading/TradingInProgressScreen";
@@ -17,6 +17,10 @@ const TradingStackNavigator: FC = () => {
           backgroundColor: backgroundColor,
           borderBottomColor: backgroundColor,
           shadowColor: "transparent",
+        },
+        headerTitleStyle: {
+          fontFamily: GrandstanderSemiBold,
+          fontSize: 20,
         },
         headerBackImage: () => {
           return <StackHeaderBackButton />;

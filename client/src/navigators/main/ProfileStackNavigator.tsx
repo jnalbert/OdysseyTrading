@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { backgroundColor } from "../../shared/colors";
+import { backgroundColor, GrandstanderSemiBold } from '../../shared/colors';
 import StackHeaderBackButton from "../../shared/StackHeader/StackHeaderBackButton";
 import ProfileScreen from "../../screens/main/profile/ProfileScreen";
 import ChangePasswordScreen from "../../screens/main/profile/ChangePasswordScreen";
@@ -16,6 +16,10 @@ const ProfileStackNavigator: FC = () => {
           backgroundColor: backgroundColor,
           borderBottomColor: backgroundColor,
           shadowColor: "transparent",
+        },
+        headerTitleStyle: {
+          fontFamily: GrandstanderSemiBold,
+          fontSize: 20,
         },
         headerBackImage: () => {
           return <StackHeaderBackButton />;
