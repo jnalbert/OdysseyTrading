@@ -2,19 +2,19 @@ import React, { FC, useState } from "react";
 import { ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import { isAnonymous } from '../AppContext';
-import { backgroundColor } from './colors';
+import { backgroundColor, Peach } from './colors';
 import IsProtectedComp from "./IsProtectedComp";
 
 const ScreenWrapper = styled.View`
   flex: 1;
-  background-color: ${backgroundColor};
+  background-color: ${Peach};
   flex-direction: column;
   align-items: center;
   margin: 0px 20px;
 `;
 
 const ScreenBackgroundColor = styled.View`
-  background-color: ${backgroundColor};
+  background-color: ${Peach};
   flex: 1;
 `;
 
