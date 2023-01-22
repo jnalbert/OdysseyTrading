@@ -235,7 +235,7 @@ const MyCollectionScreen: FC<any> = ({navigation}) => {
   return (
     <>
     {/* <StackHeaderNotifications name="My Collection" showNotification={isNotificationVisible}/> */}
-      <ScreenWrapperComp backgroundColor={Peach}>
+      <ScreenWrapperComp backgroundColor={Peach} isScreenProtected>
         <PinsCollectedPercentSlider>
           <CollectionPercent
             world={currentWorld && worldAttributes?.[currentWorld]}
