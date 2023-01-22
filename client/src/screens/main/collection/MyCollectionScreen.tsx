@@ -4,8 +4,13 @@ import { FlatList } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import CollectionPercent from "../../../components/mainComps/collection/CollectionPercent";
 import CollectionPinCard from "../../../components/mainComps/collection/CollectionPinCard";
+import StackHeaderNotifications from "../../../components/mainComps/collection/StackHeaderNotifcations";
 import WorldSelector from "../../../components/mainComps/collection/WorldSelector";
-import { BlueGreen, GrandstanderSemiBold, Peach, Text500 } from "../../../shared/colors";
+import {
+  BlueGreen,
+  GrandstanderSemiBold,
+  Peach,
+} from "../../../shared/colors";
 import { WorldNameEnum } from "../../../shared/MiscTypes";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
 
@@ -37,11 +42,11 @@ const ComingSoonText = styled.Text`
   font-family: ${GrandstanderSemiBold};
   font-size: 24px;
   color: ${BlueGreen};
-`
+`;
 const ShhhEmoji = styled.Text`
   font-size: 96px;
   text-align: center;
-`
+`;
 
 const FakeWorldData: WorldsAttributesType = {
   [WorldNameEnum.DEEP_SEA]: {
@@ -135,7 +140,8 @@ export interface WorldType {
 type PinsData = { [key in WorldNameEnum]?: PinType[] };
 
 export type WorldsAttributesType = { [key in WorldNameEnum]?: WorldType };
-const MyCollectionScreen: FC = () => {
+
+const MyCollectionScreen: FC<any> = ({navigation}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const [pinsData, setAllPinsData] = useState<PinsData>();
@@ -168,7 +174,6 @@ const MyCollectionScreen: FC = () => {
       // FakePinData[world as WorldNameEnum] = [...Data, ...Data, ...Data, ...Data, ...Data]
     });
 
-
     setAllPinsData(FakePinData);
   };
 
@@ -180,10 +185,11 @@ const MyCollectionScreen: FC = () => {
     FakeWorldData[WorldNameEnum.COMING_SOON] = {
       worldName: "Coming Soon",
       worldColor: "#000000",
-      worldIcon: "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png",
+      worldIcon:
+        "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png",
       pinsInWorld: 66,
       pinsCollected: 0,
-    }
+    };
 
     setWorldAttributes(FakeWorldData);
   };
@@ -195,6 +201,7 @@ const MyCollectionScreen: FC = () => {
     await getPinData();
     await getWorldAttributes();
     await getUnopenedPacksData();
+    await getNotifications();
     setIsRefreshing(false);
   };
 
@@ -207,60 +214,83 @@ const MyCollectionScreen: FC = () => {
     setCurrentWorld(world);
   };
 
+  // navigation.setParams({ newPinNotifications: false })
+
+  const getNotifications = async () => {
+    // get notifications from server
+    // setIsNotificationVisible(true)
+    // navigation.newPinNotifications = true
+    const notifications = true;
+    if (notifications) {
+      navigation.setParams({ newPinNotifications: true })
+    }
+  }
+
   return (
-    <ScreenWrapperComp backgroundColor={Peach}>
-      <PinsCollectedPercentSlider>
-        <CollectionPercent
-          world={currentWorld && worldAttributes?.[currentWorld]}
-        />
-      </PinsCollectedPercentSlider>
+    <>
+    {/* <StackHeaderNotifications name="My Collection" showNotification={isNotificationVisible}/> */}
+      <ScreenWrapperComp backgroundColor={Peach}>
+        <PinsCollectedPercentSlider>
+          <CollectionPercent
+            world={currentWorld && worldAttributes?.[currentWorld]}
+          />
+        </PinsCollectedPercentSlider>
 
-      <Divider />
+        <Divider />
 
-      <FlatList
-        ListEmptyComponent={() => {
-          return (
-            <View style={{ flex: 1, justifyContent: "center", flexDirection: "column" }}>
-              <ComingSoonText style={{ textAlign: "center" }}>Coming Soon....</ComingSoonText>
-              <ShhhEmoji style={{ textAlign: "center" }}>🤫</ShhhEmoji>
-            </View>
-          );
-        }}
-        numColumns={2}
-        style={{ height: "95%", width: "95%" }}
-        contentContainerStyle={{ paddingBottom: "30%" }}
-        data={currentWorld && pinsData?.[currentWorld]}
-        renderItem={({ index, item }) => {
-          return (
-            <CollectionPinCard
-              style={{
-                marginRight: index % 2 !== 0 ? 0 : "4%",
-              }}
-              src={item.fullColorSrc}
-              color={item.worldColor}
-              isHidden={!item.isOwned}
+        <FlatList
+          ListEmptyComponent={() => {
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <ComingSoonText style={{ textAlign: "center" }}>
+                  Coming Soon....
+                </ComingSoonText>
+                <ShhhEmoji style={{ textAlign: "center" }}>🤫</ShhhEmoji>
+              </View>
+            );
+          }}
+          numColumns={2}
+          style={{ height: "95%", width: "95%" }}
+          contentContainerStyle={{ paddingBottom: "30%" }}
+          data={currentWorld && pinsData?.[currentWorld]}
+          renderItem={({ index, item }) => {
+            return (
+              <CollectionPinCard
+                style={{
+                  marginRight: index % 2 !== 0 ? 0 : "4%",
+                }}
+                src={item.fullColorSrc}
+                color={item.worldColor}
+                isHidden={!item.isOwned}
+              />
+            );
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={async () => await getPinData()}
             />
-          );
-        }}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={async () => await getPinData()}
-          />
-        }
-      ></FlatList>
+          }
+        ></FlatList>
 
-      <WorldPickingWrapper>
-        {currentWorld && worldAttributes && (
-          <WorldSelector
-            currentWorld={currentWorld || {}}
-            worldsInfo={worldAttributes || {}}
-            handleWorldChange={handleChangeWorld}
-          />
-        )}
-      </WorldPickingWrapper>
-    </ScreenWrapperComp>
+        <WorldPickingWrapper>
+          {currentWorld && worldAttributes && (
+            <WorldSelector
+              currentWorld={currentWorld || {}}
+              worldsInfo={worldAttributes || {}}
+              handleWorldChange={handleChangeWorld}
+            />
+          )}
+        </WorldPickingWrapper>
+      </ScreenWrapperComp>
+    </>
   );
 };
 
