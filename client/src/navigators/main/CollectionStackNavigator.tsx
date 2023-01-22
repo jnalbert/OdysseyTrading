@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { View, Text } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { backgroundColor, GrandstanderSemiBold, Peach } from "../../shared/colors";
+import { GrandstanderSemiBold, Peach } from "../../shared/colors";
 import StackHeaderBackButton from "../../shared/StackHeader/StackHeaderBackButton";
 import MyCollectionScreen from "../../screens/main/collection/MyCollectionScreen";
 import HeaderNewPinNotification from "../../components/mainComps/collection/HeaderNewPinNotification";

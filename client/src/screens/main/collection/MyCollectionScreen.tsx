@@ -74,6 +74,7 @@ const FakePinData: PinsData = {
       name: "Pang Searching For Home",
       world: "Deep Sea",
       worldColor: "#5FB5BF",
+      duplicates: 1,
       fullColorSrc:
         "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20searching%20for%20home%20(2).png?alt=media&token=8f976977-5764-4061-9425-71a52f644c73",
       isOwned: false,
@@ -83,6 +84,7 @@ const FakePinData: PinsData = {
       name: "Pang Searching For Home",
       world: "Deep Sea",
       worldColor: "#5FB5BF",
+      duplicates: 2,
       fullColorSrc:
         "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20searching%20for%20home%20(2).png?alt=media&token=8f976977-5764-4061-9425-71a52f644c73",
       isOwned: true,
@@ -92,6 +94,7 @@ const FakePinData: PinsData = {
       name: "Pang Searching For Home",
       world: "Deep Sea",
       worldColor: "#5FB5BF",
+      duplicates: 1,
       fullColorSrc:
         "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20searching%20for%20home%20(2).png?alt=media&token=8f976977-5764-4061-9425-71a52f644c73",
       isOwned: false,
@@ -103,6 +106,7 @@ const FakePinData: PinsData = {
       name: "Frank Traveling",
       world: "Enchanted Forest",
       worldColor: "#6b9247",
+      duplicates: 1,
       fullColorSrc:
         "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/frank%20traveling.png?alt=media&token=57a5f1c5-9bb9-4a8f-9f16-ff60ef19fdaf",
       isOwned: false,
@@ -112,6 +116,7 @@ const FakePinData: PinsData = {
       name: "Pang In A Flower",
       world: "Enchanted Forest",
       worldColor: "#6b9247",
+      duplicates: 5,
       fullColorSrc:
         "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20in%20a%20flower.png?alt=media&token=3b2b2b1f-5b1f-4b1f-9f16-ff60ef19fdaf",
       isOwned: true,
@@ -125,6 +130,7 @@ interface PinType {
   world: string;
   worldColor: string;
   fullColorSrc: string;
+  duplicates: number;
   isOwned: boolean;
 }
 
@@ -207,7 +213,7 @@ const MyCollectionScreen: FC<any> = ({navigation}) => {
 
   useEffect(() => {
     getInitialData();
-    setCurrentWorld(WorldNameEnum.COMING_SOON);
+    setCurrentWorld(WorldNameEnum.DEEP_SEA);
   }, []);
 
   const handleChangeWorld = (world: WorldNameEnum) => {
@@ -267,6 +273,7 @@ const MyCollectionScreen: FC<any> = ({navigation}) => {
                 }}
                 src={item.fullColorSrc}
                 color={item.worldColor}
+                numberOfDuplicates={item.duplicates}
                 isHidden={!item.isOwned}
               />
             );

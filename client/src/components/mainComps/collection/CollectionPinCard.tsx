@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
+import { GrandstanderSemiBold, Pink } from '../../../shared/colors';
 
 const OverallCardWrapper = styled.View`
   width: 48%;
@@ -21,10 +22,29 @@ const PinImage = styled.Image`
   width: 100%;
 `;
 
+const DuplicateWrapper = styled.View`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-color: ${Pink};
+  justify-content: center;
+  align-items: center;
+`
+
+const DuplicateText = styled.Text`
+  font-family: ${GrandstanderSemiBold};
+  font-size: 14px;
+  color: #ffffff;
+`
+
 interface Props {
   src: string;
   isHidden: boolean;
   color: string;
+  numberOfDuplicates: number;
   style: {};
 }
 
@@ -32,7 +52,8 @@ const CollectionPinCard: FC<Props> = ({
   src,
   isHidden,
   color,
-  style
+  style,
+  numberOfDuplicates
 }) => {
   const tintColor = isHidden ? {tintColor: "rgba(0, 0, 0, 0.3)"} : {}
   return (
@@ -40,6 +61,12 @@ const CollectionPinCard: FC<Props> = ({
       <PinImageWrapper>
         <PinImage style={[tintColor]} resizeMode='contain' source={{uri: src}} />
       </PinImageWrapper>
+      {numberOfDuplicates > 1 && (
+        <DuplicateWrapper>
+          <DuplicateText>{numberOfDuplicates}x</DuplicateText>
+        </DuplicateWrapper>
+      )}
+      
     </OverallCardWrapper>
   )
 }
