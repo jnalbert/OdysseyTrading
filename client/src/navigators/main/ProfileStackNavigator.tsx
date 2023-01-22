@@ -40,7 +40,7 @@ const ProfileStackNavigator: FC = () => {
         name="ChangePassword"
         component={ChangePasswordScreen}
         options={{
-          headerTitle: "Change Password",
+          headerTitle: "",
           // headerShown: false,
         }}
       />
