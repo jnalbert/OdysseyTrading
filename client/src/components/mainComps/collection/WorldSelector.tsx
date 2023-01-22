@@ -6,10 +6,10 @@ import { BlueGreen, GrandstanderSemiBold, Peach, Orange, Pink } from '../../../s
 import { WorldNameEnum } from '../../../shared/MiscTypes';
 
 const OverallWrapper = styled.View`
-  width: 150px;
-  height: 150px;
+  width: 50%;
+  height: 170%;
   background-color: ${Peach};
-  border-radius: 75px;
+  border-radius: 100px;
   border: 1px solid black;
   /* justify-content: center; */
   align-items: center;
