@@ -53,6 +53,7 @@ const CollectionStackNavigator: FC = () => {
         component={OpenPacksScreen}
         options={{
           headerTitle: "Open Packs",
+          headerLeft: () => null
           // headerShown: false,
         }}
       />
