@@ -52,7 +52,7 @@ interface Props {
   hideText: boolean | undefined;
   styles?: {};
   otherOptions?: {};
-  icon: "email" | "password" | "name" | "PhoneNumber" | "bio";
+  icon: "email" | "password" | "name" | "PhoneNumber" | "bio" | "userName";
 }
 
 const StyledTextInput: FC<Props> = ({
@@ -78,11 +78,13 @@ const StyledTextInput: FC<Props> = ({
     if (icon === "password")
       return <AntDesign name="lock" size={24} color="#001833" />;
     if (icon === "name")
-      return <FontAwesome name="user-o" size={20} color="#001833" />;
+      return <AntDesign name="idcard" size={20} color="#001833" />
     if (icon === "PhoneNumber")
       return <Ionicons name="phone-portrait-outline" size={20} color="#001833" />;
     if (icon === "bio") 
       return <FontAwesome name="paper-plane-o" size={20} color="#001833" />;
+    if (icon === "userName")
+      return <FontAwesome name="user-o" size={20} color="#001833" />;
   };
 
   return (

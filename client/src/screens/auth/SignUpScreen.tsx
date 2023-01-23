@@ -43,6 +43,7 @@ const ProfilePicture = styled.Image`
 `
 
 export interface SignUpFormProps {
+  userName: string;
   name: string;
   phoneNumber: number;
   profilePhoto: string;
@@ -70,6 +71,14 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
     if (!data.profilePhoto) {
       const errorConfig = { type: "manual", message: "A profile photo is required" };
       setError("profilePhoto", errorConfig);
+      return
+    }
+    // TODO CALL SEVER *********
+    // const isUserNameOriginal = getUserNameOriginality(data.userName)
+    const isUserNameOriginal = true;
+    if (!isUserNameOriginal) {
+      const errorConfig = { type: "manual", message: "This username is already taken" };
+      setError("userName", errorConfig, { shouldFocus: true });
       return
     }
     // console.log(data);
@@ -131,6 +140,16 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       </ProfileWrapper>
 
       <InputWrapper style={{marginTop: "2%"}}>
+
+        <StyledTextInput
+          hideText={false}
+          error={errors.userName}
+          rules={{ required: "This field is required" }}
+          control={control}
+          placeHolderText="User Name"
+          name="userName"
+          icon="userName"
+        />
 
         <StyledTextInput
           hideText={false}
