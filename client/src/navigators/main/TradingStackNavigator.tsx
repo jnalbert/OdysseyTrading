@@ -33,7 +33,6 @@ const TradingStackNavigator: FC = () => {
         component={MainTradingScreen}
         options={{
           headerTitle: "Trading",
-          headerStyle: {},
           // headerShown: false,
         }}
       />

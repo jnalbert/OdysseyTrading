@@ -2,14 +2,14 @@ import React, { FC, useContext } from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 import BasicButton from './BasicButton';
-import { Black, GrandstanderExtraBold, MulishMedium } from './colors';
+import { Black, GrandstanderExtraBold, MulishMedium, Orange, borderColor, Peach } from './colors';
 import { AuthContext } from '../AppContext';
 
 const OverallWrapper = styled.View`
   height: 100%;
   width: 100%;
   padding-top: 37%;
-  alignItems: center;
+  align-items: center;
 `
 
 const HeaderText = styled.Text`
@@ -54,20 +54,17 @@ const IsProtectedComp: FC = () => {
 
   return (
     <OverallWrapper>
-
       <HeaderText>You must be signed in</HeaderText>
       <SubHeaderWrapper>
         <SubHeaderText>
           This page requires an account 
         </SubHeaderText>
-
         <SubHeaderText style={{fontSize: 24}}>
           Please create one or sign in
         </SubHeaderText>
       </SubHeaderWrapper>
-
-      <ButtonWrapper>
-        <BasicButton title="Sign In" onPress={signOutPress} style={{ width: "100%", height: 50, backgroundColor: "transparent" }} buttonTextStyle={{fontSize: 18}} gradient />
+        <ButtonWrapper>
+          <BasicButton title="Sign In" onPress={signOutPress} buttonTextStyle={{color: Peach, fontSize: 18}} style={{ width: "100%", height: 50, backgroundColor: Orange, borderColor: "black", borderWidth: 2  }} />
         </ButtonWrapper>
     </OverallWrapper>
   )
