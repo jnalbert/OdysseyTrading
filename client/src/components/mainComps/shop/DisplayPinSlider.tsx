@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import styled from "styled-components/native";
 import Carousel from "react-native-reanimated-carousel";
 import { BlueGreen, GrandstanderMedium, GrandstanderSemiBold, Peach, Pink } from "../../../shared/colors";
+import MyCachedImage from '../../../shared/MyCachedImage';
 
 const OverallWrapper = styled.View`
   flex-direction: column;
@@ -26,10 +27,6 @@ const PinImageWrapper = styled.View`
   /* width: 170px; */
 `;
 
-const PinImage = styled.Image`
-  height: 100%;
-  width: 100%;
-`;
 
 const PinLabelWrapper = styled.View`
   margin-top: 5%;
@@ -113,7 +110,7 @@ const DisplayPinSlider: FC = () => {
           }}
           renderItem={(pin) => (
             <PinImageWrapper>
-              <PinImage resizeMode="contain" source={{ uri: pin.item.src }} />
+              <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={pin.item.src} />
             </PinImageWrapper>
           )}
         />

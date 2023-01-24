@@ -2,6 +2,7 @@ import React, { FC, useEffect, useRef, useState } from 'react'
 import { Animated, View } from 'react-native';
 import styled from 'styled-components/native'
 import { Peach } from '../../../shared/colors';
+import MyCachedImage from '../../../shared/MyCachedImage';
 
 const PinLotterySectionWrapper = styled.View`
   height: 80px;
@@ -83,7 +84,28 @@ const PinLotterySlider: FC<PinLotterySliderProps> = ({
   
   return (
     <PinLotterySectionWrapper>
-      <Animated.Image
+      <Animated.View
+        style={{
+          backfaceVisibility: "hidden",
+          width: 80,
+          height: 70,
+          ...flipToFrontStyle,
+        }}
+      >
+        <MyCachedImage style={{height: "100%", width: "100%"}} resizeMode="contain" src={worldIcon} />
+      </Animated.View>
+      <Animated.View
+        style={{
+          position: "absolute",
+          backfaceVisibility: "hidden",
+          width: 80,
+          height: 70,
+          ...flipToPinStyle,
+        }}
+      >
+        <MyCachedImage style={{height: "100%", width: "100%"}} resizeMode="contain" src={pinSrc} />
+      </Animated.View>
+      {/* <Animated.Image
         style={{
           position: "absolute",
           backfaceVisibility: "hidden",
@@ -104,8 +126,7 @@ const PinLotterySlider: FC<PinLotterySliderProps> = ({
           resizeMode: "contain",
         }}
         source={{uri: worldIcon}}
-        // width={80}
-      />
+      /> */}
       {/* <Animated.View style={{ opacity: fadeInPin, position: "absolute"}}>
         {pickedPinState && (
           <PinWrapperComp>

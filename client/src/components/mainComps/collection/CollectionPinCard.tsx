@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
-import { View } from 'react-native';
-import styled from 'styled-components/native'
-import { GrandstanderSemiBold, Pink } from '../../../shared/colors';
+import React, { FC } from "react";
+import { View } from "react-native";
+import styled from "styled-components/native";
+import { GrandstanderSemiBold, Pink } from "../../../shared/colors";
+import MyCachedImage from "../../../shared/MyCachedImage";
 
 const OverallCardWrapper = styled.View`
   width: 48%;
@@ -11,15 +12,10 @@ const OverallCardWrapper = styled.View`
   justify-content: center;
   border: 1px solid #000000;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-`
+`;
 const PinImageWrapper = styled.View`
   height: 85%;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-`;
-
-const PinImage = styled.Image`
-  height: 100%;
-  width: 100%;
 `;
 
 const DuplicateWrapper = styled.View`
@@ -32,13 +28,13 @@ const DuplicateWrapper = styled.View`
   background-color: ${Pink};
   justify-content: center;
   align-items: center;
-`
+`;
 
 const DuplicateText = styled.Text`
   font-family: ${GrandstanderSemiBold};
   font-size: 14px;
   color: #ffffff;
-`
+`;
 
 interface Props {
   src: string;
@@ -53,22 +49,25 @@ const CollectionPinCard: FC<Props> = ({
   isHidden,
   color,
   style,
-  numberOfDuplicates
+  numberOfDuplicates,
 }) => {
-  const tintColor = isHidden ? {tintColor: "rgba(0, 0, 0, 0.3)"} : {}
+  const tintColor = isHidden ? { tintColor: "rgba(0, 0, 0, 0.3)" } : {};
   return (
-    <OverallCardWrapper style={[{backgroundColor: color}, style]}>
+    <OverallCardWrapper style={[{ backgroundColor: color }, style]}>
       <PinImageWrapper>
-        <PinImage style={[tintColor]} resizeMode='contain' source={{uri: src}} />
+        <MyCachedImage
+          style={[tintColor, { height: "100%", width: "100%" }]}
+          resizeMode="contain"
+          src={src}
+        />
       </PinImageWrapper>
       {numberOfDuplicates > 1 && (
         <DuplicateWrapper>
           <DuplicateText>{numberOfDuplicates}x</DuplicateText>
         </DuplicateWrapper>
       )}
-      
     </OverallCardWrapper>
-  )
-}
+  );
+};
 
-export default CollectionPinCard
+export default CollectionPinCard;

@@ -200,13 +200,11 @@ const MyCollectionScreen: FC<any> = ({navigation}) => {
     setWorldAttributes(FakeWorldData);
   };
 
-  const getUnopenedPacksData = async () => {};
 
   const getInitialData = async () => {
     setIsRefreshing(true);
     await getPinData();
     await getWorldAttributes();
-    await getUnopenedPacksData();
     await getNotifications();
     setIsRefreshing(false);
   };

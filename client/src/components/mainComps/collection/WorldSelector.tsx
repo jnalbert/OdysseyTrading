@@ -4,6 +4,7 @@ import styled from 'styled-components/native'
 import { WorldsAttributesType } from '../../../screens/main/collection/MyCollectionScreen';
 import { BlueGreen, GrandstanderSemiBold, Peach, Orange, Pink } from '../../../shared/colors';
 import { WorldNameEnum } from '../../../shared/MiscTypes';
+import MyCachedImage from '../../../shared/MyCachedImage';
 
 const OverallWrapper = styled.View`
   width: 50%;
@@ -91,7 +92,7 @@ const WorldSelector: FC<Props> = ({
         }, checkActive(WorldNameEnum.DEEP_SEA)]}
         onPress={() => handleWorldChange(WorldNameEnum.DEEP_SEA)}
         >
-          <WorldIcon source={{ uri: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/DeepSeaIcon.png?alt=media&token=22bb" }} />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/DeepSeaIcon.png?alt=media&token=22bb" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -99,7 +100,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.ENCHANTED_FOREST)]}
           onPress={() => handleWorldChange(WorldNameEnum.ENCHANTED_FOREST)}
         >
-          <WorldIcon source={{ uri: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/TreeLandIcon.png?alt=media&token=97a786f4-9016-4a66-b9b8-b4590b4be6cf" }} />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/TreeLandIcon.png?alt=media&token=97a786f4-9016-4a66-b9b8-b4590b4be6cf" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -107,7 +108,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.SEASONAL)]}
           onPress={() => handleWorldChange(WorldNameEnum.SEASONAL)}
         >
-          <WorldIcon source={{ uri: "https://www.transparentpng.com/thumb/four-seasons/tree-sun-nature-picture-rain-snow-tree-png-18.png" }} />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://www.transparentpng.com/thumb/four-seasons/tree-sun-nature-picture-rain-snow-tree-png-18.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -115,7 +116,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.COMING_SOON)]}
           onPress={() => handleWorldChange(WorldNameEnum.COMING_SOON)}
         >
-          <WorldIcon source={{ uri: "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png" }} />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -123,7 +124,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.COMING_SOON)]}
           onPress={() => handleWorldChange(WorldNameEnum.COMING_SOON)}
         >
-          <WorldIcon source={{ uri: "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png" }} />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png" />
         </WorldIconCircle>
       </WorldIconsWrapper>
       <WorldText

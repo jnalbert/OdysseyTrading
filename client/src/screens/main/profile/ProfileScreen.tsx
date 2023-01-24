@@ -1,10 +1,11 @@
 import React, { FC, useState, useEffect } from "react";
-import { Alert, RefreshControl, View } from "react-native";
+import { Alert, Image, RefreshControl, View } from "react-native";
 import styled from "styled-components/native";
 import { AuthContext, _getUuid } from "../../../AppContext";
 import ProfileInfoSection from "../../../components/profile/ProfileInfoSection";
 import BasicButton from "../../../shared/BasicButton";
 import { BlueGreen, GrandstanderSemiBold, logoutRed, Peach, Text300, backgroundColor, Orange, borderColor, Black } from '../../../shared/colors';
+import MyCachedImage from "../../../shared/MyCachedImage";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
 
 const ProfilePhotoWrapper = styled.TouchableOpacity`
@@ -83,7 +84,7 @@ const TestUserInfo: UserInfoType = {
   totalPinsOwned: 0,
   totalTradesMade: 0,
   profilePhotoSrc:
-    "https://www.treehugger.com/thmb/nSp8ESJ1N6zq_bsTVL_MoSrKAqA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1273584292-cbcd5f85f4c646d58f7a7fa158dcaaeb.jpg",
+    "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20in%20a%20flower.png?alt=media&token=5dc21ba1-0c99-4c71-a5f8-ee7e332ea68f",
 };
 
 const ProfileScreen: FC<any> = ({ navigation }) => {
@@ -198,7 +199,7 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       />
     }>
       <ProfilePhotoWrapper>
-        <ProfilePhoto source={{ uri: userInfo.profilePhotoSrc }} />
+        <Image style={{width: "100%", height: "100%"}} source={{uri: userInfo.profilePhotoSrc}} />
       </ProfilePhotoWrapper>
 
       <ProfileHeaderWrapper>
