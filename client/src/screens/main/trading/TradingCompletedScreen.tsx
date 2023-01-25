@@ -1,12 +1,13 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Animated, Easing, View } from 'react-native';
+import React, { FC, useEffect, useRef, useState } from 'react'
+import { Animated, Dimensions, Easing, View } from 'react-native';
 import styled from 'styled-components/native'
 import { completeTradeFirebase } from '../../../../firebase/FirestoreFunctions';
 import ScreenWrapperComp from '../../../shared/ScreenWrapperComp';
 import { ActiveTradeType } from '../../../../firebase/types/ActiveTradeType';
 import TradingUserTopCard from '../../../components/mainComps/trading/TradingUserTopCard';
-import { BlueGreen, GrandstanderExtraBold, MulishBold, Orange } from '../../../shared/colors';
+import { BlueGreen, GrandstanderExtraBold, MulishBold, Orange, backgroundColor, Peach } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
+import BasicButton from '../../../shared/BasicButton';
 
 const OverallMeatWrapper = styled.View`
     margin-top: 10%;
@@ -30,16 +31,23 @@ const ReceivedText = styled.Text`
     font-size: 25px;
     color: ${Orange};
     margin-top: 10%;
-    margin-bottom: 5%;
 `
 const SendInAndOutWrapper = styled.View`
     width: 100%;
-    height: 100%;
+    height: 180px;
+    align-items: center;
+    justify-content: center;
 `
 
 const PinWrapper = styled.View`
-    width: 50%;
-    height: 30%;
+    width: 40%;
+    height: 20%;
+    background-color: red;
+    position: absolute;
+`
+
+const BackHomeWrapper = styled.View`
+    width: 100%;
 `
 
 
@@ -64,37 +72,43 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         getTradingData();
     }, [])
 
-    let ItemsOpacity = new Animated.Value(0.5);
-    let sendInPinY = new Animated.Value(0);
-    let sendOutPinY = new Animated.Value(0);
+    let ItemsOpacity = useRef(new Animated.Value(0)).current;
+    let sendInPinY = useRef(new Animated.Value(-800)).current;
+    let sendOutPinY = useRef(new Animated.Value(-100)).current;
 
-
-  const sendOutPin = () => {
-    // make an timing animation to move the pin up
-    Animated.timing(sendInPinY, {
-        toValue: -100,
-        duration: 1200,
-        easing: Easing.cubic,
-        useNativeDriver: true,
-    }).start();
-  };
-  const sendInPin = () => {
+  const startAnimations = () => {
     // make an timing animation to move the pin down
-    Animated.timing(sendOutPinY, {
+    console.log("called")
+    const sendOutPin = Animated.timing(sendOutPinY, {
+      toValue: -800,
+      duration: 2200,
+      easing: Easing.linear,
+      useNativeDriver: true,
+  })
+    const sendInPin = Animated.timing(sendInPinY, {
         toValue: 0,
-        duration: 1200,
-        easing: Easing.cubic,
+        duration: 2200,
+        easing: Easing.linear,
         useNativeDriver: true,
-    }).start();
+    })
+    const makeVisible = Animated.timing(ItemsOpacity, {
+      toValue: 1,
+      duration: 1200,
+      easing: Easing.cubic,
+      useNativeDriver: true,
+  })
+    Animated.sequence([sendOutPin, sendInPin, makeVisible]).start();
   }
-  const makeTextVisible = () => {
-    Animated.timing(ItemsOpacity, {
-        toValue: 1,
-        duration: 1200,
-        easing: Easing.cubic,
-        useNativeDriver: true,
-    }).start();
+
+  useEffect(() => {
+    startAnimations();
+  }, [tradeData])
+
+  const returnHome = () => {
+    navigation.navigate("MainTrading")
   }
+
+  const screenHeight = Dimensions.get("window").height; 
 
   return (
     <ScreenWrapperComp>
@@ -104,6 +118,8 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         <Animated.View
             style={{
                 opacity: ItemsOpacity,
+                // flex: 1,
+                height: "50%",
             }}
             >
             <OverallMeatWrapper>
@@ -112,54 +128,43 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
                 <TradingUserTopCard username={tradeData.receiveUsername} userSrc={receiveUserPhoto} />
                 <ReceivedText>You Received</ReceivedText>
             </OverallMeatWrapper>
-            <PinWrapper>
-                <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.receivePinSrc} />
-            </PinWrapper>
         </Animated.View>
-
-        {/* send In Pin */}
         <SendInAndOutWrapper>
+          <Animated.View style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            transform: [
+                {translateY: sendInPinY}
+            ]
+          }}>
+            <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.receivePinSrc} />
+          </Animated.View>
         <Animated.View
-            style={{
-                transform: [
-                    {translateY: sendInPinY}
-                ],
-                width: "100%",
-                height: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-                // position: "absolute",
-                // bottom: "50%",
-                // top: "50%",
-            }}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            transform: [
+                {translateY: sendOutPinY}
+            ]
+          }}
         >
-            <PinWrapper>
-                <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.receivePinSrc} />
-            </PinWrapper>
-        </Animated.View>
-
-        {/* send Out Pin */}
-        <Animated.View
-            style={{
-                transform: [
-                    {translateY: sendOutPinY}
-                ],
-                width: "100%",
-                height: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-                // position: "absolute",
-                // bottom: "50%",
-                // top: "50%",
-            }}
-        >
-            <PinWrapper>
-                <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.sendPinSrc} />
-            </PinWrapper>
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.sendPinSrc} />
         </Animated.View>
         </SendInAndOutWrapper>
-        
-        
+
+        <Animated.View
+          style={{
+            opacity: ItemsOpacity,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <BasicButton border boxShadow style={{backgroundColor: Orange, width: 200, height: 56}} buttonTextStyle={{color: Peach, fontSize: 22}} onPress={returnHome} title="Back Home"  />
+        </Animated.View>
+
         </>
       )}
       </>
