@@ -9,7 +9,7 @@ import BasicButton from "../../shared/BasicButton";
 import { useNavigation } from "@react-navigation/native";
 
 const IntroScreenWrapper = styled.View`
-  margin-top: 12%;
+  margin-top: 5%;
   flex: 1;
   width: 100%;
   height: 100%;
@@ -19,9 +19,14 @@ const IntroScreenWrapper = styled.View`
 const CarouselWrapper = styled.View`
     width: 100%;
 `
+const IntroImageWrapper = styled.View`
+  width: 100%;
+  height: 30%;
+`
 
 const IntroImage = styled.Image`
   width: 100%;
+  height: 100%;
 `;
 
 const GetStartedButtonWrapper = styled.View`
@@ -37,6 +42,8 @@ const IntroScreen: FC = () => {
 
     const [carouselSlidesData, setCarouselSlidesData] = useState<NodeRequire[]>([
         require("../../../assets/IntroCarousel/IntroSlide1.png"),
+        require("../../../assets/IntroCarousel/IntroSlide2.png"),
+        require("../../../assets/IntroCarousel/IntroSlide3.png"),
     ])
     const navigator: any = useNavigation();
     
@@ -47,8 +54,10 @@ const IntroScreen: FC = () => {
   return (
     <ScreenWrapperComp noMargin backgroundColor={Peach}>
       <IntroScreenWrapper>
-        {/* NEEEEDS TO BE CHANGED TODO */}
-        <IntroImage source={require("../../../assets/IntroCarousel/OdysseyAppIntro.png")} />
+
+        <IntroImageWrapper>
+          <IntroImage resizeMode="contain" source={require("../../../assets/IntroCarousel/OdysseyAppIntroV2.png")} />
+        </IntroImageWrapper>
 
         <CarouselWrapper>
             <Carousel
