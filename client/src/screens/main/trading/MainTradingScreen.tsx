@@ -1,15 +1,21 @@
 import React, { FC, useEffect, useState } from "react";
-import { View, Dimensions, RefreshControl } from 'react-native';
+import { View, Dimensions, RefreshControl, Alert } from 'react-native';
 import styled from "styled-components/native";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
 import QRCode from 'react-native-qrcode-svg';
-import { Peach, Orange, MulishBold, Black, BlueGreen, Pink, GrandstanderExtraBold, Text300, Text400 } from '../../../shared/colors';
+import { Peach, Orange, MulishBold, Black, BlueGreen, Pink, GrandstanderExtraBold, Text300, Text400, logoutRed } from '../../../shared/colors';
 import BasicButton from '../../../shared/BasicButton';
 import { useIsFocused } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { FlatList } from "react-native-gesture-handler";
 import PastTradeCard from "../../../components/mainComps/trading/PastTradeCard";
 import { AntDesign } from '@expo/vector-icons'; 
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { Feather } from '@expo/vector-icons'; 
+import { doc, DocumentData, onSnapshot, QueryDocumentSnapshot } from "firebase/firestore";
+import { deleteActiveTrade, startActiveTrade, updateActiveTrade } from "../../../../firebase/FirestoreFunctions";
+import { db } from "../../../../config/firebase";
+import { ActiveTradeType } from "../../../../firebase/types/ActiveTradeType";
 
 const QRCodeWrapper = styled.View`
   /* border: 1px solid black; */
@@ -87,6 +93,18 @@ const NoPinsYetText = styled.Text`
   text-align: center;
   color: ${Text400};
 `
+const ScannerXWrapper = styled.TouchableOpacity`
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 50%;
+  padding: 2px;
+`
+
 
 interface TradingUserInformation {
   uuid: string;
@@ -116,21 +134,37 @@ export interface PastTrade {
   date: string;
 }
 
-const MainTradingScreen: FC = () => {
+const MainTradingScreen: FC<any> = ({navigation}) => {
   const [userInformation, setUserInformation] = useState<TradingUserInformation>({ uuid: "", username: "" });
-  const defaultTradeCode = "test";
+  const defaultTradeCode = "";
   const [activeTradeCode, setActiveTradeCode] = useState<string>(defaultTradeCode);
   const [pastTrades, setPastTrades] = useState<PastTrade[]>([]);
   const [isPastTradesLoading, setIsPastTradesLoading] = useState<boolean>(false);
+  const [isLoadingQrCode, setIsLoadingQrCode] = useState<boolean>(false);
+  const [unsubDB, setUnsubDB] = useState<any>(() => {});
+
+
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
+
+  const [scanned, setScanned] = useState(false);
+
+  const getBarCodeScannerPermissions = async () => {
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    if (status === 'granted') {
+      setHasPermission(true);
+    } else {
+      Alert.alert("Camera access denied", "Please enable camera access in your settings to scan QR codes");
+    }
+  };
 
   const getInitialUserData = async () => {
     //TODO get data from server ********
     // call server function to get the user information
-    setUserInformation({ uuid: "3245351345123423", username: "jnalbert879" });
+    setUserInformation({ uuid: "ZpLZ5ugg23d7DlhzkMKwAF4UCgR2", username: "jnalbert879" });
   }
   const getPastTrades = async () => {
     setIsPastTradesLoading(true);
-    /// get Data from server *******
+    /// TODO get Data from server *******
     setPastTrades(fakePastTrades);
     setIsPastTradesLoading(false);
   };
@@ -143,30 +177,93 @@ const MainTradingScreen: FC = () => {
   // once the screen goes out of focus, clear the active trade code
   const isFocused = useIsFocused();
   useEffect(() => {
-    if (!isFocused) {
+    if (!isFocused || hasPermission) {
       setActiveTradeCode(defaultTradeCode)
+      if (activeTradeCode !== defaultTradeCode) {
+        deleteActiveTrade(activeTradeCode)
+      }
+      
     }
-  }, [isFocused]);
+  }, [isFocused, hasPermission]);
 
   const getActiveTradeCode = async () => {
     //TODO get data from server ********
     // call server function to start the active trade and get the code
-    setActiveTradeCode("test");
+    setIsLoadingQrCode(true);
+    const {tradeCode} = await startActiveTrade(userInformation);
+    console.log(tradeCode, "trade")
+    setActiveTradeCode(tradeCode);
+    setIsLoadingQrCode(false);
+
+    onSnapshot(doc(db, "active-trades", tradeCode), (doc) => {
+      handleDocUpdate(doc.data())
+    })
+  }
+  const handleDocUpdate = (activeTradeDoc: DocumentData | undefined) => {
+    if (activeTradeDoc?.receiveUserUuid !== "") {
+      // someone has matched the trade
+      navigation.navigate("TradingInProgress", { tradeId: activeTradeCode })
+    }
   }
 
   const handleScanCode = async () => {
-    console.log("scan code")
+/// TODO DEV THINGS ********
+    const devTradeCode = "xSQNKvm6pq6V0Rt7NOIV";
+    navigation.navigate("TradingInProgress", { tradeId: devTradeCode })
+
+    /// TODO DEV TINGS TO PUT BACK ******
+    // await getBarCodeScannerPermissions()
+  }
+
+  const handleBarCodeScanned = ({ data }: any) => {
+    setScanned(true);
+    handleFoundQRCode(data)
+  };
+
+  const handleFoundQRCode = async (tradeUuid: string) => {
+    //TODO updated active trade on sever with current uuid and userName ********
+    await updateActiveTrade(tradeUuid, userInformation)
+    // go to continue trading screen with the tradeUuid
+    // console.log("n")
+    navigation.navigate("TradingInProgress", { tradeId: tradeUuid })
+  }
+  // ****** TODO SET SCANNED BACK TO FALSE BEFORE YOU LEAVE SCREEN *****
+
+  const handleExitScanner = () => {
+    setHasPermission(false);
+    setScanned(false);
   }
 
   // get the screen width
   const screenWidth60 = Dimensions.get("window").width * 0.6
   return (
-    <ScreenWrapperComp isScreenProtected>
+    <>
+    {hasPermission ? (
+      <>
+        <ScannerXWrapper
+          onPress={handleExitScanner}
+        >
+          <Feather name="x" size={50} color={logoutRed} />
+        </ScannerXWrapper>
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style = {{
+            height:  "100%",
+            width: "100%",
+          }}
+          barCodeTypes={[
+            BarCodeScanner.Constants.BarCodeType.qr,
+          ]}
+          />
+        </>
+    )
+    : (
+<ScreenWrapperComp isScreenProtected>
       <QRCodeWrapper style={{width: screenWidth60, height: screenWidth60}}>
       {activeTradeCode ? (
           <QRCode backgroundColor={Peach} size={screenWidth60} value={activeTradeCode} />
       ) : (
-        <BasicButton border boxShadow style={{backgroundColor: Orange, width: screenWidth60, height: 70}} buttonTextStyle={{color: Peach, fontSize: 22}} onPress={getActiveTradeCode} title="Start Trading"  />
+        <BasicButton isDisabled={isLoadingQrCode} border boxShadow style={{backgroundColor: Orange, width: screenWidth60, height: 70}} buttonTextStyle={{color: Peach, fontSize: 22}} onPress={getActiveTradeCode} title="Start Trading"  />
       )}
        </QRCodeWrapper>
       
@@ -228,6 +325,11 @@ const MainTradingScreen: FC = () => {
         />
       </PastTradesWrapper>
     </ScreenWrapperComp>
+    )
+  }
+    
+    
+    </>
   );
 };
 

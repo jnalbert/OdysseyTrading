@@ -5,10 +5,11 @@ import { PastTrade } from '../../../screens/main/trading/MainTradingScreen';
 import { GrandstanderExtraBold, MulishMedium, Text400 } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
 import { FontAwesome } from '@expo/vector-icons'; 
+import { _getUuid } from '../../../AppContext';
 
 const OverallCardWrapper = styled.View`
   width: 100%;
-  background-color: #ffffffa9;
+  background-color: #ffffff7d;
   height: 105px;
   flex-direction: row;
   justify-content: space-between;
@@ -77,6 +78,21 @@ const PastTradeCard: FC<PastTrade> = ({
   receivePinSrc,
   date,
 }) => {
+  // check if sendUserUuid === userUuid
+  // if it does, then sendUserProfilePhoto = sendUserProfilePhoto
+  // else sendUserProfilePhoto = receiveUserProfilePhoto
+  const [displaySendInformation, setDisplaySendInformation] = useState({sendUserUuid: sendUserUuid, sendUserName: sendUserName, sendPinSrc: sendPinSrc})
+  const [displayReceiveInformation, setDisplayReceiveInformation] = useState({receiveUserUuid: receiveUserUuid, receiveUserName: receiveUserName, receivePinSrc: receivePinSrc})
+
+  const setCorrectData = async () => {
+    const userUuid = await _getUuid()
+    // console.log("userUuid: ", userUuid)
+    if (userUuid === sendUserUuid) {
+      setDisplaySendInformation({sendUserUuid: receiveUserUuid, sendUserName: receiveUserName, sendPinSrc: receivePinSrc})
+      setDisplayReceiveInformation({receiveUserUuid: sendUserUuid, receiveUserName: sendUserName, receivePinSrc: sendPinSrc})
+    }
+  }
+ 
   const [sendUserProfilePhoto, setSendUserProfilePhoto] = useState<string>("");
   const [receiveUserProfilePhoto, setReceiveUserProfilePhoto] = useState<string>("");
 
@@ -88,16 +104,19 @@ const PastTradeCard: FC<PastTrade> = ({
     return localDate.slice(0, localDate.length - 4) + shortYear;
   };
 
+  const getInitalData = async () => {
+    await setCorrectData()
+    await getProfilePhotos()
+  }
   const getProfilePhotos = async () => {
     // get profile photos from the database TODO *******
     setSendUserProfilePhoto("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgJvMekGVb6Qvn6KAeBiDtds9JmdvtZqM0bg&usqp=CAU");
     setReceiveUserProfilePhoto("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8d29vZHN8ZW58MHx8MHx8&w=1000&q=80");
   }
+
   useEffect(() => {
-    getProfilePhotos();
+    getInitalData()
   }, []);
-
-
 
   return (
     <OverallCardWrapper>
@@ -108,14 +127,14 @@ const PastTradeCard: FC<PastTrade> = ({
           </ProfilePhotoWrapper>
           <UserNameText
             numberOfLines={1}
-          >@{sendUserName.substring(0,5)}...</UserNameText>
+          >@{displaySendInformation.sendUserName.substring(0,5)}...</UserNameText>
         </UserInformationWrapper>
         <PinWrapper
           style={{
             marginLeft: "11%",
           }}
         >
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={sendPinSrc}/>
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={displaySendInformation.sendPinSrc}/>
         </PinWrapper>
       </EndSectionsWrapper>
         
@@ -136,7 +155,7 @@ const PastTradeCard: FC<PastTrade> = ({
             marginRight: "11%",
           }}
       >
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={receivePinSrc}/>
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={displayReceiveInformation.receivePinSrc}/>
         </PinWrapper>
         <UserInformationWrapper>
           <ProfilePhotoWrapper>
@@ -144,7 +163,7 @@ const PastTradeCard: FC<PastTrade> = ({
           </ProfilePhotoWrapper>
           <UserNameText
              numberOfLines={1}
-          >@{receiveUserName.substring(0,5)}...</UserNameText>
+          >@{displayReceiveInformation.receiveUserName.substring(0,5)}...</UserNameText>
         </UserInformationWrapper>
       </EndSectionsWrapper>
       

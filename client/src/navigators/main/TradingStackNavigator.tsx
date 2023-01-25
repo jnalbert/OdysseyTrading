@@ -41,17 +41,19 @@ const TradingStackNavigator: FC = () => {
         name="TradingInProgress"
         component={TradingInProgressScreen}
         options={{
-          headerTitle: "Trading In Progress",
-          headerShown: false,
+          headerTitle: "Trade In Progress",
+          headerLeft: () => null,
+          headerShown: true,
         }}
       />
 
       <Stack.Screen
-        name="Trading Completed"
+        name="TradingCompleted"
         component={TradingCompletedScreen}
         options={{
           headerTitle: "Trading Completed",
-          headerShown: false,
+          headerShown: true,
+          headerLeft: () => null,
         }}
       />
     </Stack.Navigator>
