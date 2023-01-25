@@ -143,7 +143,7 @@ export interface WorldType {
 }
 
 // make a type script type that is an object with string keys and PinType values
-type PinsData = { [key in WorldNameEnum]?: PinType[] };
+export type PinsData = { [key in WorldNameEnum]?: PinType[] };
 
 export type WorldsAttributesType = { [key in WorldNameEnum]?: WorldType };
 

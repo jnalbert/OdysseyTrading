@@ -222,7 +222,7 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
 
   const handleScanCode = async () => {
 /// TODO DEV THINGS ********
-    const devTradeCode = "ojoQ1qYtspZaHNjoZlW9";
+    const devTradeCode = "DF0dAMRdpYEV7RshXi17";
     navigation.navigate("TradingInProgress", { tradeId: devTradeCode })
 
     /// TODO DEV TINGS TO PUT BACK ******

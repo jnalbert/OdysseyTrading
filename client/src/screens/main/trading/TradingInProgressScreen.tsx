@@ -10,8 +10,10 @@ import { _getUuid } from '../../../AppContext';
 import { cancelActiveTrade, deleteActiveTrade, updateActiveTrade } from '../../../../firebase/FirestoreFunctions';
 import CurrentPinChoiceCard from '../../../components/mainComps/trading/CurrentPinChoiceCard';
 import { Fontisto } from '@expo/vector-icons'; 
-import BasicButton from '../../../shared/BasicButton';
 import ConfirmUnConfirmButton from '../../../components/mainComps/trading/ConfirmUnConfirmButton';
+import PinPickingSection from '../../../components/mainComps/trading/PinPickingSection';
+import { GrandstanderExtraBold, logoutRed } from '../../../shared/colors';
+import BasicButton from '../../../shared/BasicButton';
 
 const OverallWrapper = styled.View`
   width: 100%;
@@ -48,6 +50,99 @@ const ConfirmUnConfirmWrapper = styled.View`
   align-items: center;
 `
 
+const PinsToChooseWrapper = styled.View`
+  margin-top: 5%;
+  flex-direction: column;
+  width: 80%;
+`
+
+const PinsHeaderWrapper = styled.View`
+  margin-top: 7%;
+  width: 85%;
+`
+const PinsHeader = styled.Text`
+  font-family: ${GrandstanderExtraBold};
+  font-size: 30px;
+  color: #000000;
+`
+
+const Divider = styled.View`
+  width: 100%;
+  height: 1px;
+  background-color: #000000;
+`
+
+const CancelTradeButtonWrapper = styled.View`
+  margin-top: 10%;
+  width: 80%;
+`
+
+interface PinWorld {
+  worldName: string;
+  worldColor: string;
+  worldIcon: string;
+  pinsInWorld: number;
+  uuid: string;
+}
+const FakeWorldData: PinWorld[] = [
+  {
+    worldName: "Deep Sea",
+    worldColor: "#5FB5BF",
+    worldIcon: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/DeepSeaIcon.png?alt=media&token=22bb8fdb-e4f2-40d9-a9f9-f7accbcb6b8e",
+    pinsInWorld: 13,
+    uuid: "1234"
+  },
+  {
+    worldName: "Enchanted Forest",
+    worldColor: "#6b9247",
+    worldIcon: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/TreeLandIcon.png?alt=media&token=97a786f4-9016-4a66-b9b8-b4590b4be6cf",
+    pinsInWorld: 13,
+    uuid: "12345"
+  }
+]
+
+export type PinsType = {
+  uuid: string;
+  name: string;
+  worldUuid: string;
+  fullColorSrc: string;
+}
+
+const FakePinData: PinsType[] = [
+  {
+    uuid: "123234",
+    name: "Pang Searching For Home",
+    worldUuid: "1234",
+    fullColorSrc: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20searching%20for%20home%20(2).png?alt=media&token=8f976977-5764-4061-9425-71a52f644c73",
+  },
+  {
+    uuid: "123233s4",
+    name: "Pang Searching For Home",
+    worldUuid: "1234",
+    fullColorSrc: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20searching%20for%20home%20(2).png?alt=media&token=8f976977-5764-4061-9425-71a52f644c73"
+  },
+  {
+    uuid: "12323323s4",
+    name: "Pang Searching For Home",
+    worldUuid: "1234",
+    fullColorSrc: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/Pang%20searching%20for%20home%20(2).png?alt=media&token=8f976977-5764-4061-9425-71a52f644c73"
+  },
+  {
+    uuid: "124",
+    name: "Buff bunny",
+    worldUuid: "12345",
+    fullColorSrc: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/frankie%20petting%20wolf.png?alt=media&token=e673b94a-777a-4337-a052-3531c7e737ae"
+  },
+  {
+    uuid: "12f2334",
+    name: "Frank Traveling",
+    worldUuid: "12345",
+    fullColorSrc: "https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/frank%20traveling.png?alt=media&token=57a5f1c5-9bb9-4a8f-9f16-ff60ef19fdaf"
+  },
+]
+
+
+
 interface ChangingTradeData {
   sendPinSrc: string;
   receivePinSrc: string;
@@ -72,6 +167,20 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
   const [currentUserUuid, setCurrentUserUuid] = useState<string>("")
   const [unchangingTradeData, setUnchangingTradeData] = useState<UnchangingTradeData>()
   const [changingTradeData, setChangingTradeData] = useState<ChangingTradeData>()
+  const [usersPins, setUsersPins] = useState<PinsType[]>()
+  const [pinWorlds, setPinWorlds] = useState<PinWorld[]>()
+  const [selectedPin, setSelectedPin] = useState<PinsType>()
+  const [isFinished, setIsFinished] = useState(false)
+
+  const getPinsAndWorlds = async () => {
+    setInitialDataLoading(true)
+    const uuid = await _getUuid()
+    // TODO get pins from DB
+    // TODO get worlds from DB
+    setUsersPins([...FakePinData])
+    setPinWorlds(FakeWorldData)
+    setInitialDataLoading(false)
+  }
 
   const {tradeId} = route.params
 
@@ -140,12 +249,16 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
     const uuid = await _getUuid()
     setCurrentUserUuid(uuid as string)
     const unsub = onSnapshot(doc(db, "active-trades", tradeId), (doc) => {
-      handleTradeDocChanges(doc.data() as ActiveTradeType, uuid as string)
+      if (doc.exists()) {
+        handleTradeDocChanges(doc.data() as ActiveTradeType, uuid as string)
+      }
+      
     })
     return unsub
   }
 
   useEffect(() => {
+    getPinsAndWorlds()
   let unsubFunc: any
     startInitial().then((unsub) => {
       unsubFunc = unsub
@@ -160,14 +273,36 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
     await cancelActiveTrade(tradeId)
   }
 
-  const pinChoiceChanged = async (pinUuid: string, pinSrc: string) => {
+  const pinChoiceChange = async (pin: PinsType) => {
     // TODO update DB with changing Data
     // TODO update UI with change
+    if (!changingTradeData) return
+    setSelectedPin(pin)
+    setChangingTradeData({
+      ...changingTradeData,
+      sendPinSrc: pin.fullColorSrc,
+      sendPinUuid: pin.uuid
+    })
+    let sendNewPin: any = {
+      senPinSrc: pin.fullColorSrc,
+      sendPinUuid: pin.uuid
+    }
+    if (isSwitched) {
+      sendNewPin = {
+        receivePinSrc: pin.fullColorSrc,
+        receivePinUuid: pin.uuid
+      }
+    }
+    await updateActiveTrade(tradeId, sendNewPin)
   }
 
   const handConfirmUnconfirm = async () => {
     // TODO update DB with changing Data
     if (!changingTradeData) return
+    if (selectedPin === undefined) {
+      alert("Please select a pin to trade")
+      return
+    }
 
     setChangingTradeData({
       ...changingTradeData,
@@ -186,6 +321,14 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
 
   }
 
+  const handleTradingCompleted = async () => {
+    if (isFinished) return
+    console.log("FINISHED")
+    setIsFinished(true)
+    // TODO update DB with changing Data
+    // TODO update UI with change
+    navigation.navigate("TradingCompleted", { tradeId: tradeId })
+  }
   // get the screen Dimension
     const screenHeight = Dimensions.get("window").height
     const screenWidth = Dimensions.get("window").width
@@ -206,7 +349,7 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
         )}
       {changingTradeData && (
         <CurrentPinChoicesWrapper>
-          <CurrentPinChoiceCard pinSrc={changingTradeData.sendPinSrc} isConfirmed={changingTradeData.senderConfirmed} />
+          <CurrentPinChoiceCard pinSrc={selectedPin?.fullColorSrc || ""} isConfirmed={changingTradeData.senderConfirmed} />
           <SwapSvgWrapper>
             <Fontisto name="arrow-swap" size={50} color="#323232" />
           </SwapSvgWrapper>
@@ -216,9 +359,27 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
        
        {changingTradeData && (
         <ConfirmUnConfirmWrapper>
-          <ConfirmUnConfirmButton isConfirmed={changingTradeData.senderConfirmed} isOtherUserConfirmed={changingTradeData.receiverConfirmed} handleClick={handConfirmUnconfirm} />
+          <ConfirmUnConfirmButton isConfirmed={changingTradeData.senderConfirmed} isOtherUserConfirmed={changingTradeData.receiverConfirmed} handleClick={handConfirmUnconfirm} handleTradingCompleted={handleTradingCompleted} />
         </ConfirmUnConfirmWrapper>
        )}
+       
+       <PinsHeaderWrapper>
+          <PinsHeader>Choose a Pin</PinsHeader>
+          <Divider />
+       </PinsHeaderWrapper>
+       {(pinWorlds && usersPins) && (
+        <PinsToChooseWrapper
+        >
+          {pinWorlds.map((world) => {
+            const worldPins = usersPins.filter((pin) => pin.worldUuid === world.uuid)
+            return <PinPickingSection key={world.uuid} isPinConfirmed={changingTradeData?.senderConfirmed || false} worldName={world.worldName} worldColor={world.worldColor} worldPins={worldPins} currentSelection={selectedPin || null} handleClick={pinChoiceChange} />
+          })}
+        </PinsToChooseWrapper>
+       )}
+
+       <CancelTradeButtonWrapper>
+        <BasicButton style={{backgroundColor: logoutRed, borderColor: logoutRed, borderWidth: 2, height: 40, width: "98%"}} buttonTextStyle={{}} title="Cancel Trade" onPress={cleanUpTrade}/>
+       </CancelTradeButtonWrapper>
         
       </OverallWrapper>
     </ScreenWrapperComp>

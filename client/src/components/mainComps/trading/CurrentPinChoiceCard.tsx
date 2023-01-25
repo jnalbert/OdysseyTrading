@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import styled from 'styled-components/native'
 import { backgroundColor, borderColor, Pink } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
@@ -41,7 +41,7 @@ const CurrentPinChoiceCard: FC<Props> = ({
     <OverallWrapper style={[confirmedStyles, {borderWidth: 3}]}>
       <PinWrapper> 
         { pinSrc && (
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={pinSrc} />
+          <Image style={{width: "100%", height: "100%"}} resizeMode={"contain"} source={{uri: pinSrc}} />
         )}
 
       </PinWrapper>
