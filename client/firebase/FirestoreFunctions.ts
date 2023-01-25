@@ -20,6 +20,8 @@ export const startActiveTrade = async (userData: {uuid: string, username: string
     receivePinUuid: "",
     sendPinSrc: "",
     receivePinSrc: "",
+    senderConfirmed: false,
+    receiverConfirmed: false,
     isCanceled: false,
   }
   // adds doc to DB
@@ -30,17 +32,29 @@ export const startActiveTrade = async (userData: {uuid: string, username: string
 }
 export const deleteActiveTrade = async (tradeCode: string) => {
   // Delete trade from db
-  console.log("Deleting Trading")
-  await deleteDoc(doc(db, "active-trades", tradeCode))
+  try {
+    await deleteDoc(doc(db, "active-trades", tradeCode))
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-export const updateActiveTrade = async (tradeCode: string, userData: {uuid: string, username: string}) => {
+export const updateActiveTrade = async (tradeCode: string, userData: {}) => {
+  try {
+    // update the active trade wit the current users information
+    const tradeDoc = doc(db, "active-trades", tradeCode)
+    await updateDoc(tradeDoc, userData)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const cancelActiveTrade = async (tradeCode: string) => {
   try {
     // update the active trade wit the current users information
     const tradeDoc = doc(db, "active-trades", tradeCode)
     await updateDoc(tradeDoc, {
-      receiveUserUuid: userData.uuid,
-      receiveUsername: userData.username,
+      isCanceled: true,
     })
   } catch (error) {
     console.error(error)

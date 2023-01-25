@@ -7,5 +7,7 @@ export interface ActiveTradeType {
   receivePinUuid: string;
   sendPinSrc: string;
   receivePinSrc: string;
+  senderConfirmed: boolean;
+  receiverConfirmed: boolean;
   isCanceled: boolean;
 }
