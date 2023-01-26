@@ -5,6 +5,7 @@ import { TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native'
 import { AuthContext } from '../../AppContext';
 import StyledTextInput from '../../components/inputs/StyledTextInput';
+import ActivityIndicatorWrapper from '../../shared/ActivityIndicatorWrapper';
 import BasicButton from '../../shared/BasicButton';
 import { Black, BlueGreen, GrandstanderSemiBold, MulishMedium, Peach, Text300, Text400 } from '../../shared/colors';
 import ScreenWrapperComp from '../../shared/ScreenWrapperComp';
@@ -89,6 +90,7 @@ export interface SignInFormProps {
 const SignInScreen: FC<any> = ({navigation}) => {
 
   const { signIn, guestSignIn } = React.useContext(AuthContext);
+  const [isFirebaseLoading, setIsFirebaseLoading] = React.useState(false)
 
   const {
     control,
@@ -98,10 +100,11 @@ const SignInScreen: FC<any> = ({navigation}) => {
   } = useForm<SignInFormProps>();
 
   const onSubmit = async (data: SignInFormProps) => { 
-    console.log(data);
-
+    setIsFirebaseLoading(true)
+    // console.log(data);
     const response = await signIn(data)
-    console.log(response)
+    // console.log(response)
+    setIsFirebaseLoading(false)
    
     if (response) {
       const errorConfig = {type: "manual", message: response}
@@ -171,11 +174,11 @@ const SignInScreen: FC<any> = ({navigation}) => {
       </AfterContentContainer>
 
       <SubmitButtonWrapper>
-        <BasicButton title="Sign In" style={{height: 45, width: 295}} onPress={handleSubmit(onSubmit)}/>
+        <ActivityIndicatorWrapper isLoading={isFirebaseLoading}>
+          <BasicButton title="Sign In" style={{height: 45, width: 295}} onPress={handleSubmit(onSubmit)}/>
+        </ActivityIndicatorWrapper>
         {/* <CircleButton onPress={handleSubmit(onSubmit)} /> */}
       </SubmitButtonWrapper>
-
-      
 
       <GuestWrapper onPress={LoginAsGuest}>
           <SmallInfo>
