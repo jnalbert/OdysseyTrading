@@ -1,12 +1,14 @@
 import React, { FC, useState, useEffect } from "react";
 import { Alert, Image, RefreshControl, View } from "react-native";
 import styled from "styled-components/native";
+import { UserDataType } from "../../../../firebase/types/UserType";
 import { AuthContext, _getUuid } from "../../../AppContext";
 import ProfileInfoSection from "../../../components/profile/ProfileInfoSection";
 import BasicButton from "../../../shared/BasicButton";
 import { BlueGreen, GrandstanderSemiBold, logoutRed, Peach, Text300, backgroundColor, Orange, borderColor, Black } from '../../../shared/colors';
 import MyCachedImage from "../../../shared/MyCachedImage";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
+import { deleteAccount, getProfileDataFromDB } from '../../../../firebase/FirestoreFunctions';
 
 const ProfilePhotoWrapper = styled.TouchableOpacity`
   border-radius: 65px;
@@ -90,14 +92,18 @@ const TestUserInfo: UserInfoType = {
 const ProfileScreen: FC<any> = ({ navigation }) => {
   const { signOut } = React.useContext(AuthContext);
 
-  const [userInfo, setUserInfo] = useState<UserInfoType>({
-    userName: "",
+  const [userInfo, setUserInfo] = useState<UserDataType>({
+    username: "",
+    phoneNumber: "",
+    unopenedPinsCount: 0,
     name: "",
     email: "",
     dateJoined: "",
-    totalPinsOwned: 0,
+    totalPinsCollected: 0,
     totalTradesMade: 0,
-    profilePhotoSrc: "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png",
+    profilePhoto: "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png",
+    bio: "",
+    uuid: ""
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -105,40 +111,31 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
     // get data from api
     setIsRefreshing(true);
     const uuid = await _getUuid();
-    // ADD THIS IN TODO ***************
-    // const res = await GetProfileData(uuid || "");
-    const res = TestUserInfo;
+    const res = await getProfileDataFromDB(uuid || "");
+    // const res = TestUserInfo;
     if (!res) return;
 
-    const rawData = {
-      userName: res?.userName,
-      name: res?.name,
-      email: res?.email,
-      dateJoined: new Date(res?.dateJoined).toString(),
-      totalPinsOwned: res?.totalPinsOwned,
-      totalTradesMade: res?.totalTradesMade,
-      profilePhotoSrc: res?.profilePhotoSrc,
-    };
     const {
-      userName,
+      username,
       name,
       email,
       dateJoined,
-      totalPinsOwned,
+      totalPinsCollected,
       totalTradesMade,
-      profilePhotoSrc,
-    } = rawData;
+      profilePhoto,
+    } = res;
 
     const newDate = getFormattedDate(new Date(dateJoined).toString());
 
     setUserInfo({
-      userName: userName,
+      ...userInfo,
+      username: username,
       name: name,
       email: email,
       dateJoined: newDate,
-      totalPinsOwned: totalPinsOwned,
+      totalPinsCollected: totalPinsCollected,
       totalTradesMade: totalTradesMade,
-      profilePhotoSrc: profilePhotoSrc,
+      profilePhoto: profilePhoto,
     });
     setIsRefreshing(false);
   };
@@ -167,7 +164,8 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
     const uuid = await _getUuid();
     // TODO ADD THIS FUNCTION ***************
     console.log("delete account")
-    // deleteAccount(uuid as string);
+    await deleteAccount(uuid as string);
+    signOut()
   };
 
   const deleteAccountAlert = () => {
@@ -199,7 +197,7 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       />
     }>
       <ProfilePhotoWrapper>
-        <Image style={{width: "100%", height: "100%"}} source={{uri: userInfo.profilePhotoSrc}} />
+        <Image style={{width: "100%", height: "100%"}} source={{uri: userInfo.profilePhoto}} />
       </ProfilePhotoWrapper>
 
       <ProfileHeaderWrapper>
@@ -207,11 +205,11 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       </ProfileHeaderWrapper>
 
       <InformationWrapper>
-        <ProfileInfoSection header="User Name" value={userInfo.userName} />
+        <ProfileInfoSection header="User Name" value={userInfo.username} />
         <ProfileInfoSection header="Name" value={userInfo.name} />
         <ProfileInfoSection header="Email" value={userInfo.email} />
         <ProfileInfoSection header="Date Joined" value={userInfo.dateJoined}/>
-        <ProfileInfoSection header="Total Pin Owned" value={userInfo.totalPinsOwned.toString()}/>
+        <ProfileInfoSection header="Total Pin Owned" value={userInfo.totalPinsCollected.toString()}/>
         <ProfileInfoSection header="Total Trades Made" value={userInfo.totalTradesMade.toString()}/>
       </InformationWrapper>
 
