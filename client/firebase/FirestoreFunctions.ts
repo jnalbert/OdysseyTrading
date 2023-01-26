@@ -5,15 +5,19 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import { db, storage } from "../config/firebase";
+import { Auth, db, storage } from "../config/firebase";
 import { _getUuid } from "../src/AppContext";
 import { ActiveTradeType } from "./types/ActiveTradeType";
 import { UserDataType } from "./types/UserType";
 import { Platform } from "react-native";
+import { deleteUser, getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 
 // *** Various User Functions *** //
 
@@ -26,9 +30,66 @@ export const addNewAccountToDB = async (newUserObject: UserDataType) => {
   }
 };
 
-export const checkIfUserNameExists = async (username: string) => {
+export const getProfileDataFromDB = async (userUuid: string) => {
   try {
-    
+    // get the user data from the db
+    const userDoc = await getDoc(doc(db, `users/${userUuid}`));
+    return userDoc.data() as UserDataType;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteAccount = async (uuid: string) => { 
+  const auth = getAuth();
+  const user = auth.currentUser;
+  deleteUser(user as any).then(() => {
+    // console.log("delted")
+  }).catch((error) => {
+    console.log('error', error)
+  });
+
+  try {
+    await deleteDoc(doc(db, "users", uuid));
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const changePassword = async (newPassword: string) => { 
+  try {
+    const currentUser = Auth.currentUser;
+    // console.log(currentUser)
+    await updatePassword(currentUser as any, newPassword);
+    console.log("password changed")
+  } catch (error: any) {
+    console.log(error);
+    return error.code;
+  }
+}
+
+
+export const reauthenticateUser = async (password: string) => { 
+  try {
+    const currentUser = Auth.currentUser;
+    // console.log('first', currentUser?.email)
+    await signInWithEmailAndPassword(Auth, currentUser?.email as string, password)
+  
+  } catch (error: any) {
+    console.log(error.code)
+    if (error.code === "auth/wrong-password") {
+      return "wrongPass";
+     }
+  }
+}
+
+export const checkIfUsernameIsUnique = async (username: string) => {
+  try {
+    // check through the user accounts and see if the username exists
+    const usersCollection = collection(db, "users");
+    const resQuery = query(usersCollection, where("username", "==", username));
+    const querySnapshot = await getDocs(resQuery);
+    return querySnapshot.size <= 0;
   } catch (error) {
     console.log(error)
   }

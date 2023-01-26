@@ -21,7 +21,7 @@ import {
 } from "./SignInScreen";
 import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
 import { AuthContext } from "../../AppContext";
-import { uploadImageToStorage } from "../../../firebase/FirestoreFunctions";
+import { checkIfUsernameIsUnique, uploadImageToStorage } from "../../../firebase/FirestoreFunctions";
 import ActivityIndicatorWrapper from "../../shared/ActivityIndicatorWrapper";
 
 const ProfileWrapper = styled.View`
@@ -76,8 +76,9 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       return
     }
     // TODO CALL SEVER *********
-    // const isUserNameOriginal = getUserNameOriginality(data.userName)
-    const isUserNameOriginal = true;
+    setIsFirebaseLoading(true)
+    const isUserNameOriginal = await checkIfUsernameIsUnique(data.userName)
+    setIsFirebaseLoading(false)
     if (!isUserNameOriginal) {
       const errorConfig = { type: "manual", message: "This username is already taken" };
       setError("userName", errorConfig, { shouldFocus: true });
