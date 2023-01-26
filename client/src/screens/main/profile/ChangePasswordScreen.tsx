@@ -38,7 +38,6 @@ const ChangePasswordScreen: FC<any> = ({navigation}) => {
 
   const onSubmit = async (data: ChangePasswordFormProps) => {
     // console.log(data)
-    // TODO IMPLEMENT THIS ***************
     setIsFirebaseLoading(true)
     const res = await changePassword(data.newPassword)
     setIsFirebaseLoading(false)

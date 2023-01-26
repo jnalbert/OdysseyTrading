@@ -75,7 +75,6 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       setError("profilePhoto", errorConfig);
       return
     }
-    // TODO CALL SEVER *********
     setIsFirebaseLoading(true)
     const isUserNameOriginal = await checkIfUsernameIsUnique(data.userName)
     setIsFirebaseLoading(false)

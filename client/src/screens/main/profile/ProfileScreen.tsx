@@ -162,7 +162,6 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
 
   const handleDeleteAccount = async () => {
     const uuid = await _getUuid();
-    // TODO ADD THIS FUNCTION ***************
     console.log("delete account")
     await deleteAccount(uuid as string);
     signOut()
