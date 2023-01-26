@@ -8,6 +8,8 @@ import StyledTextInput from '../../../components/inputs/StyledTextInput';
 import BasicButton from '../../../shared/BasicButton';
 import ActionCompletedSection from '../../../shared/ActionCompletedSection';
 import { Orange, Peach } from '../../../shared/colors';
+import { changePassword, reauthenticateUser } from '../../../../firebase/FirestoreFunctions';
+import ActivityIndicatorWrapper from '../../../shared/ActivityIndicatorWrapper';
 
 export interface ChangePasswordFormProps {
   oldPassword: string;
@@ -23,6 +25,7 @@ const ChangePasswordButtonWrapper = styled.View`
 const ChangePasswordScreen: FC<any> = ({navigation}) => {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFirebaseLoading, setIsFirebaseLoading] = useState(false);
 
   const {
     control,
@@ -36,8 +39,9 @@ const ChangePasswordScreen: FC<any> = ({navigation}) => {
   const onSubmit = async (data: ChangePasswordFormProps) => {
     // console.log(data)
     // TODO IMPLEMENT THIS ***************
-    // const res = await ChangePassword(data.newPassword)
-    const res = ""
+    setIsFirebaseLoading(true)
+    const res = await changePassword(data.newPassword)
+    setIsFirebaseLoading(false)
     if (res) {
       console.log(res)
     } else {
@@ -50,8 +54,9 @@ const ChangePasswordScreen: FC<any> = ({navigation}) => {
 
     // call function to validate password here instead of hard code
     // TODO IMPLEMENT THIS ***************
-    // const res = await ReauthenticateUser(oldPassword);
-    const res: any = ""
+    setIsFirebaseLoading(true)
+    const res = await reauthenticateUser(oldPassword);
+    setIsFirebaseLoading(false)
 
     if (res === "wrongPass") {
       setError("oldPassword", { type: "manual", message: "Incorrect Password" })
@@ -123,7 +128,9 @@ const ChangePasswordScreen: FC<any> = ({navigation}) => {
       </InputWrapper>
 
       <ChangePasswordButtonWrapper>
-        <BasicButton style={{width: "100%", borderRadius: 18, backgroundColor: Orange, borderColor: "black", borderWidth: 2}} buttonTextStyle={{color: Peach, fontSize: 18}} onPress={handleResetPress} title='Change Password' />
+        <ActivityIndicatorWrapper isLoading={isFirebaseLoading}>
+          <BasicButton style={{width: "100%", borderRadius: 18, backgroundColor: Orange, borderColor: "black", borderWidth: 2}} buttonTextStyle={{color: Peach, fontSize: 18}} onPress={handleResetPress} title='Change Password' />
+        </ActivityIndicatorWrapper>
       </ChangePasswordButtonWrapper>
 
     </ScreenWrapperComp>
