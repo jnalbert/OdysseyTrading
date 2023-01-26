@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
@@ -21,6 +21,8 @@ import {
 } from "./SignInScreen";
 import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
 import { AuthContext } from "../../AppContext";
+import { uploadImageToStorage } from "../../../firebase/FirestoreFunctions";
+import ActivityIndicatorWrapper from "../../shared/ActivityIndicatorWrapper";
 
 const ProfileWrapper = styled.View`
   margin-top: 5%;
@@ -82,9 +84,10 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       return
     }
     // console.log(data);
-
+    setIsFirebaseLoading(true)
     const response = await signUp(data)
     // const response = false;
+    setIsFirebaseLoading(false)
 
     if (response) {
       const errorConfig = { type: "manual", message: response };
@@ -108,10 +111,10 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 4],
-      quality: 1,
+      quality: 0.4,
     });
     
-    console.log(result)
+    // console.log(result)
 
     if (!result.canceled) {
       setProfilePicture(result.assets[0].uri);
@@ -119,6 +122,15 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       clearErrors("profilePhoto");
     }
   }
+  const [isFirebaseLoading, setIsFirebaseLoading] = useState(false);
+
+  // const testingUpload = async () => {
+  //   setIsFirebaseLoading(true)
+  //   const uuid = "Xx8GcT5r5lWU2mWqWpWbLDCDWUm1"
+  //   const dowload = await uploadImageToStorage(uuid, profilePicture || "")
+  //   console.log(dowload)
+  //   setIsFirebaseLoading(false)
+  // }
 
   return (
     <ScreenWrapperComp scrollView backgroundColor={Peach}>
@@ -230,12 +242,19 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
         </SignUpWrapper>
       </AfterContentContainer>
 
-      <SubmitButtonWrapper style={{marginBottom: "10%"}}>
-        <BasicButton
-          title="Sign Up"
-          style={{ height: 45, width: 295 }}
-          onPress={handleSubmit(onSubmit)}
-        />
+      <SubmitButtonWrapper
+      style={{marginBottom: "60%"}}>
+        <ActivityIndicatorWrapper
+          isLoading={isFirebaseLoading}
+        >
+          <BasicButton
+            title="Sign Up"
+            style={{ height: 45, width: 295 }}
+            onPress={handleSubmit(onSubmit)}
+            // onPress={testingUpload}
+          />
+        </ActivityIndicatorWrapper>
+       
       </SubmitButtonWrapper>
     </ScreenWrapperComp>
   );

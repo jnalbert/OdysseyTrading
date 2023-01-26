@@ -7,7 +7,7 @@ import React, {
   // import { setItemAsync, getItemAsync, deleteItemAsync } from "expo-secure-store";
   import { Auth } from '../config/firebase';
   import { createUserWithEmailAndPassword, deleteUser, sendPasswordResetEmail, signInAnonymously, signInWithEmailAndPassword } from "firebase/auth";
-  import { addNewAccountToDB } from "../firebase/FirestoreFunctions";
+  import { addNewAccountToDB, uploadImageToStorage } from "../firebase/FirestoreFunctions";
   
   export interface AuthTypes {
     isLoading: boolean;
@@ -146,28 +146,30 @@ import React, {
       // After getting token, we need to persist the token using `SecureStore`
       // In the example, we'll use a dummy token
       // console.log(data)
-  
       try {
         const userResponse = await createUserWithEmailAndPassword(Auth, data.email, data.password)
   
         // console.log(new Date(userResponse?.user?.metadata?.creationTime))
+        // add the profilePicture to storage
+        const profilePhotoSrc = await uploadImageToStorage(userResponse.user.uid, data.profilePhoto)
   
         const creationDate = userResponse.user.metadata.creationTime
   
-        // const newUserObject = {
-        //   name: data.name,
-        //   email: data.email,
-        //   phoneNumber: data.phoneNumber.toString(),
-        //   dateJoined: creationDate ? new Date(creationDate).toISOString() : "",
-        //   totalCookiesPurchased: 0,
-        //   totalRewardsEarned: 0,
-        //   totalPointsEarned: 0,
-        //   uuid: userResponse.user.uid || "",
-        // }
-  
-        // addNewAccountToDB(newUserObject)
-  
-    
+        const newUserObject = {
+          username: data.userName,
+          name: data.name,
+          email: data.email,
+          phoneNumber: data.phoneNumber.toString(),
+          dateJoined: creationDate ? new Date(creationDate).toISOString() : "",
+          totalPinsCollected: 0,
+          totalTradesMade: 0,
+          profilePhoto: profilePhotoSrc || "",
+          bio: data.bio,
+          uuid: userResponse.user.uid || "",
+          unopenedPinsCount: 0,
+        }
+        addNewAccountToDB(newUserObject)
+
         dispatch({ type: "SIGN_IN", token: userResponse.user.uid });
       } catch (error: any) {
         console.log(error.code)

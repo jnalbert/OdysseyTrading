@@ -1,3 +1,4 @@
+import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import {
   addDoc,
   collection,
@@ -5,13 +6,51 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { db, storage } from "../config/firebase";
 import { _getUuid } from "../src/AppContext";
 import { ActiveTradeType } from "./types/ActiveTradeType";
+import { UserDataType } from "./types/UserType";
+import { Platform } from "react-native";
 
-export const addNewAccountToDB = async () => {};
+// *** Various User Functions *** //
+
+export const addNewAccountToDB = async (newUserObject: UserDataType) => {
+  try {
+    // add the new user to the db
+    await setDoc(doc(db, `users/${newUserObject.uuid}`), newUserObject);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const checkIfUserNameExists = async (username: string) => {
+  try {
+    
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const uploadImageToStorage = async (userUuid: string, profileUri: string) => {
+  try {
+    profileUri = Platform.OS === 'ios' ? profileUri.replace('file://', '') : profileUri;
+    // get the image blob from the local file uri
+    // console.log("Here")
+    const response = await fetch(profileUri);
+    console.log(response, "response")
+    const blob = await response.blob();
+    const storageRef = ref(storage, `users/${userUuid}/profile-picture`);
+    const snapshot = await uploadBytes(storageRef, blob);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+    return downloadUrl
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 
 // *** Various Trading Functions *** //
 
