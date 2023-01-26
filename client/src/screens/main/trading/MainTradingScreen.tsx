@@ -222,11 +222,11 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
 
   const handleScanCode = async () => {
 /// TODO DEV THINGS ********
-    const devTradeCode = "DF0dAMRdpYEV7RshXi17";
-    navigation.navigate("TradingInProgress", { tradeId: devTradeCode })
+    // const devTradeCode = "DF0dAMRdpYEV7RshXi17";
+    // navigation.navigate("TradingInProgress", { tradeId: devTradeCode })
 
     /// TODO DEV TINGS TO PUT BACK ******
-    // await getBarCodeScannerPermissions()
+    await getBarCodeScannerPermissions()
   }
 
   const handleBarCodeScanned = ({ data }: any) => {

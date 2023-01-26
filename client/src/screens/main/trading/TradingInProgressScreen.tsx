@@ -164,7 +164,6 @@ interface UnchangingTradeData {
 const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
   const [initialDataLoading, setInitialDataLoading] = useState(true)
   const [isSwitched, setIsSwitched] = useState(false)
-  const [currentUserUuid, setCurrentUserUuid] = useState<string>("")
   const [unchangingTradeData, setUnchangingTradeData] = useState<UnchangingTradeData>()
   const [changingTradeData, setChangingTradeData] = useState<ChangingTradeData>()
   const [usersPins, setUsersPins] = useState<PinsType[]>()
@@ -247,7 +246,6 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
 
   const startInitial = async () => {
     const uuid = await _getUuid()
-    setCurrentUserUuid(uuid as string)
     const unsub = onSnapshot(doc(db, "active-trades", tradeId), (doc) => {
       if (doc.exists()) {
         handleTradeDocChanges(doc.data() as ActiveTradeType, uuid as string)
@@ -264,7 +262,7 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
       unsubFunc = unsub
     })
     return () => {
-      // cleanUpTrade()
+      cleanUpTrade()
       unsubFunc()
     }
   }, [])
