@@ -50,7 +50,7 @@ const CollectionPercent: FC<Props> = ({
     worldName = world?.worldName
     color = world?.worldColor
     // get the percentage as a number wit no decimals
-    percentage = Math.floor((world?.pinsCollected / world?.pinsInWorld * 100) || 0)
+    percentage = Math.floor((world?.numPinsCollected / world?.numPinsInWorld * 100) || 0)
   }
   return (
     <OverallWrapper>

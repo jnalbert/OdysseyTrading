@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { View } from "react-native";
+import React, { FC, useRef } from "react";
+import { View, Image } from "react-native";
 import styled from "styled-components/native";
 import { GrandstanderSemiBold, Pink } from "../../../shared/colors";
 import MyCachedImage from "../../../shared/MyCachedImage";
@@ -42,6 +42,7 @@ interface Props {
   color: string;
   numberOfDuplicates: number;
   style: {};
+  isChangingScreen: boolean;
 }
 
 const CollectionPinCard: FC<Props> = ({
@@ -50,16 +51,26 @@ const CollectionPinCard: FC<Props> = ({
   color,
   style,
   numberOfDuplicates,
+  isChangingScreen,
 }) => {
+  const previousImageRef = useRef(src);
+
+  if (previousImageRef.current !== src) {
+
+  }
+
+
+  console.log(src, "pin Src")
   const tintColor = isHidden ? { tintColor: "rgba(0, 0, 0, 0.3)" } : {};
   return (
     <OverallCardWrapper style={[{ backgroundColor: color }, style]}>
       <PinImageWrapper>
-        <MyCachedImage
+          <Image
           style={[tintColor, { height: "100%", width: "100%" }]}
           resizeMode="contain"
-          src={src}
-        />
+          source={{ uri: src }}
+          // src={src}
+          />
       </PinImageWrapper>
       {numberOfDuplicates > 1 && (
         <DuplicateWrapper>

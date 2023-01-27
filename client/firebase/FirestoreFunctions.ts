@@ -22,6 +22,8 @@ import { Platform } from "react-native";
 import { deleteUser, getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { PinTypeDB, WorldTypeDB, UserOwnedPinTypeDB } from './types/PinAndWorldType';
 import { WorldPinsToOpenType } from '../src/screens/main/collection/OpenPacksScreen';
+import { PinsDataMyCollection, WorldsAttributesType } from "../src/screens/main/collection/MyCollectionScreen";
+import { WorldNameEnum } from '../src/shared/MiscTypes';
 
 // *** Various User Functions *** //
 
@@ -329,5 +331,103 @@ export const getPacksToOpenData = async (userUuid: string) => {
 
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const getPinsForUserCollection = async (userUuid: string) => {
+  try {
+      // get all the pins from the users collection
+      const userPinsCollection = collection(db, "users", userUuid, "pins");
+      const querySnapshot = await getDocs(userPinsCollection);
+      const userPins: UserOwnedPinTypeDB[] = [];
+      querySnapshot.forEach((doc) => {
+        userPins.push(doc.data() as UserOwnedPinTypeDB);
+      })
+      // get all of the existing pins
+      const allPins = await getAllPins()
+      if (!allPins) return
+      // go through all pins and check it against the users pins to see if they own it 
+      const pinsWithUserOwnedData = allPins.map(pin => {
+        const userPin = userPins.find(userPin => userPin.pinUuid === pin.uuid)
+        if (userPin) {
+          return {...pin, isOwned: true, duplicates: userPin.duplicates}
+        } else {
+          return {...pin, isOwned: false, duplicates: 1}
+        }
+      })
+      // get all the worlds attributes
+      // const worldsAttributesCollection = collection(db, "worlds");
+      // const querySnapshotWorld = await getDocs(worldsAttributesCollection);
+      // const worldsAttributes: WorldTypeDB[] = [];
+      // querySnapshotWorld.forEach((doc) => {
+      //   worldsAttributes.push(doc.data() as WorldTypeDB);
+      // })
+
+      // const pinsWithWorldsFormatted: PinsDataMyCollection = {}
+      // // format the pins into an object with the worlds as the keys
+      // worldsAttributes.forEach(world => {
+      //   // find the pins in the current world
+      //   const pinsInWorld = pinsWithUserOwnedData.filter(pin => pin.worldUuid === world.uuid)
+      //   // add the pins to the object
+      //   const worldAttributesKey: WorldNameEnum = switchCaseToGetWorld(world.worldName)
+      //   pinsWithWorldsFormatted[worldAttributesKey] = pinsInWorld
+      // })
+      return pinsWithUserOwnedData
+  } catch (error) {
+
+  }
+}
+
+export const getWorldsAttributesMyCollection = async (userUuid: string) => {
+  try {
+      // get all the worlds attributes
+      const worldsAttributesCollection = collection(db, "worlds");
+      const querySnapshot = await getDocs(worldsAttributesCollection);
+      const worldsAttributes: WorldTypeDB[] = [];
+      querySnapshot.forEach((doc) => {
+        worldsAttributes.push(doc.data() as WorldTypeDB);
+      })
+      // get all the pins from the users collection
+      const userPinsCollection = collection(db, "users", userUuid, "pins");
+      const userPinsQuerySnapshot = await getDocs(userPinsCollection);
+      const userPins: UserOwnedPinTypeDB[] = [];
+      userPinsQuerySnapshot.forEach((doc) => {
+        userPins.push(doc.data() as UserOwnedPinTypeDB);
+      })
+      // find the number of each pin in the world that exists in the users collection
+      const worldsAttributesWithPins: WorldsAttributesType = {}
+      worldsAttributes.forEach(world => {
+        const pinsInCurrentWorld = userPins.filter(pin => pin.worldUuid === world.uuid)
+  //       worldName: string;
+        // worldColor: string;
+        // worldIcon: string;
+        // numPinsInWorld: number;
+        // numPinsCollected: number;
+        const worldToAdd = {
+          worldName: world.worldName,
+          worldColor: world.worldColor,
+          worldIcon: world.worldIcon,
+          numPinsInWorld: world.numPinsInWorld,
+          numPinsCollected: pinsInCurrentWorld.length
+        }
+        const worldAttributesKey: WorldNameEnum = switchCaseToGetWorld(world.worldName)
+        worldsAttributesWithPins[worldAttributesKey] = worldToAdd
+      })
+      return worldsAttributesWithPins
+  } catch (error) {
+      console.log(error)
+  }
+}
+
+const switchCaseToGetWorld = (world: string) => {
+  switch (world) {
+    case "Enchanted Forest":
+      return WorldNameEnum.ENCHANTED_FOREST
+    case "Deep Sea":
+      return WorldNameEnum.DEEP_SEA
+    case "Seasonal":
+      return WorldNameEnum.SEASONAL
+    default:
+      return WorldNameEnum.COMING_SOON
   }
 }
