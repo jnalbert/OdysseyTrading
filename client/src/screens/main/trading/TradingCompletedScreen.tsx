@@ -1,13 +1,14 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
 import { Animated, Dimensions, Easing, View } from 'react-native';
 import styled from 'styled-components/native'
-import { completeTradeFirebase } from '../../../../firebase/FirestoreFunctions';
+import { completeTradeFirebase, FinishTrading, getProfileDataFromDB } from '../../../../firebase/FirestoreFunctions';
 import ScreenWrapperComp from '../../../shared/ScreenWrapperComp';
 import { ActiveTradeType } from '../../../../firebase/types/ActiveTradeType';
 import TradingUserTopCard from '../../../components/mainComps/trading/TradingUserTopCard';
 import { BlueGreen, GrandstanderExtraBold, MulishBold, Orange, backgroundColor, Peach } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
 import BasicButton from '../../../shared/BasicButton';
+import { _getUuid } from '../../../AppContext';
 
 const OverallMeatWrapper = styled.View`
     margin-top: 10%;
@@ -53,8 +54,9 @@ const BackHomeWrapper = styled.View`
 
 const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
     const {tradeId} = route.params;
-    console.log(tradeId)
+    // console.log(tradeId)
     const [isLoading, setIsLoading] = useState(false);
+    const [isSwitched, setIsSwitched] = useState(false);
     const [tradeData, setTradeData] = useState<ActiveTradeType | null>()
     const [receiveUserPhoto, setReceiveUserPhoto] = useState<string | null>(null)
 
@@ -62,10 +64,28 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         setIsLoading(true);
         const tradeData = (await completeTradeFirebase(tradeId)) as ActiveTradeType 
         setTradeData(tradeData || null);
+        // check if user is switced
+  
+        let isUserSwtiched = false;
+        const uuid = await _getUuid()
+        if (tradeData?.receiveUserUuid === uuid) {
+            isUserSwtiched = true;
+            setIsSwitched(true)
+        }
         // TODO get user photo from db
-        const userPhoto = "http://cdn.shopify.com/s/files/1/0238/5301/collections/Teal-Lip.jpg?v=1643402323"
-        setReceiveUserPhoto(userPhoto || null);
+        // swtich the trade Data if user is switched
+        const getPhotoUuid = isUserSwtiched ? tradeData?.receiveUserUuid : tradeData?.sendUserUuid
+        const userPhoto = (await getProfileDataFromDB(getPhotoUuid))?.profilePhoto || null
+        setReceiveUserPhoto(userPhoto);
         setIsLoading(false);
+
+        doEndOfTradingThings()
+    }
+
+    const doEndOfTradingThings = async () => {
+      const uuid = await _getUuid()
+      if (!tradeData) return
+      await FinishTrading(tradeData, uuid || "")
     }
 
     useEffect(() => {
@@ -78,7 +98,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
 
   const startAnimations = () => {
     // make an timing animation to move the pin down
-    console.log("called")
+    // console.log("called")
     const sendOutPin = Animated.timing(sendOutPinY, {
       toValue: -800,
       duration: 2200,
@@ -138,7 +158,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
                 {translateY: sendInPinY}
             ]
           }}>
-            <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.receivePinSrc} />
+            <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={isSwitched ? tradeData.sendPinSrc : tradeData.receivePinSrc} />
           </Animated.View>
         <Animated.View
           style={{
@@ -150,7 +170,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
             ]
           }}
         >
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={tradeData.sendPinSrc} />
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode="contain" src={isSwitched ? tradeData.receivePinSrc : tradeData.sendPinSrc} />
         </Animated.View>
         </SendInAndOutWrapper>
 

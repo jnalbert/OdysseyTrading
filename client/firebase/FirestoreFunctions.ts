@@ -477,3 +477,47 @@ export const getAllWorldsForTrading = async () => {
     console.log(error)
   }
 }
+
+export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
+  try {
+    // find the pin with the pinUuid in the users pins
+    const userPinsCollection = collection(db, "users", userUuid, "pins");
+    // const findPinDoc = await query(userPinsCollection, where("pinUuid", "==", pinUuid))
+    const pinDoc = await doc(userPinsCollection, pinUuid)
+    const findPinDocSnapshot = await getDoc(pinDoc)
+    const pinToDelete = findPinDocSnapshot
+    const currentPinData = pinToDelete.data() as UserOwnedPinTypeDB
+    if (currentPinData.duplicates > 1) {
+      // update the pin to have one less duplicate
+      await updateDoc(pinDoc, {duplicates: currentPinData.duplicates - 1})
+      return
+    } else {
+      // delete the pin
+      await deleteDoc(pinDoc)
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const FinishTrading = async (tradeData: ActiveTradeType, currentUserUuid: string) => {
+  try {
+    if (tradeData.sendUserUuid === currentUserUuid) {
+      // delete the sending Pin from the currentUsersCollection
+      await deletePinFromUser(currentUserUuid, tradeData.sendPinUuid)
+      // get the full Data pin from the database
+      const docFullPin = doc(db, `pins/${tradeData.receivePinUuid}`)
+      const fullPin = (await getDoc(docFullPin)).data() as PinTypeDB
+      await addPinsToUserCollection(currentUserUuid, [fullPin])
+    } else {
+      await deletePinFromUser(currentUserUuid, tradeData.receivePinUuid)
+      // get the full Data pin from the database
+      const docFullPin = doc(db, `pins/${tradeData.sendPinUuid}`)
+      const fullPin = (await getDoc(docFullPin)).data() as PinTypeDB
+      await addPinsToUserCollection(currentUserUuid, [fullPin])
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
