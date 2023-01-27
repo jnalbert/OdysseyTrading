@@ -13,6 +13,8 @@ import {
 } from "../../../shared/colors";
 import { WorldNameEnum } from "../../../shared/MiscTypes";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
+import { _getUuid } from '../../../AppContext';
+import { getNumberOfPacksToOpen } from '../../../../firebase/FirestoreFunctions';
 
 const PinsCollectedPercentSlider = styled.View`
   margin-top: 3%;
@@ -224,8 +226,9 @@ const MyCollectionScreen: FC<any> = ({navigation}) => {
     // get notifications from server
     // setIsNotificationVisible(true)
     // navigation.newPinNotifications = true
-    const notifications = true;
-    if (notifications) {
+    const uuid = await _getUuid()
+    const packsToOpen = await getNumberOfPacksToOpen(uuid || "")
+    if (packsToOpen && packsToOpen > 0) {
       navigation.setParams({ newPinNotifications: true })
     }
   }
