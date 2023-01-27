@@ -18,6 +18,7 @@
     "@react-navigation/bottom-tabs": "^6.5.1",
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/stack": "^6.3.11",
+    "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "expo": "~47.0.8",
     "expo-barcode-scanner": "~12.1.0",
@@ -30,6 +31,7 @@
     "expo-permissions": "~14.0.0",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
+    "expo-updates": "~0.15.6",
     "firebase": "^9.15.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -43,11 +45,11 @@
     "react-native-screens": "~3.18.0",
     "react-native-svg": "13.4.0",
     "react-native-web": "~0.18.9",
-    "styled-components": "^5.3.6",
-    "expo-updates": "~0.15.6"
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@types/crypto-js": "^4.1.1",
     "@types/node": "^18.11.18",
     "@types/react": "~18.0.14",
     "@types/react-native": "~0.70.6",

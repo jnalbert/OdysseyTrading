@@ -4,6 +4,8 @@ import styled from 'styled-components/native'
 // @ts-ignore
 import CachedImage from 'expo-cached-image'
 import { Black } from './colors';
+import sha256 from 'crypto-js/sha256';
+
 
 interface Props {
   src: string;
@@ -18,9 +20,12 @@ const MyCachedImage: FC<Props> = ({
 }) => {
   // please sha-1 the src
   // make the src a cacheKey that doesnt hace non-alphanumeric characters
-  const regex = new RegExp(/[^a-zA-Z0-9]/g)
+  // const regex = new RegExp(/[^a-zA-Z0-9]/g)
+  // replace aoo non-alphanumeric characters with empty string
   //@ts-ignore
-  const cacheKey = src.replace(regex, '')
+  const cacheKeyHash = sha256(src)
+  console.log(cacheKeyHash.toString())
+  // const cacheKey = src.replace(regex, '')
 
   return (
     <CachedImage
@@ -28,7 +33,7 @@ const MyCachedImage: FC<Props> = ({
             uri: src, // (required) -- URI of the image to be cached         
             expiresIn: 1_628_288, // 1 month in seconds (optional), if not set -- will never expire and will be managed by the OS
           }}
-          cacheKey={`${cacheKey}`} // (required) -- key to store image locally
+          cacheKey={`${cacheKeyHash}`} // (required) -- key to store image locally
           placeholderContent={( // (optional) -- shows while the image is loading
             <ActivityIndicator // can be any react-native tag
               color={
