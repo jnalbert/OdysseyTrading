@@ -64,7 +64,6 @@ const App: FC<any> = () => {
         });
         // do other fetches here
         // ***************
-        // const getOtherData = await fetch("https://jsonplaceholder.typicode.com/todos/1");
 
       } catch (error) {
         console.warn(error);

@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
-import { WorldPinsToOpenType, PinsToOpen } from '../../../screens/main/collection/OpenPacksScreen';
+import { WorldPinsToOpenType } from '../../../screens/main/collection/OpenPacksScreen';
 import { GrandstanderExtraBold } from '../../../shared/colors';
 import PinLotterySlider from './PinLotterySlider';
 

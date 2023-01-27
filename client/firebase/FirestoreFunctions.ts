@@ -6,11 +6,13 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   onSnapshot,
   query,
   setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { Auth, db, storage } from "../config/firebase";
 import { _getUuid } from "../src/AppContext";
@@ -18,6 +20,8 @@ import { ActiveTradeType } from "./types/ActiveTradeType";
 import { UserDataType } from "./types/UserType";
 import { Platform } from "react-native";
 import { deleteUser, getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import { PinTypeDB, WorldTypeDB, UserOwnedPinTypeDB } from './types/PinAndWorldType';
+import { WorldPinsToOpenType } from '../src/screens/main/collection/OpenPacksScreen';
 
 // *** Various User Functions *** //
 
@@ -203,3 +207,127 @@ export const completeTradeFirebase = async (tradeCode: string) => {
     console.error(error);
   }
 };
+
+export const getNumberOfPacksToOpen = async (userUuid: string) => {
+  try {
+    const userDoc = (await getDoc(doc(db, "users", userUuid))).data() as UserDataType;
+    return userDoc?.unopenedPinsCount;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getAllPins = async () => {
+  try {
+    const pinsCollection = collection(db, "pins");
+    const querySnapshot = await getDocs(pinsCollection);
+    const pins: PinTypeDB[] = [];
+    querySnapshot.forEach((doc) => {
+      pins.push(doc.data() as PinTypeDB);
+    });
+    return pins;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getWorld = async (worldUuid: string) => {
+  try {
+    const worldDoc = (await getDoc(doc(db, "worlds", worldUuid))).data() as WorldTypeDB;
+    return worldDoc;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const addPinsToUserCollection = async (userUuid: string, pins: PinTypeDB[]) => {
+  try {
+    // add the pins to the users pin collection
+    const userPinsCollection = collection(db, "users", userUuid, "pins");
+    const pinsToAddToDB: UserOwnedPinTypeDB[] = pins.map((pin) => {
+      return {
+        pinUuid: pin.uuid,
+        worldUuid: pin.worldUuid,
+        worldName: pin.worldName,
+        duplicates: 1
+      }
+    })
+    // add the new pins added to the user field for pins collected
+    updateDoc(doc(db, "users", userUuid), {
+      totalPinsCollected: increment(pins.length),
+    });
+    // pins that there are duplicates of
+    const pinsToRemove: UserOwnedPinTypeDB[] = [];
+    // check if the user already owns the designs
+    const userPinsQuerySnapshot = await getDocs(userPinsCollection);
+
+    userPinsQuerySnapshot.forEach((doc) => {
+      const alreadyOwnedPin = doc.data() as UserOwnedPinTypeDB
+      // check if the already owned pin has the same uuid as a pin in pinsToAddToDB 
+      const pinsAlreadyOwned = pinsToAddToDB.find(pin => pin.pinUuid === alreadyOwnedPin.pinUuid)
+      // find the amount of pins that are duplicates
+      const duplicates = pinsToAddToDB.filter(pin => pin.pinUuid === alreadyOwnedPin.pinUuid).length
+      if (pinsAlreadyOwned) {
+        // add the pin to the pinsToRemove array
+        pinsToRemove.push(pinsAlreadyOwned)
+        // add the duplicate to the already owned pin
+        updateDoc(doc.ref, {
+          duplicates: increment(duplicates),
+        });
+      }
+    })
+    // remove the duplicates from the pinsToAddToDB array
+    pinsToAddToDB.forEach(pin => {
+      const index = pinsToRemove.findIndex(pinToRemove => pinToRemove.pinUuid === pin.pinUuid)
+      if (index !== -1) {
+        pinsToAddToDB.splice(index, 1)
+      }
+    })
+    // add the pins to the users pin collection
+    // creat a batch to add the pins
+    const batch = writeBatch(db);
+    pinsToAddToDB.forEach(pin => {
+      // add a doc with id of the pin uuid
+      batch.set(doc(userPinsCollection, pin.pinUuid), pin);
+    })
+    // commit the batch
+    await batch.commit();
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getPacksToOpenData = async (userUuid: string) => {
+  try {
+    const numberToOpen = await getNumberOfPacksToOpen(userUuid) || 0
+    // console.log(numberToOpen)
+    // get 10% of seasonal pins and get the rest split between deep sea and forest
+    const countOfEachWorld: { [key: string]: number; } = {"Seasonal": Math.floor((numberToOpen * 0.1) + 1), "Enchanted Forest": Math.floor((numberToOpen * 0.45) + 1), "Deep Sea": Math.floor((numberToOpen * 0.45) + 1)}
+    const allPins = await getAllPins()
+    if (!allPins) return
+    let worldsWithPins: WorldPinsToOpenType[] = []
+    for (const world in countOfEachWorld) {
+      const pinsToOpen = allPins.filter(pin => pin.worldName === world).sort(() => Math.random() - 0.5).slice(0, countOfEachWorld[world])
+      // console.log("here")
+      const currentWorldData = await getWorld(pinsToOpen[0].worldUuid)
+      if (!currentWorldData) return
+      const worldDataToAdd = {
+        world: currentWorldData?.worldName,
+        color: currentWorldData?.worldColor,
+        worldIcon: currentWorldData?.worldIcon,
+        pickedPins: pinsToOpen
+      }
+      worldsWithPins.push(worldDataToAdd)
+    }
+    // set unopened pins count to 0
+    await updateDoc(doc(db, "users", userUuid), {
+      unopenedPinsCount: 0,
+    });
+    
+    return worldsWithPins
+
+  } catch (error) {
+    console.log(error)
+  }
+}
