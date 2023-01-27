@@ -283,7 +283,7 @@ const MyCollectionScreen: FC<any> = ({navigation}) => {
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}
-              onRefresh={async () => await getPinData()}
+              onRefresh={async () => await getInitialData()}
             />
           }
         ></FlatList>
