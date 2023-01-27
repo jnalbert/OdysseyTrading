@@ -18,7 +18,9 @@ const MyCachedImage: FC<Props> = ({
 }) => {
   // please sha-1 the src
   // make the src a cacheKey that doesnt hace non-alphanumeric characters
-  const cacheKey = src.replace(/[^a-zA-Z0-9]/g, '')
+  const regex = new RegExp(/[^a-zA-Z0-9]/g)
+  //@ts-ignore
+  const cacheKey = src.replace(regex, '')
 
   return (
     <CachedImage
