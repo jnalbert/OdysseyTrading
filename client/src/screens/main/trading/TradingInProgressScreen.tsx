@@ -7,13 +7,14 @@ import { db } from '../../../../config/firebase';
 import { ActiveTradeType } from '../../../../firebase/types/ActiveTradeType';
 import TradingUserTopCard from '../../../components/mainComps/trading/TradingUserTopCard';
 import { _getUuid } from '../../../AppContext';
-import { cancelActiveTrade, deleteActiveTrade, updateActiveTrade } from '../../../../firebase/FirestoreFunctions';
+import { cancelActiveTrade, constGetPinsForTrading, deleteActiveTrade, getAllWorldsForTrading, getProfileDataFromDB, updateActiveTrade } from '../../../../firebase/FirestoreFunctions';
 import CurrentPinChoiceCard from '../../../components/mainComps/trading/CurrentPinChoiceCard';
 import { Fontisto } from '@expo/vector-icons'; 
 import ConfirmUnConfirmButton from '../../../components/mainComps/trading/ConfirmUnConfirmButton';
 import PinPickingSection from '../../../components/mainComps/trading/PinPickingSection';
 import { GrandstanderExtraBold, logoutRed } from '../../../shared/colors';
 import BasicButton from '../../../shared/BasicButton';
+import { PinTypeDB, WorldTypeDB } from '../../../../firebase/types/PinAndWorldType';
 
 const OverallWrapper = styled.View`
   width: 100%;
@@ -75,6 +76,7 @@ const Divider = styled.View`
 const CancelTradeButtonWrapper = styled.View`
   margin-top: 10%;
   width: 80%;
+  margin-bottom: 40%;
 `
 
 interface PinWorld {
@@ -166,41 +168,49 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
   const [isSwitched, setIsSwitched] = useState(false)
   const [unchangingTradeData, setUnchangingTradeData] = useState<UnchangingTradeData>()
   const [changingTradeData, setChangingTradeData] = useState<ChangingTradeData>()
-  const [usersPins, setUsersPins] = useState<PinsType[]>()
-  const [pinWorlds, setPinWorlds] = useState<PinWorld[]>()
-  const [selectedPin, setSelectedPin] = useState<PinsType>()
+  const [usersPins, setUsersPins] = useState<PinTypeDB[]>()
+  const [pinWorlds, setPinWorlds] = useState<WorldTypeDB[]>()
+  const [selectedPin, setSelectedPin] = useState<PinTypeDB>()
   const [isFinished, setIsFinished] = useState(false)
 
   const getPinsAndWorlds = async () => {
     setInitialDataLoading(true)
     const uuid = await _getUuid()
-    // TODO get pins from DB
-    // TODO get worlds from DB
-    setUsersPins([...FakePinData])
-    setPinWorlds(FakeWorldData)
+    const dBPins = await constGetPinsForTrading(uuid || "")
+    const DbWorlds = await getAllWorldsForTrading()
+    setUsersPins(dBPins)
+    setPinWorlds(DbWorlds)
     setInitialDataLoading(false)
   }
 
   const {tradeId} = route.params
+  
+// console.log(tradeId, "Route Param")
 
-  const handleTradeDocChanges = (TradeDocData: ActiveTradeType, uuid: string) => {
+  const handleTradeDocChanges = async (TradeDocData: ActiveTradeType, uuid: string) => {
+    // console.log(TradeDocData, "Trade Doc Data")
+    // console.log("yere")
+    // console.log("data from db", TradeDocData)
     let innerIsSwitched = false
     if (TradeDocData.receiveUserUuid === uuid) {
       innerIsSwitched = true
       setIsSwitched(true)
+      // console.log("setSwtiched", uuid)
     }
     if (TradeDocData.isCanceled) {
-      // TODO do Something
       deleteActiveTrade(tradeId)
       navigation.navigate("MainTrading")
       return
     }
+    // console.log("isSwticed", innerIsSwitched, " ", TradeDocData.receiveUsername, " ", uuid)
     if (unchangingTradeData === undefined) {
       // TODO get profile photos from DB
-      const sendProfilePhoto = "http://cdn.shopify.com/s/files/1/0238/5301/collections/Teal-Lip.jpg?v=1643402323"
-      const receiveProfilePhoto = "https://surfd.com/wp-content/uploads/2021/12/Grossman-Feature-1.jpg"
+      const sendProfilePhoto = (await getProfileDataFromDB(TradeDocData.sendUserUuid))?.profilePhoto || ""
+      const receiveProfilePhoto = (await getProfileDataFromDB(TradeDocData.receiveUserUuid))?.profilePhoto || ""
+      // const sendProfilePhoto = "http://cdn.shopify.com/s/files/1/0238/5301/collections/Teal-Lip.jpg?v=1643402323"
+      // const receiveProfilePhoto = "https://surfd.com/wp-content/uploads/2021/12/Grossman-Feature-1.jpg"
       // first time getting data
-      console.log(TradeDocData.receiveUserUuid, " ", uuid)
+      // console.log(TradeDocData.receiveUserUuid, " ", uuid)
       if (innerIsSwitched) {
           setUnchangingTradeData({
             sendUserUuid: TradeDocData.receiveUserUuid,
@@ -223,6 +233,8 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
      
     } 
     if (innerIsSwitched) {
+      // flip the send and receive pins
+      // console.log("Gere")
       setChangingTradeData({
         sendPinSrc: TradeDocData.receivePinSrc,
         receivePinSrc: TradeDocData.sendPinSrc,
@@ -242,12 +254,17 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
       })
     }
     setInitialDataLoading(false)
+    // console.log("changing", changingTradeData)
   }
 
   const startInitial = async () => {
     const uuid = await _getUuid()
+    // console.log(tradeId, "trade")
     const unsub = onSnapshot(doc(db, "active-trades", tradeId), (doc) => {
+      // console.log("In snap")
+      // check if its a local change
       if (doc.exists()) {
+        // console.log("doc exits")
         handleTradeDocChanges(doc.data() as ActiveTradeType, uuid as string)
       }
       
@@ -262,8 +279,8 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
       unsubFunc = unsub
     })
     return () => {
-      cleanUpTrade()
-      unsubFunc()
+      // cleanUpTrade()
+      // unsubFunc()
     }
   }, [])
 
@@ -271,26 +288,33 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
     await cancelActiveTrade(tradeId)
   }
 
-  const pinChoiceChange = async (pin: PinsType) => {
+  useEffect(() => {
+    // console.log(changingTradeData, "changing")
+  }, [changingTradeData])
+  const pinChoiceChange = async (pin: PinTypeDB) => {
     // TODO update DB with changing Data
     // TODO update UI with change
+    // let isSwitchedLocal = false
+    // console.log("isSqitec", isSwitched)
+
     if (!changingTradeData) return
     setSelectedPin(pin)
     setChangingTradeData({
       ...changingTradeData,
-      sendPinSrc: pin.fullColorSrc,
+      sendPinSrc: pin.src,
       sendPinUuid: pin.uuid
     })
     let sendNewPin: any = {
-      senPinSrc: pin.fullColorSrc,
+      sendPinSrc: pin.src,
       sendPinUuid: pin.uuid
     }
     if (isSwitched) {
       sendNewPin = {
-        receivePinSrc: pin.fullColorSrc,
+        receivePinSrc: pin.src,
         receivePinUuid: pin.uuid
       }
     }
+    // console.log(sendNewPin, "New")
     await updateActiveTrade(tradeId, sendNewPin)
   }
 
@@ -316,6 +340,7 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
       }
     }
     await updateActiveTrade(tradeId, sendData)
+    // console.log("currentState", changingTradeData)
 
   }
 
@@ -347,7 +372,7 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
         )}
       {changingTradeData && (
         <CurrentPinChoicesWrapper>
-          <CurrentPinChoiceCard pinSrc={selectedPin?.fullColorSrc || ""} isConfirmed={changingTradeData.senderConfirmed} />
+          <CurrentPinChoiceCard pinSrc={selectedPin?.src || ""} isConfirmed={changingTradeData.senderConfirmed} />
           <SwapSvgWrapper>
             <Fontisto name="arrow-swap" size={50} color="#323232" />
           </SwapSvgWrapper>

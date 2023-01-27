@@ -13,8 +13,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Feather } from '@expo/vector-icons'; 
 import { doc, DocumentData, onSnapshot } from "firebase/firestore";
-import { deleteActiveTrade, startActiveTrade, updateActiveTrade } from "../../../../firebase/FirestoreFunctions";
+import { deleteActiveTrade, getProfileDataFromDB, startActiveTrade, updateActiveTrade } from "../../../../firebase/FirestoreFunctions";
 import { db } from "../../../../config/firebase";
+import { _getUuid } from "../../../AppContext";
 
 const QRCodeWrapper = styled.View`
   /* border: 1px solid black; */
@@ -155,9 +156,10 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
   };
 
   const getInitialUserData = async () => {
-    //TODO get data from server ********
+    const uuid = await _getUuid()
+    const userInfo = await getProfileDataFromDB(uuid || "");
     // call server function to get the user information
-    setUserInformation({ uuid: "ZpLZ5ugg23d7DlhzkMKwAF4UCgR2", username: "jnalbert879" });
+    setUserInformation({ uuid: userInfo?.uuid || "", username: userInfo?.username || "" });
   }
   const getPastTrades = async () => {
     setIsPastTradesLoading(true);
@@ -187,12 +189,14 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (!isFocused || hasPermission) {
-      handleOutFocus()
+      if (!goingToTrading) {
+        handleOutFocus()
+      }
+     
     }
   }, [isFocused, hasPermission]);
 
   const getActiveTradeCode = async () => {
-    //TODO get data from server ********
     // call server function to start the active trade and get the code
     setIsLoadingQrCode(true);
     const {tradeCode} = await startActiveTrade(userInformation);
@@ -204,7 +208,7 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
       if (tradeCode !==  "") {
         onSnapshot(doc(db, "active-trades", tradeCode), (doc) => {
           if (doc.exists()) {
-            handleDocUpdate(doc.data())
+            handleDocUpdate(doc.data(), tradeCode)
           }
         })
       }
@@ -213,10 +217,14 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
     }
    
   }
-  const handleDocUpdate = (activeTradeDoc: DocumentData | undefined) => {
+  const [goingToTrading, setGoingToTrading] = useState<boolean>(false);
+  const handleDocUpdate = (activeTradeDoc: DocumentData | undefined, tradeCode: string) => {
+    console.log(activeTradeDoc, "activeTradeDoc")
     if (activeTradeDoc?.receiveUserUuid !== "") {
       // someone has matched the trade
-      navigation.navigate("TradingInProgress", { tradeId: activeTradeCode })
+      // console.log("passed on trade Code", tradeCode)
+      setGoingToTrading(true)
+      navigation.navigate("TradingInProgress", { tradeId: tradeCode })
     }
   }
 
@@ -235,14 +243,12 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
   };
 
   const handleFoundQRCode = async (tradeUuid: string) => {
-    //TODO updated active trade on sever with current uuid and userName ********
     await updateActiveTrade(tradeUuid, {receiveUserUuid: userInformation.uuid, receiveUsername: userInformation.username})
     // go to continue trading screen with the tradeUuid
     // console.log("n")
     // setScanned(false);
     navigation.navigate("TradingInProgress", { tradeId: tradeUuid })
   }
-  // ****** TODO SET SCANNED BACK TO FALSE BEFORE YOU LEAVE SCREEN *****
 
   const handleExitScanner = () => {
     setHasPermission(false);

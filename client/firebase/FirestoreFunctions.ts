@@ -431,3 +431,49 @@ const switchCaseToGetWorld = (world: string) => {
       return WorldNameEnum.COMING_SOON
   }
 }
+
+export const constGetPinsForTrading = async (userUuid: string) => {
+  try {
+    // get the user pins
+    const userPinsCollection = collection(db, "users", userUuid, "pins");
+      const querySnapshot = await getDocs(userPinsCollection);
+      const userPins: UserOwnedPinTypeDB[] = [];
+      querySnapshot.forEach((doc) => {
+        userPins.push(doc.data() as UserOwnedPinTypeDB);
+      })
+
+    const allPins = await getAllPins()
+    if (!allPins) return
+      // find the pins in all pins that equal a userPin
+    const pinsToReturn: PinTypeDB[] = []
+    // find the allPins and userPinsCollection that match
+    // for (let pin in userPinsCollection) {
+    //   const pinInAllPins = allPins.find(pinInAllPins => pinInAllPins.uuid === pin.pinUuid)
+    // }
+    // go through all pins and check it against the users pins to see if they own it
+    allPins.forEach(pin => {
+      const userPin = userPins.find(userPin => userPin.pinUuid === pin.uuid)
+      if (userPin) {
+        pinsToReturn.push(pin)
+      }
+    })
+    return pinsToReturn
+      
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getAllWorldsForTrading = async () => {
+  try {
+      const allWorldsToReturns = await collection(db, "worlds");
+      const querySnapshot = await getDocs(allWorldsToReturns);
+      const worldsAttributes: WorldTypeDB[] = [];
+      querySnapshot.forEach((doc) => {
+        worldsAttributes.push(doc.data() as WorldTypeDB);
+      })
+      return worldsAttributes
+  } catch (error) {
+    console.log(error)
+  }
+}

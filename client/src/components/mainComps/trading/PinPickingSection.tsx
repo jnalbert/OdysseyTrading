@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
+import { PinTypeDB } from '../../../../firebase/types/PinAndWorldType';
 import { WorldPinsToOpenType } from '../../../screens/main/collection/OpenPacksScreen';
 import { PinsType } from '../../../screens/main/trading/TradingInProgressScreen';
 import { GrandstanderExtraBold } from '../../../shared/colors';
@@ -31,10 +32,10 @@ const PinsSectionHeaderWrapper = styled.View`
 interface Props {
   worldName: string;
   worldColor: string;
-  worldPins: PinsType[];
+  worldPins: PinTypeDB[];
   isPinConfirmed: boolean;
-  currentSelection: PinsType | null;
-  handleClick: (pin: PinsType) => void;
+  currentSelection:  PinTypeDB | null;
+  handleClick: (pin: PinTypeDB) => void;
 }
 
 

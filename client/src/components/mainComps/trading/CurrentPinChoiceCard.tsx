@@ -28,6 +28,7 @@ const CurrentPinChoiceCard: FC<Props> = ({
   pinSrc,
   isConfirmed
 }) => {
+  // console.log("receive PinSrc: ", pinSrc)
   const confirmedStyles = isConfirmed ? {
     borderColor: '#2DDB29',
     backgroundColor: "#2cdb297f",

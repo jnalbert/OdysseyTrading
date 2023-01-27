@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
+import { PinTypeDB } from '../../../../firebase/types/PinAndWorldType';
 import { PinsType } from '../../../screens/main/trading/TradingInProgressScreen';
 import { Pink } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
@@ -20,10 +21,10 @@ const PinWrapper = styled.View`
 `
 
 interface Props {
-  handleClick: (pin: PinsType) => void;
+  handleClick: (pin: PinTypeDB) => void;
   isSelected: boolean;
   isPinConfirmed: boolean;
-  pin: PinsType;
+  pin: PinTypeDB;
 }
 
 const PinPickCard: FC<Props> = ({
@@ -52,8 +53,8 @@ const PinPickCard: FC<Props> = ({
   return (
     <OverallWrapper style={[backgroundStyles]} onPress={() => handleClick(pin)}>
       <PinWrapper> 
-        { pin.fullColorSrc && (
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={pin.fullColorSrc} />
+        { pin.src && (
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={pin.src} />
         )}
 
       </PinWrapper>

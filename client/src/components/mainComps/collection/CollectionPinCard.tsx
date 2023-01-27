@@ -60,7 +60,7 @@ const CollectionPinCard: FC<Props> = ({
   }
 
 
-  console.log(src, "pin Src")
+  // console.log(src, "pin Src")
   const tintColor = isHidden ? { tintColor: "rgba(0, 0, 0, 0.3)" } : {};
   return (
     <OverallCardWrapper style={[{ backgroundColor: color }, style]}>
