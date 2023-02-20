@@ -196,7 +196,7 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       />
     }>
       <ProfilePhotoWrapper>
-        <Image style={{width: "100%", height: "100%"}} source={{uri: userInfo.profilePhoto}} />
+        <MyCachedImage style={{width: "100%", height: "100%"}} src={userInfo.profilePhoto} />
       </ProfilePhotoWrapper>
 
       <ProfileHeaderWrapper>
@@ -208,7 +208,7 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
         <ProfileInfoSection header="Name" value={userInfo.name} />
         <ProfileInfoSection header="Email" value={userInfo.email} />
         <ProfileInfoSection header="Date Joined" value={userInfo.dateJoined}/>
-        <ProfileInfoSection header="Total Pin Owned" value={userInfo.totalPinsCollected.toString()}/>
+        <ProfileInfoSection header="Total Pins Owned" value={userInfo.totalPinsCollected.toString()}/>
         <ProfileInfoSection header="Total Trades Made" value={userInfo.totalTradesMade.toString()}/>
       </InformationWrapper>
 
