@@ -348,6 +348,7 @@ refreshing={worldIsChanging}
                 color={color}
                 numberOfDuplicates={item.duplicates}
                 isHidden={!item.isOwned}
+                key={item.uuid}
               />
             );
           }}

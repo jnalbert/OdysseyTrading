@@ -65,11 +65,11 @@ const CollectionPinCard: FC<Props> = ({
   return (
     <OverallCardWrapper style={[{ backgroundColor: color }, style]}>
       <PinImageWrapper>
-          <Image
+          <MyCachedImage
           style={[tintColor, { height: "100%", width: "100%" }]}
           resizeMode="contain"
-          source={{ uri: src }}
-          // src={src}
+          // source={{ uri: src }}
+          src={src}
           />
       </PinImageWrapper>
       {numberOfDuplicates > 1 && (
