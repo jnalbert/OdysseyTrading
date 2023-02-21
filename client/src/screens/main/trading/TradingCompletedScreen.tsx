@@ -11,9 +11,10 @@ import BasicButton from '../../../shared/BasicButton';
 import { _getUuid } from '../../../AppContext';
 
 const OverallMeatWrapper = styled.View`
-    margin-top: 10%;
+    margin-top: 6%;
     justify-content: center;
     align-items: center;
+    width: 100%;
 `
 
 const HeaderText = styled.Text`
@@ -59,6 +60,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
     const [isSwitched, setIsSwitched] = useState(false);
     const [tradeData, setTradeData] = useState<ActiveTradeType | null>()
     const [receiveUserPhoto, setReceiveUserPhoto] = useState<string | null>(null)
+    const [receiveUserUsername, setReceiveUserUsername] = useState<string | null>(null)
 
     const getTradingData = async () => {
         setIsLoading(true);
@@ -66,17 +68,19 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         setTradeData(tradeData || null);
         // check if user is switced
   
-        let isUserSwtiched = false;
+        let isUserSwitched = false;
         const uuid = await _getUuid()
         if (tradeData?.receiveUserUuid === uuid) {
-            isUserSwtiched = true;
+            isUserSwitched = true;
             setIsSwitched(true)
         }
         // TODO get user photo from db
         // swtich the trade Data if user is switched
-        const getPhotoUuid = isUserSwtiched ? tradeData?.receiveUserUuid : tradeData?.sendUserUuid
+        const getPhotoUuid = isUserSwitched ? tradeData?.receiveUserUuid : tradeData?.sendUserUuid
+        const getUsername = isUserSwitched ? tradeData?.receiveUsername : tradeData?.sendUsername
         const userPhoto = (await getProfileDataFromDB(getPhotoUuid))?.profilePhoto || null
         setReceiveUserPhoto(userPhoto);
+        setReceiveUserUsername(getUsername);
         setIsLoading(false);
 
         doEndOfTradingThings()
@@ -145,7 +149,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
             <OverallMeatWrapper>
                 <HeaderText>Congratulations!!</HeaderText>
                 <SubHeaderCompletedText>You just completed a trade with:</SubHeaderCompletedText>
-                <TradingUserTopCard username={tradeData.receiveUsername} userSrc={receiveUserPhoto} />
+                <TradingUserTopCard username={receiveUserUsername || ""} userSrc={receiveUserPhoto} />
                 <ReceivedText>You Received</ReceivedText>
             </OverallMeatWrapper>
         </Animated.View>
@@ -176,6 +180,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
 
         <Animated.View
           style={{
+            marginTop: "12%",
             opacity: ItemsOpacity,
             width: "100%",
             justifyContent: "center",
