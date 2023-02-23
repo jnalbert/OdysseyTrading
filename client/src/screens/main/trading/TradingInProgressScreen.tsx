@@ -22,6 +22,7 @@ const OverallWrapper = styled.View`
   flex-direction: column;
   /* justify-content: center; */
   align-items: center;
+  /* margin-bottom: 20%; */
 `
 
 const TopCardsWrapper = styled.View`
@@ -326,11 +327,6 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
       return
     }
 
-    setChangingTradeData({
-      ...changingTradeData,
-      senderConfirmed: !changingTradeData.senderConfirmed
-    })
-
     let sendData: any = {
       senderConfirmed: !changingTradeData.senderConfirmed
     }
@@ -342,15 +338,27 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
     await updateActiveTrade(tradeId, sendData)
     // console.log("currentState", changingTradeData)
 
+    setChangingTradeData({
+      ...changingTradeData,
+      senderConfirmed: !changingTradeData.senderConfirmed
+    })
+
+    return
+
   }
 
   const handleTradingCompleted = async () => {
-    if (isFinished) return
-    console.log("FINISHED")
-    setIsFinished(true)
-    // TODO update DB with changing Data
-    // TODO update UI with change
-    navigation.navigate("TradingCompleted", { tradeId: tradeId })
+    // print sender and receiver confirmed with labels
+    // console.log("sender: ", changingTradeData?.senderConfirmed, "receiver: ", changingTradeData?.receiverConfirmed)
+    if (changingTradeData?.senderConfirmed && changingTradeData.receiverConfirmed) {
+      if (isFinished) return
+      console.log("FINISHED")
+      setIsFinished(true)
+      // TODO update DB with changing Data
+      // TODO update UI with change
+      navigation.navigate("TradingCompleted", { tradeId: tradeId })
+    }
+    
   }
   // get the screen Dimension
     const screenHeight = Dimensions.get("window").height
@@ -360,14 +368,14 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
     <ScreenWrapperComp scrollView>
       <OverallWrapper
         style={{ 
-          height: screenHeight,
+          height: screenHeight + (screenHeight * 0.4),
           width: screenWidth,
         }}
       >
         {unchangingTradeData && (
           <TopCardsWrapper>
-            <TradingUserTopCard username={unchangingTradeData.sendUsername} userSrc={unchangingTradeData.sendProfilePhoto} />
-            <TradingUserTopCard username={unchangingTradeData.receiveUsername} userSrc={unchangingTradeData.receiveProfilePhoto} />
+            <TradingUserTopCard username={unchangingTradeData.sendUsername} userSrc={unchangingTradeData.sendProfilePhoto} key={unchangingTradeData.sendUsername} />
+            <TradingUserTopCard username={unchangingTradeData.receiveUsername} userSrc={unchangingTradeData.receiveProfilePhoto} key={unchangingTradeData.receiveUsername} />
           </TopCardsWrapper>
         )}
       {changingTradeData && (

@@ -224,6 +224,11 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
       // someone has matched the trade
       // console.log("passed on trade Code", tradeCode)
       setGoingToTrading(true)
+      // exits out of qr code and code scanning
+      setActiveTradeCode(defaultTradeCode)
+      setHasPermission(false);
+      setScanned(false);
+      
       navigation.navigate("TradingInProgress", { tradeId: tradeCode })
     }
   }
@@ -348,7 +353,6 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
     </ScreenWrapperComp>
     )
   }
-    
     
     </>
   );

@@ -24,6 +24,8 @@ const ConfirmUnConfirmButton: FC<Props> = ({
   handleTradingCompleted,
   handleClick
 }) => {
+  // console.log("confirmed:", isConfirmed)
+
   const [buttonText, setButtonText] = useState(isConfirmed ? "Unconfirm Trade" : "Confirm Trade")
   const cancledRef = React.useRef(false)
 
@@ -37,9 +39,10 @@ const ConfirmUnConfirmButton: FC<Props> = ({
     // then call handleTradingCompleted
     // then setButtonText to "Trade Completed"
     // then setButtonTextCount to "Trade Completed"
-    console.log("Gpot ere")
+    // console.log("Gpot ere")
     // wait for the set timeout to finish
     await new Promise(resolve => setTimeout(resolve, 5000));
+    // console.log(cancledRef.current, "current")
       if (!cancledRef.current) {
         handleTradingCompleted()
         setButtonText("Trade Completed")
@@ -53,7 +56,10 @@ const ConfirmUnConfirmButton: FC<Props> = ({
   const [buttonTextCount, setButtonTextCount] = useState(`Trading in 5 Seconds...`)
   useEffect(() => {
     if (isConfirmed && isOtherUserConfirmed) {
+      cancledRef.current = false
       handleFullyConfirmed()
+    } else {
+      cancledRef.current = true
     }
   }, [isConfirmed, isOtherUserConfirmed])
 
@@ -69,6 +75,11 @@ const ConfirmUnConfirmButton: FC<Props> = ({
         }
 
         handleClick()
+        // if (canChange) {
+        //   console.log('here')
+        //   setButtonText("Confirm Trade" ? "Unconfirm Trade" : "Confirm Trade")
+        // }
+
         }} />
     </OverallWrapper>
   )

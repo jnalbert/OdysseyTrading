@@ -129,6 +129,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
   }, [tradeData])
 
   const returnHome = () => {
+    // TODO: go to main trading and pass params to the screen to tell it to refresh the qr code
     navigation.navigate("MainTrading")
   }
 
