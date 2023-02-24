@@ -18,7 +18,7 @@ import { PinTypeDB, WorldTypeDB } from '../../../../firebase/types/PinAndWorldTy
 
 const OverallWrapper = styled.View`
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   flex-direction: column;
   /* justify-content: center; */
   align-items: center;
@@ -52,10 +52,14 @@ const ConfirmUnConfirmWrapper = styled.View`
   align-items: center;
 `
 
-const PinsToChooseWrapper = styled.View`
+const PinsToChooseWrapper = styled.ScrollView`
   margin-top: 5%;
   flex-direction: column;
   width: 80%;
+  max-height: 50%;
+  /* overflow-y: scroll; */
+  /* overflow: scroll; */
+  /* margin-bottom: 20%; */
 `
 
 const PinsHeaderWrapper = styled.View`
@@ -75,9 +79,10 @@ const Divider = styled.View`
 `
 
 const CancelTradeButtonWrapper = styled.View`
-  margin-top: 10%;
+  margin-top: 15%;
   width: 80%;
-  margin-bottom: 40%;
+  /* height: 10%; */
+  margin-bottom: 10%;
 `
 
 interface PinWorld {
@@ -396,11 +401,14 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
        )}
        
        <PinsHeaderWrapper>
-          <PinsHeader>Choose a Pin</PinsHeader>
+          <PinsHeader>Choose a Pin (Scroll)</PinsHeader>
           <Divider />
        </PinsHeaderWrapper>
        {(pinWorlds && usersPins) && (
         <PinsToChooseWrapper
+        showsVerticalScrollIndicator={true} 
+        persistentScrollbar={true}
+        
         >
           {pinWorlds.map((world) => {
             const worldPins = usersPins.filter((pin) => pin.worldUuid === world.uuid)

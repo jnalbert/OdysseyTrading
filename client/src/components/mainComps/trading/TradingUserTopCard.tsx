@@ -34,7 +34,7 @@ interface Props {
 }
 
 const TradingUserTopCard: FC<Props> = ({ username, userSrc }) => {
-  console.log("Here", userSrc);
+//   console.log("Here", userSrc);
   return (
     <OverallWrapper>
       <ProfileWrapper>

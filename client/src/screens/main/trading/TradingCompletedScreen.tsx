@@ -89,6 +89,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
     const doEndOfTradingThings = async () => {
       const uuid = await _getUuid()
       if (!tradeData) return
+      console.log("Here")
       await FinishTrading(tradeData, uuid || "")
     }
 

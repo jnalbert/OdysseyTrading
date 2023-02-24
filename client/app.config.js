@@ -20,7 +20,7 @@ export default {
     ios: {
       supportsTablet: false,
       bundleIdentifier: "com.jnalbert879.odysseytrading",
-      buildNumber: "1.0.0",
+      buildNumber: "2",
     },
     android: {
       adaptiveIcon: {

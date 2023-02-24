@@ -481,6 +481,7 @@ export const getAllWorldsForTrading = async () => {
 export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
   try {
     // find the pin with the pinUuid in the users pins
+    console.log("deletePinFromUser", userUuid, pinUuid)
     const userPinsCollection = collection(db, "users", userUuid, "pins");
     // const findPinDoc = await query(userPinsCollection, where("pinUuid", "==", pinUuid))
     const pinDoc = await doc(userPinsCollection, pinUuid)
@@ -495,6 +496,10 @@ export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
       // delete the pin
       await deleteDoc(pinDoc)
     }
+    // update the total pins the person has
+    updateDoc(doc(db, "users", userUuid), {
+        totalPinsCollected: increment(-1),
+      });
 
   } catch (error) {
     console.log(error)
