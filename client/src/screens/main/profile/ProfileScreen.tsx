@@ -195,9 +195,13 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       onRefresh={async () => await fetchInitialData()}
       />
     }>
-      <ProfilePhotoWrapper>
-        <MyCachedImage style={{width: "100%", height: "100%"}} src={userInfo.profilePhoto} />
-      </ProfilePhotoWrapper>
+        <ProfilePhotoWrapper>
+          {userInfo.profilePhoto === "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png" ? (
+            <MyCachedImage style={{width: "100%", height: "100%"}} src={userInfo.profilePhoto} />
+          ) : (
+            <MyCachedImage style={{width: "100%", height: "100%"}} src={userInfo.profilePhoto} />
+          )}
+        </ProfilePhotoWrapper>
 
       <ProfileHeaderWrapper>
         <ProfileHeader>Profile Information</ProfileHeader>
