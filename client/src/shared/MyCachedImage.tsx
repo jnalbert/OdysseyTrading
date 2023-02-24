@@ -30,7 +30,7 @@ const MyCachedImage: FC<Props> = ({ src, style, resizeMode }) => {
         <CachedImage
           source={{
             uri: stateSrc, // (required) -- URI of the image to be cached
-            expiresIn: 1_628_288, // 1 month in seconds (optional), if not set -- will never expire and will be managed by the OS
+            expiresIn: 1628288, // 1 month in seconds (optional), if not set -- will never expire and will be managed by the OS
           }}
           cacheKey={`${cacheKeyHash}`} // (required) -- key to store image locally
           placeholderContent={
