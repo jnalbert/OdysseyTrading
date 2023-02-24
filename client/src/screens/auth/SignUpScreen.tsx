@@ -156,7 +156,7 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
         <StyledTextInput
           hideText={false}
           error={errors.userName}
-          rules={{ required: "This field is required" }}
+          rules={{ required: "This field is required", minLength: { value: 3, message: "Username must be at least 3 characters long" }, maxLength: { value: 15, message: "Username must be less than 15 characters long" } }}
           control={control}
           placeHolderText="User Name"
           name="userName"
