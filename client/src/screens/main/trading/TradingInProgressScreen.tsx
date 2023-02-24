@@ -289,9 +289,10 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
     await cancelActiveTrade(tradeId)
   }
 
-  useEffect(() => {
-    // console.log(changingTradeData, "changing")
-  }, [changingTradeData])
+//   useEffect(() => {
+//     // console.log(changingTradeData, "changing")
+//   }, [changingTradeData])
+
   const pinChoiceChange = async (pin: PinTypeDB) => {
     // TODO update DB with changing Data
     // TODO update UI with change
@@ -374,7 +375,7 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
       >
         {unchangingTradeData && (
           <TopCardsWrapper>
-            <TradingUserTopCard username={unchangingTradeData.sendUsername} userSrc={unchangingTradeData.sendProfilePhoto} key={unchangingTradeData.sendUsername} />
+            <TradingUserTopCard username={unchangingTradeData.sendUsername} userSrc={unchangingTradeData.sendProfilePhoto} key={unchangingTradeData.sendUsername}/>
             <TradingUserTopCard username={unchangingTradeData.receiveUsername} userSrc={unchangingTradeData.receiveProfilePhoto} key={unchangingTradeData.receiveUsername} />
           </TopCardsWrapper>
         )}

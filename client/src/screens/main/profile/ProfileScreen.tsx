@@ -9,6 +9,7 @@ import { BlueGreen, GrandstanderSemiBold, logoutRed, Peach, Text300, backgroundC
 import MyCachedImage from "../../../shared/MyCachedImage";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
 import { deleteAccount, getProfileDataFromDB } from '../../../../firebase/FirestoreFunctions';
+import ActivityIndicatorWrapper from "../../../shared/ActivityIndicatorWrapper";
 
 const ProfilePhotoWrapper = styled.TouchableOpacity`
   border-radius: 65px;
@@ -92,6 +93,8 @@ const TestUserInfo: UserInfoType = {
 const ProfileScreen: FC<any> = ({ navigation }) => {
   const { signOut } = React.useContext(AuthContext);
 
+  const [profilePhotoSrc, setProfilePhotoSrc] = useState<string>("");
+
   const [userInfo, setUserInfo] = useState<UserDataType>({
     username: "",
     phoneNumber: "",
@@ -101,7 +104,7 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
     dateJoined: "",
     totalPinsCollected: 0,
     totalTradesMade: 0,
-    profilePhoto: "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png",
+    profilePhoto: "",
     bio: "",
     uuid: ""
   });
@@ -137,6 +140,8 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       totalTradesMade: totalTradesMade,
       profilePhoto: profilePhoto,
     });
+    setProfilePhotoSrc(profilePhoto);
+    console.log("profilePhotoSrc: ", profilePhotoSrc)
     setIsRefreshing(false);
   };
   useEffect(() => {
@@ -196,11 +201,10 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       />
     }>
         <ProfilePhotoWrapper>
-          {userInfo.profilePhoto === "https://upload.wikimedia.org/wikipedia/en/5/5a/Black_question_mark.png" ? (
-            <MyCachedImage style={{width: "100%", height: "100%"}} src={userInfo.profilePhoto} />
-          ) : (
-            <MyCachedImage style={{width: "100%", height: "100%"}} src={userInfo.profilePhoto} />
-          )}
+            <ActivityIndicatorWrapper isLoading={isRefreshing} >
+                {/* <MyCachedImage style={{width: "100%", height: "100%"}} src={profilePhotoSrc} key="profilePic" /> */}
+                <Image style={{width: "100%", height: "100%"}} source={{uri: profilePhotoSrc}} key="profilePic" />
+            </ActivityIndicatorWrapper>
         </ProfilePhotoWrapper>
 
       <ProfileHeaderWrapper>
