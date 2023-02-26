@@ -24,6 +24,7 @@ import { PinTypeDB, WorldTypeDB, UserOwnedPinTypeDB } from './types/PinAndWorldT
 import { WorldPinsToOpenType } from '../src/screens/main/collection/OpenPacksScreen';
 import { PinsDataMyCollection, WorldsAttributesType } from "../src/screens/main/collection/MyCollectionScreen";
 import { WorldNameEnum } from '../src/shared/MiscTypes';
+import { PastTradeType } from './types/PastTradeType';
 
 // *** Various User Functions *** //
 
@@ -176,39 +177,6 @@ export const cancelActiveTrade = async (tradeCode: string) => {
   }
 };
 
-export const completeTradeFirebase = async (tradeCode: string) => {
-  try {
-    // update the active trade wit the current users information
-    const userUuid = await _getUuid();
-    const tradeDoc = (
-      await getDoc(doc(db, "active-trades", tradeCode))
-    ).data() as ActiveTradeType;
-    let formattedTradeDoc;
-    if (userUuid === tradeDoc?.receiveUserUuid) {
-      // swap user and receiver
-      formattedTradeDoc = {
-        sendUserUuid: tradeDoc.receiveUserUuid,
-        sendUsername: tradeDoc.receiveUsername,
-        receiveUserUuid: tradeDoc.sendUserUuid,
-        receiveUsername: tradeDoc.sendUsername,
-        sendPinUuid: tradeDoc.receivePinUuid,
-        receivePinUuid: tradeDoc.sendPinUuid,
-        sendPinSrc: tradeDoc.receivePinSrc,
-        receivePinSrc: tradeDoc.sendPinSrc,
-        senderConfirmed: tradeDoc.receiverConfirmed,
-        receiverConfirmed: tradeDoc.senderConfirmed,
-        isCanceled: tradeDoc.isCanceled,
-      };
-    } else {
-      formattedTradeDoc = tradeDoc;
-    }
-
-    // TODO delete the active trade and add the trade to the individule user profiles ********
-    return tradeDoc;
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 export const getNumberOfPacksToOpen = async (userUuid: string) => {
   try {
@@ -481,7 +449,7 @@ export const getAllWorldsForTrading = async () => {
 export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
   try {
     // find the pin with the pinUuid in the users pins
-    console.log("deletePinFromUser", userUuid, pinUuid)
+    // console.log("deletePinFromUser", userUuid, pinUuid)
     const userPinsCollection = collection(db, "users", userUuid, "pins");
     // const findPinDoc = await query(userPinsCollection, where("pinUuid", "==", pinUuid))
     const pinDoc = await doc(userPinsCollection, pinUuid)
@@ -508,6 +476,7 @@ export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
 
 export const FinishTrading = async (tradeData: ActiveTradeType, currentUserUuid: string) => {
   try {
+
     if (tradeData.sendUserUuid === currentUserUuid) {
       // delete the sending Pin from the currentUsersCollection
       await deletePinFromUser(currentUserUuid, tradeData.sendPinUuid)
@@ -522,6 +491,94 @@ export const FinishTrading = async (tradeData: ActiveTradeType, currentUserUuid:
       const fullPin = (await getDoc(docFullPin)).data() as PinTypeDB
       await addPinsToUserCollection(currentUserUuid, [fullPin])
     }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const completeTradeFirebase = async (tradeCode: string) => {
+  try {
+    // update the active trade wit the current users information
+    const userUuid = await _getUuid();
+    const tradeDoc = (
+      await getDoc(doc(db, "active-trades", tradeCode))
+    ).data() as ActiveTradeType;
+    let formattedTradeDoc;
+    if (userUuid === tradeDoc?.receiveUserUuid) {
+      // swap user and receiver
+      formattedTradeDoc = {
+        sendUserUuid: tradeDoc.receiveUserUuid,
+        sendUsername: tradeDoc.receiveUsername,
+        receiveUserUuid: tradeDoc.sendUserUuid,
+        receiveUsername: tradeDoc.sendUsername,
+        sendPinUuid: tradeDoc.receivePinUuid,
+        receivePinUuid: tradeDoc.sendPinUuid,
+        sendPinSrc: tradeDoc.receivePinSrc,
+        receivePinSrc: tradeDoc.sendPinSrc,
+        senderConfirmed: tradeDoc.receiverConfirmed,
+        receiverConfirmed: tradeDoc.senderConfirmed,
+        isCanceled: tradeDoc.isCanceled,
+      };
+    } else {
+      formattedTradeDoc = tradeDoc;
+    }
+
+    addCompetedTradesToUsers(formattedTradeDoc, userUuid || "");
+
+    // console.log("Formattred Trade Doc", formattedTradeDoc, "comprred fie");
+    // TODO delete the active trade and add the trade to the individule user profiles ********
+    return formattedTradeDoc;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addCompetedTradesToUsers = async (tradeData: ActiveTradeType, userUuid: string) => {
+  try {
+    //  TODODO CHANGE THIS
+    // Check if the send user UUId equals the current ID and then make the past trade dont do it for both
+    const date = new Date().toString()
+    const sendProfilePhoto = (await getProfileDataFromDB(tradeData.sendUserUuid))?.profilePhoto || ""
+    const receiveProfilePhoto = (await getProfileDataFromDB(tradeData.receiveUserUuid))?.profilePhoto || ""
+
+    // add the trade to the senders completed trades
+    const pastTradeDoc = doc(collection(db, "users", userUuid, "past-trades"))
+    let pastTradeDataFormatted: PastTradeType
+
+    if (userUuid === tradeData.sendUserUuid) {
+      pastTradeDataFormatted = {
+        tradeUuid: pastTradeDoc.id,
+        sendUserUuid: tradeData.sendUserUuid,
+        sendUsername: tradeData.sendUsername,
+        sendUserPhoto: sendProfilePhoto,
+        receiveUserUuid: tradeData.receiveUserUuid,
+        receiveUsername: tradeData.receiveUsername,
+        receiveUserPhoto: receiveProfilePhoto,
+        sendPinUuid: tradeData.sendPinUuid,
+        sendPinSrc: tradeData.sendPinSrc,
+        receivePinUuid: tradeData.receivePinUuid,
+        receivePinSrc: tradeData.receivePinSrc,
+        date: date,
+      }
+    } else {
+      pastTradeDataFormatted = {
+        tradeUuid: pastTradeDoc.id,
+        sendUserUuid: tradeData.receiveUserUuid,
+        sendUsername: tradeData.receiveUsername,
+        sendUserPhoto: receiveProfilePhoto,
+        receiveUserUuid: tradeData.sendUserUuid,
+        receiveUsername: tradeData.sendUsername,
+        receiveUserPhoto: sendProfilePhoto,
+        sendPinUuid: tradeData.receivePinUuid,
+        sendPinSrc: tradeData.receivePinSrc,
+        receivePinUuid: tradeData.sendPinUuid,
+        receivePinSrc: tradeData.sendPinSrc,
+        date: date,
+      }
+    }
+    
+    await setDoc(pastTradeDoc, pastTradeDataFormatted)
+    
   } catch (error) {
     console.log(error)
   }

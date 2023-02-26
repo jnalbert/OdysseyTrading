@@ -65,7 +65,9 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
     const getTradingData = async () => {
         setIsLoading(true);
         const tradeData = (await completeTradeFirebase(tradeId)) as ActiveTradeType 
+        // console.log("Other trade doc", tradeData)
         setTradeData(tradeData || null);
+        doEndOfTradingThings(tradeData)
         // check if user is switced
   
         let isUserSwitched = false;
@@ -83,14 +85,14 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         setReceiveUserUsername(getUsername);
         setIsLoading(false);
 
-        doEndOfTradingThings()
     }
 
-    const doEndOfTradingThings = async () => {
+    const doEndOfTradingThings = async (tradeDataPass: ActiveTradeType) => {
+      // console.log("do end things", tradeDataPass)
       const uuid = await _getUuid()
-      if (!tradeData) return
-      console.log("Here")
-      await FinishTrading(tradeData, uuid || "")
+      if (!tradeDataPass) return
+      // console.log("finsh trading")
+      await FinishTrading(tradeDataPass, uuid || "")
     }
 
     useEffect(() => {

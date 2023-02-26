@@ -13,7 +13,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Feather } from '@expo/vector-icons'; 
 import { doc, DocumentData, onSnapshot } from "firebase/firestore";
-import { deleteActiveTrade, getProfileDataFromDB, startActiveTrade, updateActiveTrade } from "../../../../firebase/FirestoreFunctions";
+import { deleteActiveTrade, getProfileDataFromDB, startActiveTrade, updateActiveTrade } from '../../../../firebase/FirestoreFunctions';
 import { db } from "../../../../config/firebase";
 import { _getUuid } from "../../../AppContext";
 
@@ -219,7 +219,7 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
   }
   const [goingToTrading, setGoingToTrading] = useState<boolean>(false);
   const handleDocUpdate = (activeTradeDoc: DocumentData | undefined, tradeCode: string) => {
-    console.log(activeTradeDoc, "activeTradeDoc")
+    // console.log(activeTradeDoc, "activeTradeDoc")
     if (activeTradeDoc?.receiveUserUuid !== "") {
       // someone has matched the trade
       // console.log("passed on trade Code", tradeCode)
@@ -238,6 +238,7 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
     // const devTradeCode = "DF0dAMRdpYEV7RshXi17";
     // navigation.navigate("TradingInProgress", { tradeId: devTradeCode })
 
+    // await completeTradeFirebase("MeMRGsNXRrAjTKvMhA6Z")
     /// TODO DEV TINGS TO PUT BACK ******
     await getBarCodeScannerPermissions()
   }
