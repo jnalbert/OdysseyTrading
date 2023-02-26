@@ -202,8 +202,8 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
     }>
         <ProfilePhotoWrapper>
             <ActivityIndicatorWrapper isLoading={isRefreshing} >
-                {/* <MyCachedImage style={{width: "100%", height: "100%"}} src={profilePhotoSrc} key="profilePic" /> */}
-                <Image style={{width: "100%", height: "100%"}} source={{uri: profilePhotoSrc}} key="profilePic" />
+                <MyCachedImage style={{width: "100%", height: "100%"}} src={profilePhotoSrc} key="profilePic" />
+                {/* <Image style={{width: "100%", height: "100%"}} source={{uri: profilePhotoSrc}} key="profilePic" /> */}
             </ActivityIndicatorWrapper>
         </ProfilePhotoWrapper>
 
