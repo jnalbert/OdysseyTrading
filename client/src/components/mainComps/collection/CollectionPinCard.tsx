@@ -1,7 +1,7 @@
 import React, { FC, useRef } from "react";
 import { View, Image } from "react-native";
 import styled from "styled-components/native";
-import { GrandstanderSemiBold, Pink } from "../../../shared/colors";
+import { BlueGreen, GrandstanderSemiBold, Pink } from "../../../shared/colors";
 import MyCachedImage from "../../../shared/MyCachedImage";
 
 const OverallCardWrapper = styled.View`
@@ -59,6 +59,9 @@ const CollectionPinCard: FC<Props> = ({
 
   }
 
+  // console.log(color)
+  const duplicatesColor = color === "#F56D6D" ? BlueGreen : Pink;
+
 
   // console.log(src, "pin Src")
   const tintColor = isHidden ? { tintColor: "rgba(0, 0, 0, 0.3)" } : {};
@@ -73,7 +76,7 @@ const CollectionPinCard: FC<Props> = ({
           />
       </PinImageWrapper>
       {numberOfDuplicates > 1 && (
-        <DuplicateWrapper>
+        <DuplicateWrapper style={{backgroundColor: duplicatesColor}}>
           <DuplicateText>{numberOfDuplicates}x</DuplicateText>
         </DuplicateWrapper>
       )}
