@@ -6,6 +6,7 @@ import { GrandstanderExtraBold, MulishMedium, Text400 } from '../../../shared/co
 import MyCachedImage from '../../../shared/MyCachedImage';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { _getUuid } from '../../../AppContext';
+import { PastTradeType } from '../../../../firebase/types/PastTradeType';
 
 const OverallCardWrapper = styled.View`
   width: 100%;
@@ -43,7 +44,7 @@ const UserNameText = styled.Text`
   margin-top: 10%;
   margin-bottom: 15%;
   font-family: ${MulishMedium};
-  font-size: 12px;
+  font-size: 10px;
   text-align: center;
   /* letter-spacing: -1px; */
 `
@@ -68,34 +69,18 @@ const DateText = styled.Text`
 `
 
 
-const PastTradeCard: FC<PastTrade> = ({
+const PastTradeCard: FC<PastTradeType> = ({
   tradeUuid,
   sendUserUuid,
-  sendUserName,
-  receiveUserName,
+  sendUsername,
+  sendUserPhoto,
+  receiveUsername,
   receiveUserUuid,
+  receiveUserPhoto,
   sendPinSrc,
   receivePinSrc,
   date,
 }) => {
-  // check if sendUserUuid === userUuid
-  // if it does, then sendUserProfilePhoto = sendUserProfilePhoto
-  // else sendUserProfilePhoto = receiveUserProfilePhoto
-  const [displaySendInformation, setDisplaySendInformation] = useState({sendUserUuid: sendUserUuid, sendUserName: sendUserName, sendPinSrc: sendPinSrc})
-  const [displayReceiveInformation, setDisplayReceiveInformation] = useState({receiveUserUuid: receiveUserUuid, receiveUserName: receiveUserName, receivePinSrc: receivePinSrc})
-
-  const setCorrectData = async () => {
-    const userUuid = await _getUuid()
-    // console.log("userUuid: ", userUuid)
-    if (userUuid === sendUserUuid) {
-      setDisplaySendInformation({sendUserUuid: receiveUserUuid, sendUserName: receiveUserName, sendPinSrc: receivePinSrc})
-      setDisplayReceiveInformation({receiveUserUuid: sendUserUuid, receiveUserName: sendUserName, receivePinSrc: sendPinSrc})
-    }
-  }
- 
-  const [sendUserProfilePhoto, setSendUserProfilePhoto] = useState<string>("");
-  const [receiveUserProfilePhoto, setReceiveUserProfilePhoto] = useState<string>("");
-
   const getDisplayDate = () => {
     const dateNew = new Date(date);
     const shortYear = dateNew.getFullYear().toString().substr(2, 2);
@@ -104,37 +89,23 @@ const PastTradeCard: FC<PastTrade> = ({
     return localDate.slice(0, localDate.length - 4) + shortYear;
   };
 
-  const getInitalData = async () => {
-    await setCorrectData()
-    await getProfilePhotos()
-  }
-  const getProfilePhotos = async () => {
-    // get profile photos from the database TODO *******
-    setSendUserProfilePhoto("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgJvMekGVb6Qvn6KAeBiDtds9JmdvtZqM0bg&usqp=CAU");
-    setReceiveUserProfilePhoto("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8d29vZHN8ZW58MHx8MHx8&w=1000&q=80");
-  }
-
-  useEffect(() => {
-    getInitalData()
-  }, []);
-
   return (
     <OverallCardWrapper>
       <EndSectionsWrapper>
         <UserInformationWrapper>
           <ProfilePhotoWrapper>
-            {sendUserProfilePhoto && <MyCachedImage style={{width: "100%", height: "100%"}} src={sendUserProfilePhoto} />}
+            {sendUserPhoto && <MyCachedImage style={{width: "100%", height: "100%"}} src={sendUserPhoto} />}
           </ProfilePhotoWrapper>
           <UserNameText
             numberOfLines={1}
-          >@{displaySendInformation.sendUserName.substring(0,5)}...</UserNameText>
+          >@{sendUsername.substring(0,8)}...</UserNameText>
         </UserInformationWrapper>
         <PinWrapper
           style={{
             marginLeft: "11%",
           }}
         >
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={displaySendInformation.sendPinSrc}/>
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={sendPinSrc}/>
         </PinWrapper>
       </EndSectionsWrapper>
         
@@ -155,15 +126,15 @@ const PastTradeCard: FC<PastTrade> = ({
             marginRight: "11%",
           }}
       >
-          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={displayReceiveInformation.receivePinSrc}/>
+          <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={receivePinSrc}/>
         </PinWrapper>
         <UserInformationWrapper>
           <ProfilePhotoWrapper>
-            {receiveUserProfilePhoto && <MyCachedImage style={{width: "100%", height: "100%"}} src={receiveUserProfilePhoto} />}
+            {receiveUserPhoto && <MyCachedImage style={{width: "100%", height: "100%"}} src={receiveUserPhoto} />}
           </ProfilePhotoWrapper>
           <UserNameText
              numberOfLines={1}
-          >@{displayReceiveInformation.receiveUserName.substring(0,5)}...</UserNameText>
+          >@{receiveUsername.substring(0,8)}...</UserNameText>
         </UserInformationWrapper>
       </EndSectionsWrapper>
       

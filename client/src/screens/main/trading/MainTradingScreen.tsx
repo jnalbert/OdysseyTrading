@@ -13,9 +13,10 @@ import { AntDesign } from '@expo/vector-icons';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Feather } from '@expo/vector-icons'; 
 import { doc, DocumentData, onSnapshot } from "firebase/firestore";
-import { deleteActiveTrade, getProfileDataFromDB, startActiveTrade, updateActiveTrade } from '../../../../firebase/FirestoreFunctions';
+import { deleteActiveTrade, getPastTradesFromDB, getProfileDataFromDB, startActiveTrade, updateActiveTrade } from '../../../../firebase/FirestoreFunctions';
 import { db } from "../../../../config/firebase";
 import { _getUuid } from "../../../AppContext";
+import { PastTradeType } from "../../../../firebase/types/PastTradeType";
 
 const QRCodeWrapper = styled.View`
   /* border: 1px solid black; */
@@ -138,7 +139,7 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
   const [userInformation, setUserInformation] = useState<TradingUserInformation>({ uuid: "", username: "" });
   const defaultTradeCode = "";
   const [activeTradeCode, setActiveTradeCode] = useState<string>(defaultTradeCode);
-  const [pastTrades, setPastTrades] = useState<PastTrade[]>([]);
+  const [pastTrades, setPastTrades] = useState<PastTradeType[]>([]);
   const [isPastTradesLoading, setIsPastTradesLoading] = useState<boolean>(false);
   const [isLoadingQrCode, setIsLoadingQrCode] = useState<boolean>(false);
 
@@ -163,8 +164,10 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
   }
   const getPastTrades = async () => {
     setIsPastTradesLoading(true);
+    const userUuid = await _getUuid()
+    const pastTrades = await getPastTradesFromDB(userUuid || "")
     /// TODO get Data from server *******
-    setPastTrades(fakePastTrades);
+    setPastTrades(pastTrades || []);
     setIsPastTradesLoading(false);
   };
 
@@ -339,7 +342,7 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
           keyExtractor={(item) => item.tradeUuid}
           renderItem={({ item }) => (
 
-            <PastTradeCard {...item} />
+            <PastTradeCard {...item} key={item.tradeUuid}/>
 
           )}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}

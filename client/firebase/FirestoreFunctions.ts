@@ -450,6 +450,9 @@ export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
   try {
     // find the pin with the pinUuid in the users pins
     // console.log("deletePinFromUser", userUuid, pinUuid)
+    updateDoc(doc(db, "users", userUuid), {
+      totalPinsCollected: increment(-1),
+    });
     const userPinsCollection = collection(db, "users", userUuid, "pins");
     // const findPinDoc = await query(userPinsCollection, where("pinUuid", "==", pinUuid))
     const pinDoc = await doc(userPinsCollection, pinUuid)
@@ -459,15 +462,12 @@ export const deletePinFromUser = async (userUuid: string, pinUuid: string) => {
     if (currentPinData.duplicates > 1) {
       // update the pin to have one less duplicate
       await updateDoc(pinDoc, {duplicates: currentPinData.duplicates - 1})
-      return
     } else {
       // delete the pin
       await deleteDoc(pinDoc)
     }
     // update the total pins the person has
-    updateDoc(doc(db, "users", userUuid), {
-        totalPinsCollected: increment(-1),
-      });
+   
 
   } catch (error) {
     console.log(error)
@@ -579,6 +579,21 @@ export const addCompetedTradesToUsers = async (tradeData: ActiveTradeType, userU
     
     await setDoc(pastTradeDoc, pastTradeDataFormatted)
     
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getPastTradesFromDB = async (userUuid: string) => {
+  try {
+    const pastTradesCollection = collection(db, "users", userUuid, "past-trades")
+    const querySnapshot = await getDocs(pastTradesCollection)
+    const pastTrades: PastTradeType[] = []
+    querySnapshot.forEach((doc) => {
+      pastTrades.push(doc.data() as PastTradeType)
+    })
+    // console.log(pastTrades)
+    return pastTrades
   } catch (error) {
     console.log(error)
   }
