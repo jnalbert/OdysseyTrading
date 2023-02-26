@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "Odyssey Trading",
     slug: "odyssey-trading",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/LogoSmall.png",
     userInterfaceStyle: "light",
@@ -20,7 +20,7 @@ export default {
     ios: {
       supportsTablet: false,
       bundleIdentifier: "com.jnalbert879.odysseytrading",
-      buildNumber: "2",
+      buildNumber: "1",
     },
     android: {
       adaptiveIcon: {
