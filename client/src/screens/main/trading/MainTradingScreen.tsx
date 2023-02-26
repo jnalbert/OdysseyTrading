@@ -17,6 +17,8 @@ import { deleteActiveTrade, getPastTradesFromDB, getProfileDataFromDB, startActi
 import { db } from "../../../../config/firebase";
 import { _getUuid } from "../../../AppContext";
 import { PastTradeType } from "../../../../firebase/types/PastTradeType";
+import Popover, {PopoverPlacement} from 'react-native-popover-view';
+import TradingInstructionsPopoverComp from "../../../components/mainComps/trading/TradingInstructionsPopoverComp";
 
 const QRCodeWrapper = styled.View`
   /* border: 1px solid black; */
@@ -303,9 +305,16 @@ const MainTradingScreen: FC<any> = ({navigation}) => {
           paddingLeft: 50
         }}>
           <UserNameText>@{userInformation.username}</UserNameText>
-          <StepsTextWrapper>
-            <StepsText>How does it work</StepsText>
-          </StepsTextWrapper>
+          <Popover
+            // placement={PopoverPlacement.TOP}
+            from={(
+              <StepsTextWrapper>
+                <StepsText>How does it work</StepsText>
+              </StepsTextWrapper>
+            )}>
+            <TradingInstructionsPopoverComp />
+          </Popover>
+          
         </BelowQRCodeInfoWrapper>
         <ScanCodeWrapper style={{marginLeft: "auto"}} >
           <ScanCodeSVG onPress={handleScanCode}>
