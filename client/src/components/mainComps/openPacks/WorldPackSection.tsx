@@ -45,7 +45,7 @@ const WorldPackSection: FC<Props> = ({
     // look through the pickedPins object and make a PinLotterySlider for each pin
     for (let i = 0; i < pickedPins.length; i++) {
       lotteryObjects.push(
-        <PinLotterySlider key={pickedPins[i].uuid}
+        <PinLotterySlider key={pickedPins[i].uuid + "" + i}
           pinSrc={pickedPins[i].src}
           worldIcon={worldIcon}
           isShown={isShown}
