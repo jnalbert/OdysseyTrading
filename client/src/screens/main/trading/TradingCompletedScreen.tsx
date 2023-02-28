@@ -78,8 +78,8 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         }
         // TODO get user photo from db
         // swtich the trade Data if user is switched
-        const getPhotoUuid = isUserSwitched ? tradeData?.receiveUserUuid : tradeData?.sendUserUuid
-        const getUsername = isUserSwitched ? tradeData?.receiveUsername : tradeData?.sendUsername
+        const getPhotoUuid = isUserSwitched ? tradeData?.sendUserUuid : tradeData?.receiveUserUuid
+        const getUsername = isUserSwitched ? tradeData?.sendUsername : tradeData?.receiveUsername
         const userPhoto = (await getProfileDataFromDB(getPhotoUuid))?.profilePhoto || null
         setReceiveUserPhoto(userPhoto);
         setReceiveUserUsername(getUsername);
