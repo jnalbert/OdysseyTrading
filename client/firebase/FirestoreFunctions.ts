@@ -222,6 +222,24 @@ export const addPinsToUserCollection = async (userUuid: string, pins: PinTypeDB[
         duplicates: 1
       }
     })
+    // loop through the pinsToAddToDB and check if some of the pins have duplcate uuids and if they do update the duplicates property with
+    // the amount of duplcates and delete the other duplicates
+    
+    const pinsToAddNoDuplicates: UserOwnedPinTypeDB[] = [];
+    pinsToAddToDB.forEach((pinToAdd, index) => {
+      // check if the pinToAdd is a duplicate
+
+      const pinAlreadyInPinsToAddNoDups = pinsToAddNoDuplicates.find(pin => pin.pinUuid === pinToAdd.pinUuid)
+      // if the pin exists in the pinsToAddNoDuplicates array then we know that it is a duplicate
+      if (pinAlreadyInPinsToAddNoDups) {
+        // update the duplicates property
+        pinAlreadyInPinsToAddNoDups.duplicates += 1
+      } else {
+        pinsToAddNoDuplicates.push(pinToAdd)
+      }
+    }
+    )
+    // console.log(pinsToAddNoDuplicates, "pinsToAddNoDuplicates")
     // add the new pins added to the user field for pins collected
     updateDoc(doc(db, "users", userUuid), {
       totalPinsCollected: increment(pins.length),
@@ -231,35 +249,42 @@ export const addPinsToUserCollection = async (userUuid: string, pins: PinTypeDB[
     // check if the user already owns the designs
     const userPinsQuerySnapshot = await getDocs(userPinsCollection);
 
-    userPinsQuerySnapshot.forEach((doc) => {
-      const alreadyOwnedPin = doc.data() as UserOwnedPinTypeDB
+    // user already owned pins
+    const usersOwnedPinDocs = userPinsQuerySnapshot.docs.map(doc => doc.data() as UserOwnedPinTypeDB)
+
+    const batch = writeBatch(db);
+
+    pinsToAddNoDuplicates.forEach((pinToAdd) => {
+      // const alreadyOwnedPin = doc.data() as UserOwnedPinTypeDB
       // check if the already owned pin has the same uuid as a pin in pinsToAddToDB 
-      const pinsAlreadyOwned = pinsToAddToDB.find(pin => pin.pinUuid === alreadyOwnedPin.pinUuid)
+      const pinThatIsOwned = usersOwnedPinDocs.find(pin => pin.pinUuid === pinToAdd.pinUuid)
       // find the amount of pins that are duplicates
-      const duplicates = pinsToAddToDB.filter(pin => pin.pinUuid === alreadyOwnedPin.pinUuid).length
-      if (pinsAlreadyOwned) {
+      // const duplicates = pinsToAddToDB.filter(pin => pin.pinUuid === pinThatIsOwned?.pinUuid).length
+      if (pinThatIsOwned) {
         // add the pin to the pinsToRemove array
-        pinsToRemove.push(pinsAlreadyOwned)
+        // pinsToRemove.push(pinThatIsOwned)
         // add the duplicate to the already owned pin
-        updateDoc(doc.ref, {
-          duplicates: increment(duplicates),
-        });
+        const currentSelectedPinDoc = doc(userPinsCollection, pinThatIsOwned.pinUuid)
+        batch.update(currentSelectedPinDoc, { duplicates: increment(pinToAdd.duplicates)})
+      } else {
+        // add the pin to the users pin collection
+        batch.set(doc(userPinsCollection, pinToAdd.pinUuid), pinToAdd);
       }
     })
     // remove the duplicates from the pinsToAddToDB array
-    pinsToAddToDB.forEach(pin => {
-      const index = pinsToRemove.findIndex(pinToRemove => pinToRemove.pinUuid === pin.pinUuid)
-      if (index !== -1) {
-        pinsToAddToDB.splice(index, 1)
-      }
-    })
+    // pinsToAddToDB.forEach(pin => {
+    //   const index = pinsToRemove.findIndex(pinToRemove => pinToRemove.pinUuid === pin.pinUuid)
+    //   if (index !== -1) {
+    //     pinsToAddToDB.splice(index, 1)
+    //   }
+    // })
     // add the pins to the users pin collection
-    // creat a batch to add the pins
-    const batch = writeBatch(db);
-    pinsToAddToDB.forEach(pin => {
-      // add a doc with id of the pin uuid
-      batch.set(doc(userPinsCollection, pin.pinUuid), pin);
-    })
+    // create a batch to add the pins
+    // const batch = writeBatch(db);
+    // pinsToAddToDB.forEach(pin => {
+    //   // add a doc with id of the pin uuid
+    //   batch.set(doc(userPinsCollection, pin.pinUuid), pin);
+    // })
     // commit the batch
     await batch.commit();
 
@@ -274,11 +299,17 @@ export const getPacksToOpenData = async (userUuid: string) => {
     // console.log(numberToOpen)
     // get 10% of seasonal pins and get the rest split between deep sea and forest
     const countOfEachWorld: { [key: string]: number; } = {"Seasonal": Math.floor((numberToOpen * 0.1) + 1), "Enchanted Forest": Math.floor((numberToOpen * 0.45) + 1), "Deep Sea": Math.floor((numberToOpen * 0.45) + 1)}
+    console.log(countOfEachWorld)
     const allPins = await getAllPins()
     if (!allPins) return
     let worldsWithPins: WorldPinsToOpenType[] = []
     for (const world in countOfEachWorld) {
-      const pinsToOpen = allPins.filter(pin => pin.worldName === world).sort(() => Math.random() - 0.5).slice(0, countOfEachWorld[world])
+      const filteredWorldDBPins = allPins.filter(pin => pin.worldName === world)
+      const pinsToOpen: PinTypeDB[] = []
+      for (let i = 0; i < countOfEachWorld[world]; i++) {
+        const randomPin = filteredWorldDBPins.sort(() => Math.random() - 0.5)[0]
+        pinsToOpen.push(randomPin)
+      }
       // console.log("here")
       const currentWorldData = await getWorld(pinsToOpen[0].worldUuid)
       if (!currentWorldData) return
@@ -524,6 +555,11 @@ export const completeTradeFirebase = async (tradeCode: string) => {
     }
 
     addCompetedTradesToUsers(formattedTradeDoc, userUuid || "");
+
+    // update the users number of trades
+    updateDoc(doc(db, `users/${userUuid}`), {
+      totalTradesMade: increment(1),
+    })
 
     // console.log("Formattred Trade Doc", formattedTradeDoc, "comprred fie");
     // TODO delete the active trade and add the trade to the individule user profiles ********
