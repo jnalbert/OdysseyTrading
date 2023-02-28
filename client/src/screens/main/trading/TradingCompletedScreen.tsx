@@ -33,10 +33,11 @@ const ReceivedText = styled.Text`
     font-size: 25px;
     color: ${Orange};
     margin-top: 10%;
+    margin-bottom: 10%;
 `
 const SendInAndOutWrapper = styled.View`
     width: 100%;
-    height: 180px;
+    height: 30%;
     align-items: center;
     justify-content: center;
 `
@@ -99,15 +100,21 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
         getTradingData();
     }, [])
 
+    const screenHeight = Dimensions.get("window").height; 
+
+    console.log(screenHeight)
+
+    const toValue = screenHeight * 0.95;
+
     let ItemsOpacity = useRef(new Animated.Value(0)).current;
-    let sendInPinY = useRef(new Animated.Value(-800)).current;
+    let sendInPinY = useRef(new Animated.Value(-toValue)).current;
     let sendOutPinY = useRef(new Animated.Value(-100)).current;
 
   const startAnimations = () => {
     // make an timing animation to move the pin down
     // console.log("called")
     const sendOutPin = Animated.timing(sendOutPinY, {
-      toValue: -800,
+      toValue: -toValue,
       duration: 2200,
       easing: Easing.linear,
       useNativeDriver: true,
@@ -136,18 +143,22 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
     navigation.navigate("MainTrading")
   }
 
-  const screenHeight = Dimensions.get("window").height; 
+
 
   return (
-    <ScreenWrapperComp>
-        <>
+    <ScreenWrapperComp scrollView>
+        <View
+          style={{
+            height: screenHeight,
+            width: "100%",
+          }} 
+        >
       {!isLoading && tradeData && receiveUserPhoto && (
         <>
         <Animated.View
             style={{
                 opacity: ItemsOpacity,
                 // flex: 1,
-                height: "50%",
             }}
             >
             <OverallMeatWrapper>
@@ -157,7 +168,9 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
                 <ReceivedText>You Received</ReceivedText>
             </OverallMeatWrapper>
         </Animated.View>
-        <SendInAndOutWrapper>
+        <SendInAndOutWrapper style={{
+          maxHeight: screenHeight * 0.23,
+        }}>
           <Animated.View style={{
             width: "100%",
             height: "100%",
@@ -196,7 +209,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
 
         </>
       )}
-      </>
+      </View>
     </ScreenWrapperComp>
   )
 }
