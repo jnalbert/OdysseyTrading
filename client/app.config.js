@@ -6,7 +6,7 @@ export default {
     slug: "odyssey-trading",
     version: "1.0.1",
     orientation: "portrait",
-    icon: "./assets/LogoSmall.png",
+    icon: "./assets/OdysseyIcon.png",
     userInterfaceStyle: "light",
     splash: {
       image: "./assets/LogoLargeV2.png",
@@ -24,12 +24,12 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/LogoSmall.png",
+        foregroundImage: "./assets/OdysseyIcon.png",
         backgroundColor: "#FFFFFF"
       },
     },
     web: {
-      favicon: "./assets/LogoSmall.png",
+      favicon: "./assets/OdysseyIcon.png",
     },
     plugins: [
       [
