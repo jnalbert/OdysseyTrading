@@ -102,7 +102,7 @@ const TradingCompletedScreen: FC<any> = ({route, navigation}) => {
 
     const screenHeight = Dimensions.get("window").height; 
 
-    console.log(screenHeight)
+    // console.log(screenHeight)
 
     const toValue = screenHeight * 0.95;
 

@@ -1,12 +1,10 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC} from 'react'
 import { View } from 'react-native';
 import styled from 'styled-components/native'
-import { PastTrade } from '../../../screens/main/trading/MainTradingScreen';
-import { GrandstanderExtraBold, MulishMedium, Text400 } from '../../../shared/colors';
+import { MulishMedium, Text400 } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { _getUuid } from '../../../AppContext';
-import { PastTradeType } from '../../../../firebase/types/PastTradeType';
 
 const OverallCardWrapper = styled.View`
   width: 100%;
@@ -68,26 +66,28 @@ const DateText = styled.Text`
   /* align-self: flex-start */
 `
 
+interface PastTradeProps {
+  tradeUuid: string;
+  sendUsername: string;
+  sendUserPhoto: string;
+  receiveUsername: string;
+  receiveUserPhoto: string;
+  sendPinSrc: string;
+  receivePinSrc: string;
+  date: string;
+}
 
-const PastTradeCard: FC<PastTradeType> = ({
-  tradeUuid,
-  sendUserUuid,
+
+const PastTradeCard: FC<PastTradeProps> = ({
   sendUsername,
   sendUserPhoto,
   receiveUsername,
-  receiveUserUuid,
   receiveUserPhoto,
   sendPinSrc,
   receivePinSrc,
   date,
 }) => {
-  const getDisplayDate = () => {
-    const dateNew = new Date(date);
-    const shortYear = dateNew.getFullYear().toString().substr(2, 2);
-    const localDate = dateNew.toLocaleDateString("en-US");
 
-    return localDate.slice(0, localDate.length - 4) + shortYear;
-  };
 
   return (
     <OverallCardWrapper>
@@ -114,7 +114,7 @@ const PastTradeCard: FC<PastTradeType> = ({
           style={{
             marginBottom: "30%",
           }}
-        >{getDisplayDate()}</DateText>
+        >{date}</DateText>
         <FontAwesome style={{
           marginBottom: "30%",
         }} name="arrows-h" size={30} color="black" />
