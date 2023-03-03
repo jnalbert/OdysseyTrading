@@ -30,6 +30,7 @@ import {
   getProfileDataFromDB,
   startActiveTrade,
   updateActiveTrade,
+  updatePastTradeWithUserPhoto,
 } from "../../../../firebase/FirestoreFunctions";
 import { db } from "../../../../config/firebase";
 import { _getUuid } from "../../../AppContext";
@@ -309,6 +310,14 @@ const MainTradingScreen: FC<any> = ({ navigation }) => {
     setHasPermission(false);
     setScanned(false);
   };
+
+  useEffect(() => {
+    pastTrades.forEach(trade => {
+      if (!trade.sendUserPhoto) {
+        updatePastTradeWithUserPhoto(trade.tradeUuid)
+      }
+    })
+  }, [pastTrades])
 
   // get the screen width
   const screenWidth60 = Dimensions.get("window").width * 0.6;

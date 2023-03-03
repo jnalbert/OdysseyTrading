@@ -634,3 +634,16 @@ export const getPastTradesFromDB = async (userUuid: string) => {
     console.log(error)
   }
 }
+
+export const updatePastTradeWithUserPhoto = async (tradeUuid: string) => {
+  try {
+    const userUuid = (await _getUuid()) || ""
+    const getUserPhoto = (await getProfileDataFromDB(userUuid))?.profilePhoto || ""
+    const docRef = doc(db, "users", userUuid, "past-trades", tradeUuid)
+    await updateDoc(docRef, {
+      sendUserPhoto: getUserPhoto,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
