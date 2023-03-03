@@ -90,8 +90,8 @@ const ShopScreen: FC = () => {
   };
 
   const handleBuyPress = () => {
-    console.log("buying pins");
-    loadInBrowser("https://odyssey-vei.com/shopdead/shop/")
+    // console.log("buying pins");
+    loadInBrowser("https://odyssey-vei.com/")
   };
 
   const loadInBrowser = (url: string) => {
