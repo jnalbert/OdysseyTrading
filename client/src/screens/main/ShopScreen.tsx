@@ -126,7 +126,7 @@ const ShopScreen: FC = () => {
           />
         </PacksButtonsWrapper>
         <RandomTextWrapper>
-          <RandomText>*pins in packs are picked randomly</RandomText>
+          <RandomText>*not real currency, for display only</RandomText>
         </RandomTextWrapper>
       </PacksPickerWrapper>
       <BuyingSectionWrapper>
