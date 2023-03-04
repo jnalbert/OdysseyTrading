@@ -16,6 +16,7 @@ import {
   getWorldsAttributesMyCollection,
 } from "../../../../firebase/FirestoreFunctions";
 import { PinTypeDB } from "../../../../firebase/types/PinAndWorldType";
+import { useIsFocused } from "@react-navigation/native";
 
 const PinsCollectedPercentSlider = styled.View`
   margin-top: 3%;
@@ -194,6 +195,7 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
   const [enchantedForestPins, setEnchantedForestPins] = useState<PinTypeMyCollection[]>([]);
   const [seasonalPins, setSeasonalPins] = useState<PinTypeMyCollection[]>([]);
   const [currentWorld, setCurrentWorld] = useState<WorldNameEnum>(WorldNameEnum.DEEP_SEA)
+  const [causeReRender, setCauseReRender] = useState(false)
 
   const getPinData = async () => {
     // fetch data from server
@@ -281,6 +283,7 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
     const packsToOpen = await getNumberOfPacksToOpen(uuid || "");
     if (packsToOpen && packsToOpen > 0) {
       navigation.setParams({ newPinNotifications: true });
+      // setCauseReRender(!causeReRender)
     }
   };
 
@@ -295,6 +298,11 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
       return [];
     }
   }
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    getNotifications()
+  }, [isFocused]);
 
   return (
     <>

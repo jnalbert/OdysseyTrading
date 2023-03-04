@@ -10,6 +10,7 @@ import MyCachedImage from "../../../shared/MyCachedImage";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
 import { deleteAccount, getProfileDataFromDB } from '../../../../firebase/FirestoreFunctions';
 import ActivityIndicatorWrapper from "../../../shared/ActivityIndicatorWrapper";
+import { useIsFocused } from "@react-navigation/native";
 
 const ProfilePhotoWrapper = styled.TouchableOpacity`
   border-radius: 65px;
@@ -141,7 +142,7 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       profilePhoto: profilePhoto,
     });
     setProfilePhotoSrc(profilePhoto);
-    console.log("profilePhotoSrc: ", profilePhotoSrc)
+    // console.log("profilePhotoSrc: ", profilePhotoSrc)
     setIsRefreshing(false);
   };
   useEffect(() => {
@@ -192,6 +193,11 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
       ]
     );
   };
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    fetchInitialData()
+  }, [isFocused]);
 
   return (
     <ScreenWrapperComp backgroundColor={Peach} isScreenProtected scrollView refreshControl={
