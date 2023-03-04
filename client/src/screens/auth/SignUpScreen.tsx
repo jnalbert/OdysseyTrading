@@ -111,7 +111,7 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 4],
-      quality: 0.4,
+      quality: 0.2,
     });
     
     // console.log(result)
