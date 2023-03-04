@@ -49,11 +49,15 @@ const MainTabNavigator: FC = () => {
       })}
     >
       <Tab.Screen
-        options={{ headerTitle: "My Collection", headerShown: false }}
+        options={{ headerTitle: "My Collection", headerShown: false, lazy: false }}
         name="MyCollectionNav"
+        
         component={CollectionStackNavigator}
       />
-      <Tab.Screen name="Shop" component={ShopScreen} />
+      <Tab.Screen 
+      options={{lazy: false}}
+      name="Shop"
+       component={ShopScreen} />
       <Tab.Screen
         options={{ headerTitle: "Trading", headerShown: false }}
         name="TradingNav"
@@ -65,7 +69,7 @@ const MainTabNavigator: FC = () => {
         component={SocialMediaScreen}
       />
       <Tab.Screen
-        options={{ headerTitle: "Profile Screen", headerShown: false }}
+        options={{ headerTitle: "Profile Screen", headerShown: false, lazy: false }}
         name="ProfileScreenNav"
         component={ProfileStackNavigator}
       />
