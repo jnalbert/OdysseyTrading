@@ -55,7 +55,7 @@ const MainTabNavigator: FC = () => {
         component={CollectionStackNavigator}
       />
       <Tab.Screen 
-      options={{lazy: false}}
+      options={{}}
       name="Shop"
        component={ShopScreen} />
       <Tab.Screen
