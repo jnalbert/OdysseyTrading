@@ -92,7 +92,7 @@ const WorldSelector: FC<Props> = ({
         }, checkActive(WorldNameEnum.DEEP_SEA)]}
         onPress={() => handleWorldChange(WorldNameEnum.DEEP_SEA)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/world-icons%2FNewDeepSeaIcon.png?alt=media&token=69677f34-b259-4e3f-bec8-fad261244357" />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/newdeepseaicon.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -100,7 +100,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.ENCHANTED_FOREST)]}
           onPress={() => handleWorldChange(WorldNameEnum.ENCHANTED_FOREST)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/world-icons%2FNewEncantedForestIcon.png?alt=media&token=7db6450e-0f52-44f4-b879-d0b0ad4b2b19" />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/newencantedforesticon.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -108,7 +108,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.SEASONAL)]}
           onPress={() => handleWorldChange(WorldNameEnum.SEASONAL)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/world-icons%2FSeasonalIcon.png?alt=media&token=e41394d3-8f2c-4e27-b04e-2de852f24ca0" />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/seasonalicon.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -116,7 +116,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.COMING_SOON)]}
           onPress={() => handleWorldChange(WorldNameEnum.COMING_SOON)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/world-icons%2FcomingSoonIcon.png?alt=media&token=9e6e3ffa-b3ed-49e3-979f-770b1bac4713" />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/comingSoonIcon.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
@@ -124,7 +124,7 @@ const WorldSelector: FC<Props> = ({
           }, checkActive(WorldNameEnum.COMING_SOON)]}
           onPress={() => handleWorldChange(WorldNameEnum.COMING_SOON)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://firebasestorage.googleapis.com/v0/b/odyssey-28652.appspot.com/o/world-icons%2FcomingSoonIcon.png?alt=media&token=9e6e3ffa-b3ed-49e3-979f-770b1bac4713" />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/comingSoonIcon.png" />
         </WorldIconCircle>
       </WorldIconsWrapper>
       <WorldText
