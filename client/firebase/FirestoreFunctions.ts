@@ -647,3 +647,12 @@ export const updatePastTradeWithUserPhoto = async (tradeUuid: string) => {
     console.log(error)
   }
 }
+
+export const getAllPinSrcs = async () => {
+  try {
+    const generalInfoDoc = (await getDoc(doc(db, "worlds", "1GeneralThings"))).data()
+    return generalInfoDoc?.allPinSrcs
+  } catch (error) {
+    console.log(error)
+  }
+}

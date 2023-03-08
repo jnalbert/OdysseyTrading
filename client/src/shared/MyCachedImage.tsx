@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from "react-native";
 import styled from "styled-components/native";
 // @ts-ignore
 import CachedImage from "expo-cached-image";
-import { Black } from "./colors";
+import { Black, BlueGreen } from './colors';
 import sha256 from "crypto-js/sha256";
 
 interface Props {
@@ -32,7 +32,7 @@ const MyCachedImage: FC<Props> = ({ src, style, resizeMode }) => {
             uri: stateSrc, // (required) -- URI of the image to be cached
             expiresIn: 1628288, // 1 month in seconds (optional), if not set -- will never expire and will be managed by the OS
           }}
-          cacheKey={`${cacheKeyHash}`} // (required) -- key to store image locally
+          cacheKey={`${cacheKeyHash}-103`} // (required) -- key to store image locally
           placeholderContent={
             // (optional) -- shows while the image is loading
             <ActivityIndicator // can be any react-native tag

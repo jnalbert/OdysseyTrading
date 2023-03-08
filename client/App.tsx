@@ -27,6 +27,8 @@ import {
   getTokenAsync,
   useMemoFunction,
 } from "./src/AppContext";
+import { loadInitialImagesToCache } from "./firebase/CachingFunctions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AppWrapperView = styled.View`
   flex: 1;
@@ -65,6 +67,8 @@ const App: FC<any> = () => {
         // do other fetches here
         // ***************
 
+        loadInitialImagesToCache()
+
       } catch (error) {
         console.warn(error);
       } finally {
@@ -74,7 +78,15 @@ const App: FC<any> = () => {
 
     loadData();
     getTokenAsync(dispatch);
+
   }, []);
+
+  useEffect(() => {
+    if (state.userUuid !== null) {
+      // cancels The image caching
+      AsyncStorage.setItem("areImagesCached", "true");
+    }
+  }, [state.userUuid])
 
   const onLayoutRootView = useCallback(async () => {
     if (isAppReady && !state.isLoading) {
