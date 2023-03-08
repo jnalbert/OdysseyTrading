@@ -20,6 +20,7 @@ import {
   FooterText,
 } from "./SignInScreen";
 import { launchImageLibraryAsync, MediaTypeOptions } from "expo-image-picker";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { AuthContext } from "../../AppContext";
 import { checkIfUsernameIsUnique, uploadImageToStorage } from "../../../firebase/FirestoreFunctions";
 import ActivityIndicatorWrapper from "../../shared/ActivityIndicatorWrapper";
@@ -111,14 +112,14 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 4],
-      quality: 0.1,
+      quality: 0,
     });
     
-    // console.log(result)
-
     if (!result.canceled) {
-      setProfilePicture(result.assets[0].uri);
-      setValue("profilePhoto", result.assets[0].uri);
+      // console.log(result.assets[0].fileSize)
+      const manipulatedImage = await manipulateAsync(result.assets[0].uri, [{ resize: { height: 400 } }], { compress: 0.4, format: SaveFormat.JPEG });
+      setProfilePicture(manipulatedImage.uri);
+      setValue("profilePhoto", manipulatedImage.uri);
       clearErrors("profilePhoto");
     }
   }
