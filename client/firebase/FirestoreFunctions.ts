@@ -25,6 +25,7 @@ import { WorldPinsToOpenType } from '../src/screens/main/collection/OpenPacksScr
 import { PinsDataMyCollection, WorldsAttributesType } from "../src/screens/main/collection/MyCollectionScreen";
 import { WorldNameEnum } from '../src/shared/MiscTypes';
 import { PastTradeType } from './types/PastTradeType';
+import { getPinsDataFromCache, setPinsDataToCache } from './CachingFunctions';
 
 // *** Various User Functions *** //
 
@@ -189,13 +190,23 @@ export const getNumberOfPacksToOpen = async (userUuid: string) => {
 
 export const getAllPins = async () => {
   try {
-    const pinsCollection = collection(db, "pins");
-    const querySnapshot = await getDocs(pinsCollection);
-    const pins: PinTypeDB[] = [];
-    querySnapshot.forEach((doc) => {
-      pins.push(doc.data() as PinTypeDB);
-    });
-    return pins;
+    // check if pins are in cache
+    const pinsFromCache = await getPinsDataFromCache();
+    if (!pinsFromCache) {
+      console.log("getting pins from firestore")
+      // if pins are not in cache
+      const pinsCollection = collection(db, "pins");
+      const querySnapshot = await getDocs(pinsCollection);
+      const pins: PinTypeDB[] = [];
+      querySnapshot.forEach((doc) => {
+        pins.push(doc.data() as PinTypeDB);
+      });
+      setPinsDataToCache(pins);
+      return pins;
+    } else {
+      return pinsFromCache;
+    }
+
   } catch (error) {
     console.log(error);
   }
@@ -304,7 +315,7 @@ export const getPacksToOpenData = async (userUuid: string) => {
     if (!allPins) return
     let worldsWithPins: WorldPinsToOpenType[] = []
     for (const world in countOfEachWorld) {
-      const filteredWorldDBPins = allPins.filter(pin => pin.worldName === world)
+      const filteredWorldDBPins = allPins.filter((pin: any) => pin.worldName === world)
       const pinsToOpen: PinTypeDB[] = []
       for (let i = 0; i < countOfEachWorld[world]; i++) {
         const randomPin = filteredWorldDBPins.sort(() => Math.random() - 0.5)[0]
@@ -346,7 +357,7 @@ export const getPinsForUserCollection = async (userUuid: string) => {
       const allPins = await getAllPins()
       if (!allPins) return
       // go through all pins and check it against the users pins to see if they own it 
-      const pinsWithUserOwnedData = allPins.map(pin => {
+      const pinsWithUserOwnedData = allPins.map((pin: any) => {
         const userPin = userPins.find(userPin => userPin.pinUuid === pin.uuid)
         if (userPin) {
           return {...pin, isOwned: true, duplicates: userPin.duplicates}
@@ -450,7 +461,7 @@ export const constGetPinsForTrading = async (userUuid: string) => {
     //   const pinInAllPins = allPins.find(pinInAllPins => pinInAllPins.uuid === pin.pinUuid)
     // }
     // go through all pins and check it against the users pins to see if they own it
-    allPins.forEach(pin => {
+    allPins.forEach((pin: any) => {
       const userPin = userPins.find(userPin => userPin.pinUuid === pin.uuid)
       if (userPin) {
         pinsToReturn.push(pin)

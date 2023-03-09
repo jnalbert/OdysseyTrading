@@ -32,7 +32,7 @@ const MyCachedImage: FC<Props> = ({ src, style, resizeMode }) => {
             uri: stateSrc, // (required) -- URI of the image to be cached
             expiresIn: 1628288, // 1 month in seconds (optional), if not set -- will never expire and will be managed by the OS
           }}
-          cacheKey={`${cacheKeyHash}-103`} // (required) -- key to store image locally
+          cacheKey={`${cacheKeyHash}-105`} // (required) -- key to store image locally
           placeholderContent={
             // (optional) -- shows while the image is loading
             <ActivityIndicator // can be any react-native tag
