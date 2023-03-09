@@ -53,9 +53,9 @@ const PinPickingSection: FC<Props> = ({
         <WorldHeader style={{color: worldColor}}>{worldName}</WorldHeader>
     </WorldHeaderWrapper>
     <PinsSectionHeaderWrapper>
-      {worldPins.map(pin => {
+      {worldPins.map((pin, index) => {
         const isSelected = currentSelection?.uuid === pin.uuid
-        return <PinPickCard isPinConfirmed={isPinConfirmed} key={pin.uuid} pin={pin} isSelected={isSelected} handleClick={handleClick} />
+        return <PinPickCard isPinConfirmed={isPinConfirmed} key={index} pin={pin} isSelected={isSelected} handleClick={handleClick} />
       })}
     </PinsSectionHeaderWrapper>
     </OverallWrapper>
