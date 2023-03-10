@@ -87,6 +87,9 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
     if (!data.phoneNumber) {
       data.phoneNumber = 12345
     }
+    if (!data.bio) {
+      data.bio = "No bio"
+    }
     // console.log(data);
     setIsFirebaseLoading(true)
     const response = await signUp(data)
@@ -180,9 +183,9 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
         <StyledTextInput
           hideText={false}
           error={errors.bio}
-          rules={{ required: "This field is required" }}
+          rules={{}}
           control={control}
-          placeHolderText="Bio"
+          placeHolderText="Bio (optional)"
           name="bio"
           icon="bio"
           otherOptions={{ multiline: true, numberOfLines: 3, style: {alignSelf: "start"} }}
