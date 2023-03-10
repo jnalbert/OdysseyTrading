@@ -84,6 +84,9 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       setError("userName", errorConfig, { shouldFocus: true });
       return
     }
+    if (!data.phoneNumber) {
+      data.phoneNumber = 12345
+    }
     // console.log(data);
     setIsFirebaseLoading(true)
     const response = await signUp(data)
@@ -189,9 +192,9 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
         <StyledTextInput
           hideText={false}
           error={errors.phoneNumber}
-          rules={{ required: "This field is required" }}
+          rules={{}}
           control={control}
-          placeHolderText="Mobile Number"
+          placeHolderText="Mobile Number (optional)"
           name="phoneNumber"
           icon="PhoneNumber"
         />
