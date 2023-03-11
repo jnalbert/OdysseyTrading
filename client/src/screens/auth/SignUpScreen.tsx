@@ -48,7 +48,6 @@ const ProfilePicture = styled.Image`
 export interface SignUpFormProps {
   userName: string;
   name: string;
-  phoneNumber: number;
   profilePhoto: string;
   bio: string;
   email: string;
@@ -83,9 +82,6 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
       const errorConfig = { type: "manual", message: "This username is already taken" };
       setError("userName", errorConfig, { shouldFocus: true });
       return
-    }
-    if (!data.phoneNumber) {
-      data.phoneNumber = 12345
     }
     if (!data.bio) {
       data.bio = "No bio"
@@ -190,16 +186,6 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
           icon="bio"
           otherOptions={{ multiline: true, numberOfLines: 3, style: {alignSelf: "start"} }}
           styles={{ height: 80 }}
-        />
-
-        <StyledTextInput
-          hideText={false}
-          error={errors.phoneNumber}
-          rules={{}}
-          control={control}
-          placeHolderText="Mobile Number (optional)"
-          name="phoneNumber"
-          icon="PhoneNumber"
         />
 
         <StyledTextInput

@@ -2,7 +2,6 @@ export interface UserDataType {
   username: string;
   name: string;
   email: string;
-  phoneNumber: string;
   dateJoined: string;
   totalPinsCollected: number;
   totalTradesMade: number;

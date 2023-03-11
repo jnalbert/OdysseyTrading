@@ -98,7 +98,6 @@ const ProfileScreen: FC<any> = ({ navigation }) => {
 
   const [userInfo, setUserInfo] = useState<UserDataType>({
     username: "",
-    phoneNumber: "",
     unopenedPinsCount: 0,
     name: "",
     email: "",

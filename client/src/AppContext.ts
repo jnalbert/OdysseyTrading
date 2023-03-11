@@ -159,7 +159,6 @@ import React, {
           username: data.userName,
           name: data.name,
           email: data.email,
-          phoneNumber: data.phoneNumber.toString(),
           dateJoined: creationDate ? new Date(creationDate).toISOString() : "",
           totalPinsCollected: 0,
           totalTradesMade: 0,
