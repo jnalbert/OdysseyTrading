@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/OdysseyTrading/static/css/main.6e870fc4.css",
-    "main.js": "/OdysseyTrading/static/js/main.f23abed9.js",
+    "main.js": "/OdysseyTrading/static/js/main.2e9e2a61.js",
     "static/js/787.f003c842.chunk.js": "/OdysseyTrading/static/js/787.f003c842.chunk.js",
     "static/media/PangSpin.png": "/OdysseyTrading/static/media/PangSpin.a156f9254ef36cba482b.png",
     "static/media/LogoPicture.png": "/OdysseyTrading/static/media/LogoPicture.1245c6086316ed11acad.png",
     "index.html": "/OdysseyTrading/index.html",
     "main.6e870fc4.css.map": "/OdysseyTrading/static/css/main.6e870fc4.css.map",
-    "main.f23abed9.js.map": "/OdysseyTrading/static/js/main.f23abed9.js.map",
+    "main.2e9e2a61.js.map": "/OdysseyTrading/static/js/main.2e9e2a61.js.map",
     "787.f003c842.chunk.js.map": "/OdysseyTrading/static/js/787.f003c842.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.6e870fc4.css",
-    "static/js/main.f23abed9.js"
+    "static/js/main.2e9e2a61.js"
   ]
 }
