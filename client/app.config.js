@@ -20,7 +20,7 @@ export default {
     ios: {
       supportsTablet: false,
       bundleIdentifier: "com.jnalbert879.odysseytrading",
-      buildNumber: "4",
+      buildNumber: "5",
     },
     android: {
       adaptiveIcon: {
@@ -33,16 +33,21 @@ export default {
     },
     plugins: [
       [
+        "expo-barcode-scanner",
+        {
+          cameraPermission: "Our app uses the camera to scan other users' QR codes to connect and trade pins with them."
+        }
+      ],
+      [
         "expo-image-picker",
         {
-          photosPermission:
-            "The app accesses your photos to use as a profile picture.",
-        },
-      ],
+          photosPermission: "Our app needs access to your photos so you can pick an image to be your profile picture."
+        }
+      ]
     ],
     extra: {
       eas: {
-        "projectId": "b2812455-c16f-4e6f-8d07-2a0ae16b994b"
+        projectId: "b2812455-c16f-4e6f-8d07-2a0ae16b994b"
       },
         firebaseApiKey: process.env.FIREBASE_API_KEY,
         firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
