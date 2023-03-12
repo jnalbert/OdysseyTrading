@@ -401,7 +401,7 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
        )}
        
        <PinsHeaderWrapper>
-          <PinsHeader>Choose a Pin (Scroll)</PinsHeader>
+          <PinsHeader>Choose a Pin</PinsHeader>
           <Divider />
        </PinsHeaderWrapper>
        {(pinWorlds && usersPins) && (
@@ -410,9 +410,9 @@ const TradingInProgressScreen: FC<any> = ({route, navigation}) => {
         persistentScrollbar={true}
         
         >
-          {pinWorlds.map((world) => {
+          {pinWorlds.map((world, index) => {
             const worldPins = usersPins.filter((pin) => pin.worldUuid === world.uuid)
-            return <PinPickingSection key={world.uuid} isPinConfirmed={changingTradeData?.senderConfirmed || false} worldName={world.worldName} worldColor={world.worldColor} worldPins={worldPins} currentSelection={selectedPin || null} handleClick={pinChoiceChange} />
+            return <PinPickingSection key={index} isPinConfirmed={changingTradeData?.senderConfirmed || false} worldName={world.worldName} worldColor={world.worldColor} worldPins={worldPins} currentSelection={selectedPin || null} handleClick={pinChoiceChange} />
           })}
         </PinsToChooseWrapper>
        )}

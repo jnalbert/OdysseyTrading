@@ -175,7 +175,7 @@ const MainTradingScreen: FC<any> = ({ navigation }) => {
     } else {
       Alert.alert(
         "Camera access denied",
-        "Please enable camera access in your settings to scan QR codes"
+        "Please enable camera access in you settings for Odyssey Trading so you can scan your friends QR codes and trade with them"
       );
     }
   };
