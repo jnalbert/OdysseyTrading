@@ -15,7 +15,7 @@ const OverAllWrapper = styled.View`
 const NotificationWrapper = styled.TouchableOpacity`
   height: 40px;
   width: 40px;
-  border-radius: 50%;
+  border-radius: 20px;
   background-color: ${Pink};
   justify-content: center;
   align-items: center;

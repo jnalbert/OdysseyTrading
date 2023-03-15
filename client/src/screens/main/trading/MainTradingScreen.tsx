@@ -121,7 +121,7 @@ const ScannerXWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   background-color: white;
-  border-radius: 50%;
+  border-radius: 27px;
   padding: 2px;
 `;
 

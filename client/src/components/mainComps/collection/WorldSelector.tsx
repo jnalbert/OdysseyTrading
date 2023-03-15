@@ -33,7 +33,7 @@ const WorldIconsWrapper = styled.View`
 const WorldIconCircle = styled.TouchableOpacity`
   width: 35px;
   height: 35px;
-  border-radius: 50%;
+  border-radius: 17.5px;
   background-color: ${BlueGreen};
   justify-content: center;
   align-items: center;

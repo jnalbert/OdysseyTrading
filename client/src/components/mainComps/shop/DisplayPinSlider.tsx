@@ -17,8 +17,8 @@ const PinsContainer = styled.View`
   justify-content: center;
   align-items: center;
   background-color: ${BlueGreen};
-  border-top-left-radius: 100%;
-  border-top-right-radius: 100%;
+  border-top-left-radius: 280px;
+  border-top-right-radius: 280px;
   border: 2.5px solid black;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `;

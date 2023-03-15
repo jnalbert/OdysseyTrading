@@ -31,7 +31,7 @@ const ProfileWrapper = styled.View`
 `
 
 const ProfilePhotoWrapper = styled.TouchableOpacity`
-  border-radius: 50%;
+  border-radius: 50px;
   justify-content: center;
   align-items: center;
   height: 100px;

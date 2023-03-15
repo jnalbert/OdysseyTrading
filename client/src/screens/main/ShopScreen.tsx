@@ -25,7 +25,7 @@ const PinSliderWrapper = styled.View`
 const PacksPickerWrapper = styled.View`
   padding: 15px;
   margin-top: 11%;
-  height: 160px;
+  height: 24%;
   width: 101%;
   background-color: ${BlueGreen};
   flex-direction: column;
@@ -64,6 +64,7 @@ const BuyingSectionWrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 87%;
+  margin-bottom: 20%;
 `;
 
 const PriceText = styled.Text`

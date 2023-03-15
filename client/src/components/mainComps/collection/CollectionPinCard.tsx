@@ -24,7 +24,7 @@ const DuplicateWrapper = styled.View`
   right: 5px;
   height: 30px;
   width: 30px;
-  border-radius: 50%;
+  border-radius: 15px;
   background-color: ${Pink};
   justify-content: center;
   align-items: center;
