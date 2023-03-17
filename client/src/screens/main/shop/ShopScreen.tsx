@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
-import DisplayPinSlider from "../../components/mainComps/shop/DisplayPinSlider";
-import PickPackButton from "../../components/mainComps/shop/PickPackButton";
-import BasicButton from "../../shared/BasicButton";
+import DisplayPinSlider from "../../../components/mainComps/shop/DisplayPinSlider";
+import PickPackButton from "../../../components/mainComps/shop/PickPackButton";
+import BasicButton from "../../../shared/BasicButton";
 import {
   BlueGreen,
   GrandstanderExtraBold,
@@ -12,10 +12,10 @@ import {
   MulishMedium,
   Orange,
   Peach,
-} from "../../shared/colors";
-import ScreenWrapperComp from "../../shared/ScreenWrapperComp";
-import { borderColor, backgroundColor } from '../../shared/colors';
-import { _getUuid } from "../../AppContext";
+} from "../../../shared/colors";
+import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
+import { borderColor, backgroundColor } from '../../../shared/colors';
+import { _getUuid } from "../../../AppContext";
 
 const PinSliderWrapper = styled.View`
   /* height: 100%; */
