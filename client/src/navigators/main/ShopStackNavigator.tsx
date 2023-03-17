@@ -39,10 +39,13 @@ const ShopStackNavigator: FC = () => {
       <Stack.Screen
         name="Cart"
         component={CartScreen}
-        options={{
-          headerTitle: "Cart",
-          // headerShown: false,  
-        }}
+        initialParams={{ itemsInCart: 0 }}
+        options={({ route, navigation }) => ({
+            headerTitle: "Cart",
+            headerRight: () => {
+                return <></>
+            }
+        })}
       />
       <Stack.Screen
         name="PurchaseCompleted"
