@@ -29,6 +29,7 @@ import {
 } from "./src/AppContext";
 import { loadInitialImagesToCache } from "./firebase/CachingFunctions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Host } from 'react-native-portalize';
 
 const AppWrapperView = styled.View`
   flex: 1;
@@ -102,9 +103,11 @@ const App: FC<any> = () => {
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer onReady={onLayoutRootView}>
-        <AppWrapperView>
-          {state?.userUuid === null ? <AuthNavigator /> : <MainTabNavigator />}
-        </AppWrapperView>
+        <Host>
+          <AppWrapperView>
+            {state?.userUuid === null ? <AuthNavigator /> : <MainTabNavigator />}
+          </AppWrapperView>
+        </Host>
       </NavigationContainer>
     </AuthContext.Provider>
   );
