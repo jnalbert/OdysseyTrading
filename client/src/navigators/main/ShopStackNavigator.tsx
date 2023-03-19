@@ -1,11 +1,12 @@
 import React, { FC } from "react";
-import {  } from "react-native";
+import {} from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { GrandstanderSemiBold, Peach } from "../../shared/colors";
 import StackHeaderBackButton from "../../shared/StackHeader/StackHeaderBackButton";
-import ShopScreen from '../../screens/main/shop/ShopScreen';
+import ShopScreen from "../../screens/main/shop/ShopScreen";
 import CartScreen from "../../screens/main/shop/CartScreen";
 import PurchaseCompletedScreen from "../../screens/main/shop/PurchaseCompletedScreen";
+import HeaderItemsInCart from "../../components/mainComps/shop/HeaderItemsInCart";
 
 const Stack = createStackNavigator();
 
@@ -31,31 +32,38 @@ const ShopStackNavigator: FC = () => {
       <Stack.Screen
         name="Shop"
         component={ShopScreen}
-        options={{
+        initialParams={{ itemsInCart: 0 }}
+        options={({ route, navigation }: any) => ({
           headerTitle: "Shop",
-          // headerShown: false,
-        }}
+          headerRight: () => {
+            return (
+              <HeaderItemsInCart
+                navigation={navigation}
+                itemsInCart={route?.params?.itemsInCart || 0}
+              />
+            );
+          },
+          headerRightContainerStyle: {
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        })}
       />
       <Stack.Screen
         name="Cart"
         component={CartScreen}
-        initialParams={{ itemsInCart: 0 }}
-        options={({ route, navigation }) => ({
-            headerTitle: "Cart",
-            headerRight: () => {
-                return <></>
-            }
-        })}
+        options={{
+          headerTitle: "Cart",
+        }}
       />
       <Stack.Screen
         name="PurchaseCompleted"
         component={PurchaseCompletedScreen}
         options={{
           headerTitle: "Purchase Completed",
-          headerShown: false,  
+          headerShown: false,
         }}
       />
-
     </Stack.Navigator>
   );
 };
