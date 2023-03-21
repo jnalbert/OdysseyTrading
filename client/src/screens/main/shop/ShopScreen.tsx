@@ -112,7 +112,8 @@ const ShopScreen: FC<any> = ({navigation}) => {
         }
         return [...prevCart];
         });
-        console.log(currentCart)
+        const quantity = currentCart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
+        navigation.setParams({ itemsInCart: quantity });
   };
 
   const getInitialCartItems = async () => {
@@ -120,7 +121,6 @@ const ShopScreen: FC<any> = ({navigation}) => {
     if (cartRaw) {
         const cart = JSON.parse(cartRaw);
         setCurrentCart(cart);
-        console.log(cart)
         const quantity = cart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
         // console.log(quantity)
         navigation.setParams({ itemsInCart: quantity });
@@ -129,7 +129,6 @@ const ShopScreen: FC<any> = ({navigation}) => {
 
   const saveItemsToCartStorage = async () => {
     await AsyncStorage.setItem("cart", JSON.stringify(currentCart));
-    console.log("saving item")
   }
 
 
@@ -137,11 +136,11 @@ const ShopScreen: FC<any> = ({navigation}) => {
     useEffect(() => {
         if (!isFocused) {
             saveItemsToCartStorage();
-            console.log("saving items")
+            // console.log("saving items")
         }
         if (isFocused) {
             getInitialCartItems();
-            console.log("gettting items")
+            // console.log("gettting items")
         }
     }, [isFocused])
 
