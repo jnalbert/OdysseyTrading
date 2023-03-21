@@ -50,8 +50,8 @@ const HeaderItemsInCart: FC<Props> = ({
   const [itemsInCartState, setItemsInCartState] = useState(0)
 
   useEffect(() => {
-    // setItemsInCartState(itemsInCart)
-    setItemsInCartState(1)
+    setItemsInCartState(itemsInCart)
+    // setItemsInCartState(1)
   }, [itemsInCart])
 
   const handleCartPress = () => {

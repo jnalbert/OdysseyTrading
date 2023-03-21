@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import DisplayPinSlider from "../../../components/mainComps/shop/DisplayPinSlider";
@@ -14,8 +14,9 @@ import {
   Peach,
 } from "../../../shared/colors";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
-import { borderColor, backgroundColor } from '../../../shared/colors';
 import { _getUuid } from "../../../AppContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from '@react-navigation/native';
 
 const PinSliderWrapper = styled.View`
   /* height: 100%; */
@@ -76,28 +77,79 @@ const BuyButtonWrapper = styled.View`
 
 `
 
+export interface SavedCartItem {
+    pack: number;
+    price: number;
+    quantity: number;
+}
+
 const PackPrices: any = {
   2: 20.0,
   4: 38.0,
   6: 55.0,
 };
 
-const ShopScreen: FC = () => {
+const ShopScreen: FC<any> = ({navigation}) => {
   const [currentPack, setCurrentPack] = React.useState(2);
+  const [currentCart, setCurrentCart] = React.useState<SavedCartItem[]>([]);
 
   const handlePackPress = (pack: number) => {
     setCurrentPack(pack);
   };
 
-  const handleBuyPress = () => {
+  const handleAddToCartPress = () => {
     // console.log("buying pins");
-    loadInBrowser("https://odyssey-vei.com/")
+    setCurrentCart((prevCart) => {
+        const cartItem = prevCart.find((item) => item.pack === currentPack);
+        if (cartItem) {
+            cartItem.quantity++;
+        } else {
+            prevCart.push({
+            pack: currentPack,
+            price: PackPrices[currentPack],
+            quantity: 1,
+            });
+        }
+        return [...prevCart];
+        });
+        console.log(currentCart)
   };
 
-  const loadInBrowser = (url: string) => {
-    Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
-    return;
-  };
+  const getInitialCartItems = async () => {
+    const cartRaw = await AsyncStorage.getItem("cart");
+    if (cartRaw) {
+        const cart = JSON.parse(cartRaw);
+        setCurrentCart(cart);
+        console.log(cart)
+        const quantity = cart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
+        // console.log(quantity)
+        navigation.setParams({ itemsInCart: quantity });
+    }
+  }
+
+  const saveItemsToCartStorage = async () => {
+    await AsyncStorage.setItem("cart", JSON.stringify(currentCart));
+    console.log("saving item")
+  }
+
+
+    const isFocused = useIsFocused();
+    useEffect(() => {
+        if (!isFocused) {
+            saveItemsToCartStorage();
+            console.log("saving items")
+        }
+        if (isFocused) {
+            getInitialCartItems();
+            console.log("gettting items")
+        }
+    }, [isFocused])
+
+
+//   const loadInBrowser = (url: string) => {
+//     Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
+//     return;
+//   };
 
 
   return (
@@ -133,19 +185,19 @@ const ShopScreen: FC = () => {
         <PriceText>${PackPrices[currentPack]}.00</PriceText>
         <BuyButtonWrapper>
           <BasicButton
-            title="BUY"
+            title="ADD TO CART"
             style={{
               width: 165,
               height: 65,
               backgroundColor: Orange,
-              borderRadius: 18
+              borderRadius: 18,
               }}
             buttonTextStyle={{
               fontFamily: GrandstanderSemiBold,
-              fontSize: 42,
+              fontSize: 24,
               color: Peach,
             }}
-            onPress={handleBuyPress}
+            onPress={handleAddToCartPress}
             border
             boxShadow
           />

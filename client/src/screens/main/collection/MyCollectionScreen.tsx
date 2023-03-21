@@ -217,9 +217,9 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
       // const Data: any = FakePinData[world as WorldNameEnum]
       // FakePinData[world as WorldNameEnum] = [...Data, ...Data, ...Data, ...Data, ...Data]
     // filter out the pins in the current world into a new array
-    const deepSeaPins = pinData.filter(pin => pin.worldName === "Deep Sea")
-    const enchantedForestPins = pinData.filter(pin => pin.worldName === "Enchanted Forest")
-    const seasonalPins = pinData.filter(pin => pin.worldName === "Seasonal")
+    const deepSeaPins = pinData.filter((pin: any) => pin.worldName === "Deep Sea")
+    const enchantedForestPins = pinData.filter((pin: any) => pin.worldName === "Enchanted Forest")
+    const seasonalPins = pinData.filter((pin: any) => pin.worldName === "Seasonal")
     // set the current pins to the new array
     setDeepSeaPins(deepSeaPins)
     setEnchantedForestPins(enchantedForestPins)
