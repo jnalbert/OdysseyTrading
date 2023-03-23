@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import styled from 'styled-components/native'
 import { GrandstanderSemiBold, Pink } from '../../../shared/colors';
 import { AntDesign } from '@expo/vector-icons'; 
+import { SavedCartItem } from '../../../screens/main/shop/ShopScreen';
 
 const OverAllWrapper = styled.View`
   /* height: 50px;
@@ -41,21 +42,31 @@ const NumberText = styled.Text`
 interface Props {
     navigation: any
     itemsInCart: number
+    cart: SavedCartItem[]
 }
 
 const HeaderItemsInCart: FC<Props> = ({
     navigation,
-    itemsInCart
+    itemsInCart,
+    cart
 }) => {
   const [itemsInCartState, setItemsInCartState] = useState(0)
+  const [cartItems, setCartItems] = useState<SavedCartItem[]>([])
 
   useEffect(() => {
     setItemsInCartState(itemsInCart)
+
     // setItemsInCartState(1)
   }, [itemsInCart])
 
+  useEffect(() => {
+    setCartItems(cart)
+  }, [cart])
+
   const handleCartPress = () => {
-    navigation.navigate('Cart')
+    navigation.navigate('Cart', {
+        cartItems
+    })
   }
 
   return (

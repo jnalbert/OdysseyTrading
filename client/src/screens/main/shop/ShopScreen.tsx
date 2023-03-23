@@ -128,6 +128,7 @@ const ShopScreen: FC<any> = ({navigation}) => {
         });
         const quantity = currentCart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
         navigation.setParams({ itemsInCart: quantity });
+        navigation.setParams({ cart: currentCart });
   };
 
 
@@ -137,6 +138,7 @@ const ShopScreen: FC<any> = ({navigation}) => {
     const quantity = cart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
     // console.log(quantity)
     navigation.setParams({ itemsInCart: quantity });
+    navigation.setParams({ cart: cart });
   }
 
 

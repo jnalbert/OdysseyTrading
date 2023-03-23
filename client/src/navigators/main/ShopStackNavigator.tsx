@@ -32,7 +32,7 @@ const ShopStackNavigator: FC = () => {
       <Stack.Screen
         name="Shop"
         component={ShopScreen}
-        initialParams={{ itemsInCart: 0 }}
+        initialParams={{ itemsInCart: 0, cart: [] }}
         options={({ route, navigation }: any) => ({
           headerTitle: "Shop",
           headerRight: () => {
@@ -40,6 +40,7 @@ const ShopStackNavigator: FC = () => {
               <HeaderItemsInCart
                 navigation={navigation}
                 itemsInCart={route?.params?.itemsInCart || 0}
+                cart={route?.params?.cart || []}
               />
             );
           },

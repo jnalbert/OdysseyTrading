@@ -95,7 +95,7 @@ const documentHeightCallbackScript = `
   });
 `;
 
-const CartScreen: FC = () => {
+const CartScreen: FC<any> = ({route}) => {
   // Modalize functions
   const modalizeRef = useRef<Modalize>(null);
   const webViewRef = useRef<WebView>(null);
@@ -180,8 +180,12 @@ const CartScreen: FC = () => {
   const [currentLoadingIndex, setCurrentLoadingIndex] = useState(0);
 
   const setInitialCartItems = async () => {
-    const cart = await getCartItems();
-    setCurrentCartData(cart);
+    // const cart = await getCartItems();
+    let cart = route.params.cartItems
+    if (!cart) {
+        cart = (await getCartItems()) || []
+    }
+    // setCurrentCartData(cart);
     console.log("cartData", cart)
   }
 
