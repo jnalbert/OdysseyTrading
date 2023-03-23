@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useRef, useState } from "react";
+import React, { FC, useCallback, useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,8 @@ import WebView, {
 } from "react-native-webview";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
+import { getCartItems, SavedCartItem, saveItemsToCartStorage } from "./ShopScreen";
 
 const { width, height: initialHeight } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
@@ -65,11 +67,6 @@ const WebViewHeaderUrl = styled.Text`
   color: #31a14c;
 `;
 
-export interface CartDataItem {
-  pinsInPack: number;
-  packPrice: number;
-  quantity: number;
-}
 
 // for android to get the high of the window
 const documentHeightCallbackScript = `
@@ -114,13 +111,11 @@ const CartScreen: FC = () => {
 
   const handleLoad = (status: "start" | "progress" | "end") => {
     setMounted(true);
-
     if (status === "progress" && !mounted) {
       return;
     }
 
     const toValue = status === "start" ? 0.2 : status === "progress" ? 0.5 : 1;
-
     Animated.timing(progress, {
       toValue,
       duration: 200,
@@ -145,12 +140,11 @@ const CartScreen: FC = () => {
       if (url.includes("/bankpaymentcompleted")) {
         setTimeout(() => {
           handleCloseWV();
-          // I HHAVE TO IMPLEMENT THHIS TODO
-        // ******
+          // I Have TO IMPLEMENT THIS TODO
+          // ******
           // navigation.navigate("PurchaseCompleted");
         }, 1000);
       }
-
       if (!loading && !navigationType && isAndroid) {
         if (webViewRef.current) {
           webViewRef.current.injectJavaScript(documentHeightCallbackScript);
@@ -161,8 +155,6 @@ const CartScreen: FC = () => {
   );
 
   const handleMessage = useCallback((event: WebViewMessageEvent) => {
-    // iOS already inherit from the whole document body height,
-    // so we don't have to manually get it with the injected script
     if (!isAndroid) {
       return;
     }
@@ -170,13 +162,11 @@ const CartScreen: FC = () => {
     if (!data) {
       return;
     }
-
     switch (data.event) {
       case "documentHeight": {
         if (data.documentHeight !== 0) {
           setDocumentHeight(data.documentHeight);
         }
-
         break;
       }
     }
@@ -185,6 +175,34 @@ const CartScreen: FC = () => {
   const handleLayout = ({ layout }: { layout: LayoutRectangle }) => {
     setLayoutHeight(layout.height);
   };
+
+  const [currentCartData, setCurrentCartData] = useState<SavedCartItem[]>([]);
+  const [currentLoadingIndex, setCurrentLoadingIndex] = useState(0);
+
+  const setInitialCartItems = async () => {
+    const cart = await getCartItems();
+    setCurrentCartData(cart);
+    console.log("cartData", cart)
+  }
+
+  const isFocused = useIsFocused();
+  
+    useEffect(() => {
+        if (!isFocused) {
+            saveItemsToCartStorage(currentCartData);
+            // console.log("saving items")
+        }
+        if (isFocused) {
+            setInitialCartItems();
+            // console.log("gettting items")
+        }
+    }, [isFocused])
+
+    const onPageLoadEnd = () => {
+
+      // if all of the tab loading is done, then call the done function
+      
+    }
 
   const renderHeader = () => {
     return (

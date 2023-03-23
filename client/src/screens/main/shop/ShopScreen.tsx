@@ -83,6 +83,20 @@ export interface SavedCartItem {
     quantity: number;
 }
 
+export const saveItemsToCartStorage = async (cartData: SavedCartItem[]) => {
+  // console.log("saved cart", cartData)
+  await AsyncStorage.setItem("cart", JSON.stringify(cartData));
+}
+
+export const getCartItems = async () => {
+  const cartRaw = await AsyncStorage.getItem("cart");
+  if (cartRaw) {
+      const cart = JSON.parse(cartRaw);
+      // console.log("first cart", cart)
+      return cart
+  }
+}
+
 const PackPrices: any = {
   2: 20.0,
   4: 38.0,
@@ -116,40 +130,27 @@ const ShopScreen: FC<any> = ({navigation}) => {
         navigation.setParams({ itemsInCart: quantity });
   };
 
-  const getInitialCartItems = async () => {
-    const cartRaw = await AsyncStorage.getItem("cart");
-    if (cartRaw) {
-        const cart = JSON.parse(cartRaw);
-        setCurrentCart(cart);
-        const quantity = cart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
-        // console.log(quantity)
-        navigation.setParams({ itemsInCart: quantity });
-    }
-  }
 
-  const saveItemsToCartStorage = async () => {
-    await AsyncStorage.setItem("cart", JSON.stringify(currentCart));
+  const setInitialCartItems = async () => {
+    const cart = (await getCartItems()) || []
+    setCurrentCart(cart);
+    const quantity = cart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
+    // console.log(quantity)
+    navigation.setParams({ itemsInCart: quantity });
   }
 
 
-    const isFocused = useIsFocused();
-    useEffect(() => {
-        if (!isFocused) {
-            saveItemsToCartStorage();
-            // console.log("saving items")
-        }
-        if (isFocused) {
-            getInitialCartItems();
-            // console.log("gettting items")
-        }
-    }, [isFocused])
-
-
-//   const loadInBrowser = (url: string) => {
-//     Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
-//     return;
-//   };
-
+  const isFocused = useIsFocused();
+  useEffect(() => {
+      if (!isFocused) {
+          saveItemsToCartStorage(currentCart);
+          // console.log("saving items")
+      }
+      if (isFocused) {
+          setInitialCartItems();
+          // console.log("gettting items")
+      }
+  }, [isFocused])
 
   return (
     <ScreenWrapperComp backgroundColor={Peach} scrollView noMargin>
