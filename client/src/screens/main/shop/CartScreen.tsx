@@ -7,6 +7,7 @@ import {
   Animated,
   Platform,
   Easing,
+  FlatList,
 } from "react-native";
 import styled from "styled-components/native";
 import BasicButton from "../../../shared/BasicButton";
@@ -21,17 +22,22 @@ import WebView, {
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { getCartItems, SavedCartItem, saveItemsToCartStorage } from "./ShopScreen";
+import {
+  getCartItems,
+  SavedCartItem,
+  saveItemsToCartStorage,
+} from "./ShopScreen";
+import CartItem from "../../../components/mainComps/shop/CartItem";
 
 const { width, height: initialHeight } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
 
 const WebViewHeader = styled.View`
-  height: 44;
+  height: 44px;
   border-bottom-color: #c1c4c7;
-  border-bottom-width: 1;
-  border-top-left-radius: 12;
-  border-top-right-radius: 12;
+  border-bottom-width: 1px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
   overflow: hidden;
 `;
 
@@ -61,12 +67,11 @@ const WebViewHeaderCenterWrapper = styled.View`
 `;
 
 const WebViewHeaderUrl = styled.Text`
-  margin-left: 4;
+  margin-left: 4px;
   font-size: 16px;
   font-weight: 500;
   color: #31a14c;
 `;
-
 
 // for android to get the high of the window
 const documentHeightCallbackScript = `
@@ -95,7 +100,7 @@ const documentHeightCallbackScript = `
   });
 `;
 
-const CartScreen: FC<any> = ({route}) => {
+const CartScreen: FC<any> = ({ route }) => {
   // Modalize functions
   const modalizeRef = useRef<Modalize>(null);
   const webViewRef = useRef<WebView>(null);
@@ -181,32 +186,30 @@ const CartScreen: FC<any> = ({route}) => {
 
   const setInitialCartItems = async () => {
     // const cart = await getCartItems();
-    let cart = route.params.cartItems
+    let cart = route.params.cartItems;
     if (!cart) {
-        cart = (await getCartItems()) || []
+      cart = (await getCartItems()) || [];
     }
-    // setCurrentCartData(cart);
-    console.log("cartData", cart)
-  }
+    setCurrentCartData(cart);
+    console.log("cartData", currentCartData);
+  };
 
   const isFocused = useIsFocused();
-  
-    useEffect(() => {
-        if (!isFocused) {
-            saveItemsToCartStorage(currentCartData);
-            // console.log("saving items")
-        }
-        if (isFocused) {
-            setInitialCartItems();
-            // console.log("gettting items")
-        }
-    }, [isFocused])
 
-    const onPageLoadEnd = () => {
-
-      // if all of the tab loading is done, then call the done function
-      
+  useEffect(() => {
+    if (!isFocused) {
+      saveItemsToCartStorage(currentCartData);
+      // console.log("saving items")
     }
+    if (isFocused) {
+      setInitialCartItems();
+      // console.log("gettting items")
+    }
+  }, [isFocused]);
+
+  const onPageLoadEnd = () => {
+    // if all of the tab loading is done, then call the done function
+  };
 
   const renderHeader = () => {
     return (
@@ -264,9 +267,29 @@ const CartScreen: FC<any> = ({route}) => {
     modalizeRef.current?.open();
   }
 
+  const handleRemoveItems = (pack: number) => {};
+
+  const handleChangeQuantity = (pack: number, quantity: number) => {};
+
   return (
     <>
       <ScreenWrapperComp>
+        <FlatList
+          data={currentCartData}
+          keyExtractor={(item) => item.pack.toString()}
+          renderItem={({ item, index }) => (
+            <CartItem
+              pack={item.pack}
+              price={item.price}
+              quantity={item.quantity}
+              onRemove={handleRemoveItems}
+              onChangeQuantity={handleChangeQuantity}
+            />
+          )}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+          style={{ height: "55%", width: "95%" }}
+        ></FlatList>
+
         <BasicButton
           title="BUY"
           style={{
