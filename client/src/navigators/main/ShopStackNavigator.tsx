@@ -7,6 +7,7 @@ import ShopScreen from "../../screens/main/shop/ShopScreen";
 import CartScreen from "../../screens/main/shop/CartScreen";
 import PurchaseCompletedScreen from "../../screens/main/shop/PurchaseCompletedScreen";
 import HeaderItemsInCart from "../../components/mainComps/shop/HeaderItemsInCart";
+import CartScreenBackButton from "../../components/mainComps/shop/CartScreenBackButton";
 
 const Stack = createStackNavigator();
 
@@ -53,9 +54,18 @@ const ShopStackNavigator: FC = () => {
       <Stack.Screen
         name="Cart"
         component={CartScreen}
-        options={{
+        initialParams={{ cart: [] }}
+        options={({ route, navigation }: any) => ({
+          headerLeft: () => {
+            return (
+              <CartScreenBackButton
+                navigation={navigation}
+                cartData={route?.params?.cart || []}
+              />
+            );
+          },
           headerTitle: "Cart",
-        }}
+        })}
       />
       <Stack.Screen
         name="PurchaseCompleted"

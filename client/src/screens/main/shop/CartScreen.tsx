@@ -11,7 +11,18 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import BasicButton from "../../../shared/BasicButton";
-import { GrandstanderSemiBold, Orange, Peach } from "../../../shared/colors";
+import {
+  Black,
+  GrandstanderExtraBold,
+  GrandstanderMedium,
+  GrandstanderSemiBold,
+  Orange,
+  Peach,
+  Pink,
+  Text100,
+  Text300,
+  Text400,
+} from "../../../shared/colors";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
@@ -73,6 +84,75 @@ const WebViewHeaderUrl = styled.Text`
   color: #31a14c;
 `;
 
+const BoundedBottomSection = styled.View`
+  position: absolute;
+  bottom: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 19%;
+`;
+
+const TopPricingInfoWrapper = styled.View`
+  flex-direction: row;
+  width: 101%;
+  margin-bottom: 5%;
+`;
+
+const PricingSection = styled.View`
+  flex-direction: row;
+  width: 50%;
+`;
+
+const PricingTitle = styled.Text`
+  font-family: ${GrandstanderMedium};
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.55);
+`;
+
+const PricingValue = styled.Text`
+  margin-left: 3%;
+  font-family: ${GrandstanderMedium};
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.8);
+`;
+
+const BottomPricingInfoWrapper = styled.View`
+  height: 90%;
+  width: 108%;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  background-color: rgba(255, 255, 255, 0.9);
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TotalPrice = styled.Text`
+  margin-top: 3%;
+  /* margin-right: 25%; */
+  font-family: ${GrandstanderSemiBold};
+  font-size: 32px;
+  color: #000000;
+  margin-right: 3%;
+`;
+
+const CheckoutButtonWrapper = styled.View`
+  margin-left: 8%;
+`;
+
+const NothingInCartTextWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+`;
+
+const NothingInCartText = styled.Text`
+  text-align: center;
+  font-size: ${GrandstanderExtraBold};
+  color: ${Text400};
+  font-size: 16px;
+`;
+
 // for android to get the high of the window
 const documentHeightCallbackScript = `
   function onElementHeightChange(elm, callback) {
@@ -100,7 +180,7 @@ const documentHeightCallbackScript = `
   });
 `;
 
-const CartScreen: FC<any> = ({ route }) => {
+const CartScreen: FC<any> = ({ route, navigation }) => {
   // Modalize functions
   const modalizeRef = useRef<Modalize>(null);
   const webViewRef = useRef<WebView>(null);
@@ -109,6 +189,15 @@ const CartScreen: FC<any> = ({ route }) => {
   const [layoutHeight, setLayoutHeight] = useState(initialHeight);
   const [documentHeight, setDocumentHeight] = useState(initialHeight);
   const height = isAndroid ? documentHeight : layoutHeight;
+  const [subTotal, setSubTotal] = useState(0);
+
+  const calculateSubTotal = (cartItems: SavedCartItem[]) => {
+    let total = 0;
+    cartItems.forEach((item) => {
+      total += item.price * item.quantity;
+    });
+    setSubTotal(total);
+  };
 
   const handleCloseWV = () => {
     modalizeRef.current?.close();
@@ -191,13 +280,16 @@ const CartScreen: FC<any> = ({ route }) => {
       cart = (await getCartItems()) || [];
     }
     setCurrentCartData(cart);
-    console.log("cartData", currentCartData);
+    calculateSubTotal(cart);
+    // console.log("cartData", currentCartData);
+    navigation.setParams({ cart: cart });
   };
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (!isFocused) {
+      // console.log(currentCartData)
       saveItemsToCartStorage(currentCartData);
       // console.log("saving items")
     }
@@ -267,46 +359,108 @@ const CartScreen: FC<any> = ({ route }) => {
     modalizeRef.current?.open();
   }
 
-  const handleRemoveItems = (pack: number) => {};
+  const handleRemoveItems = (pack: number) => {
+    // const newCartData: SavedCartItem[] = [];
+    // for (let i = 0; i < currentCartData.length; i++) {
+    //   if (currentCartData[i].pack !== pack) {
+    //     newCartData.push(currentCartData[i]);
+    //   }
+    // }
+    // // const newCartData = currentCartData.filter((item) => item.pack !== pack)
+    // setCurrentCartData(newCartData);
+    // calculateSubTotal(newCartData);
+    // navigation.setParams({ cart: newCartData });
+    // console.log(newCartData);
+  };
 
-  const handleChangeQuantity = (pack: number, quantity: number) => {};
+  const handleChangeQuantity = (pack: number, quantity: number) => {
+    // find the pack and then add the quantity
+    const newCartData = currentCartData.map((item) => {
+      if (item.pack === pack) {
+        item.quantity += quantity;
+      }
+      return item;
+    });
+
+    // filters out any cart item that has quantity 0
+    const filteredCart: SavedCartItem[] = [];
+    for (let i = 0; i < newCartData.length; i++) {
+      if (newCartData[i].quantity > 0) {
+        filteredCart.push(currentCartData[i]);
+      }
+    }
+
+    setCurrentCartData(filteredCart);
+    calculateSubTotal(filteredCart);
+    navigation.setParams({ cart: filteredCart });
+  };
 
   return (
     <>
       <ScreenWrapperComp>
         <FlatList
-          data={currentCartData}
-          keyExtractor={(item) => item.pack.toString()}
-          renderItem={({ item, index }) => (
-            <CartItem
-              pack={item.pack}
-              price={item.price}
-              quantity={item.quantity}
-              onRemove={handleRemoveItems}
-              onChangeQuantity={handleChangeQuantity}
-            />
+          ListEmptyComponent={() => (
+            <NothingInCartTextWrapper>
+              <NothingInCartText>
+                Nothing in your cart yet. Go buy some pins!
+              </NothingInCartText>
+            </NothingInCartTextWrapper>
           )}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-          style={{ height: "55%", width: "95%" }}
+          data={(currentCartData || []).sort((a, b) => a.pack - b.pack).filter((item) => item.quantity > 0)}
+          keyExtractor={(item) => item.pack.toString()}
+          renderItem={({ item, index }) => {
+            if (item.quantity > 0) {
+              return (
+                <CartItem
+                  pack={item.pack}
+                  price={item.price}
+                  quantity={item.quantity}
+                  onRemove={handleRemoveItems}
+                  onChangeQuantity={handleChangeQuantity}
+                />
+              );
+            } else {
+              return <></>
+            }
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+          style={{ height: "55%", width: "95%", marginTop: "5%" }}
         ></FlatList>
 
-        <BasicButton
-          title="BUY"
-          style={{
-            width: 165,
-            height: 65,
-            backgroundColor: Orange,
-            borderRadius: 18,
-          }}
-          buttonTextStyle={{
-            fontFamily: GrandstanderSemiBold,
-            fontSize: 42,
-            color: Peach,
-          }}
-          onPress={handleBuyPress}
-          border
-          boxShadow
-        />
+        <BoundedBottomSection>
+          <TopPricingInfoWrapper>
+            <PricingSection>
+              <PricingTitle>subtotal:</PricingTitle>
+              <PricingValue>${subTotal}.00</PricingValue>
+            </PricingSection>
+            <PricingSection>
+              <PricingTitle>shipping:</PricingTitle>
+              <PricingValue>${subTotal ? 10 : 0}.00</PricingValue>
+            </PricingSection>
+          </TopPricingInfoWrapper>
+          <BottomPricingInfoWrapper>
+            <TotalPrice>${subTotal ? subTotal + 10 : 0}.00</TotalPrice>
+            <CheckoutButtonWrapper>
+              <BasicButton
+                title="CHECK OUT"
+                style={{
+                  width: 180,
+                  height: 50,
+                  backgroundColor: Pink,
+                  borderRadius: 34,
+                }}
+                buttonTextStyle={{
+                  fontFamily: GrandstanderSemiBold,
+                  fontSize: 22,
+                  color: Peach,
+                }}
+                onPress={handleBuyPress}
+                border
+                boxShadow
+              />
+            </CheckoutButtonWrapper>
+          </BottomPricingInfoWrapper>
+        </BoundedBottomSection>
       </ScreenWrapperComp>
 
       <Portal>

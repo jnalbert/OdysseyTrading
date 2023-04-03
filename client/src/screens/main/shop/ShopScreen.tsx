@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import DisplayPinSlider from "../../../components/mainComps/shop/DisplayPinSlider";
@@ -85,6 +85,7 @@ export interface SavedCartItem {
 
 export const saveItemsToCartStorage = async (cartData: SavedCartItem[]) => {
   // console.log("saved cart", cartData)
+  // console.log("Saving", cartData)
   await AsyncStorage.setItem("cart", JSON.stringify(cartData));
 }
 
@@ -103,7 +104,7 @@ const PackPrices: any = {
   6: 55.0,
 };
 
-const ShopScreen: FC<any> = ({navigation}) => {
+const ShopScreen: FC<any> = ({navigation, route}) => {
   const [currentPack, setCurrentPack] = React.useState(2);
   const [currentCart, setCurrentCart] = React.useState<SavedCartItem[]>([]);
 
@@ -133,7 +134,17 @@ const ShopScreen: FC<any> = ({navigation}) => {
 
 
   const setInitialCartItems = async () => {
-    const cart = (await getCartItems()) || []
+    let cart: SavedCartItem[];
+
+    const {cartFromCartScreen} = route.params
+    // console.log("From Cart Screen", cartFromCartScreen)
+
+    if (cartFromCartScreen) {
+      cart = cartFromCartScreen
+    } else {
+        cart = (await getCartItems()) || []
+    }
+   
     setCurrentCart(cart);
     const quantity = cart.reduce((accValue: number, item: SavedCartItem) => accValue + item.quantity, 0);
     // console.log(quantity)
@@ -141,14 +152,19 @@ const ShopScreen: FC<any> = ({navigation}) => {
     navigation.setParams({ cart: cart });
   }
 
-
   const isFocused = useIsFocused();
+  const [wasOutOfFocus, setWasOutOfFocus] = useState(false)
+
   useEffect(() => {
       if (!isFocused) {
+        if (!wasOutOfFocus) {
           saveItemsToCartStorage(currentCart);
+        }
+        setWasOutOfFocus(true)
           // console.log("saving items")
       }
       if (isFocused) {
+        setWasOutOfFocus(false)
           setInitialCartItems();
           // console.log("gettting items")
       }
