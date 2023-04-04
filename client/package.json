@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build-ios-simulator": "eas build -p ios --profile preview"
+    "build-ios-simulator": "eas build -p ios --profile preview",
+    "run-ios-simulator": "eas build:run -p ios"
   },
   "dependencies": {
     "@expo-google-fonts/grandstander": "^0.2.2",
