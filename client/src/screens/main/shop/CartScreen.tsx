@@ -16,11 +16,8 @@ import {
   GrandstanderExtraBold,
   GrandstanderMedium,
   GrandstanderSemiBold,
-  Orange,
   Peach,
   Pink,
-  Text100,
-  Text300,
   Text400,
 } from "../../../shared/colors";
 import ScreenWrapperComp from "../../../shared/ScreenWrapperComp";
@@ -39,6 +36,11 @@ import {
   saveItemsToCartStorage,
 } from "./ShopScreen";
 import CartItem from "../../../components/mainComps/shop/CartItem";
+import Constants from "expo-constants";
+
+console.log("Expo constant", Constants.expoConfig?.extra?.canClearCookies)
+
+const CookieManager = Constants.expoConfig?.extra?.canClearCookies ? require("@react-native-cookies/cookies").default : null;
 
 const { width, height: initialHeight } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
@@ -199,7 +201,17 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     setSubTotal(total);
   };
 
-  const handleCloseWV = () => {
+  const handleCloseWV = () => { 
+    if (Constants.expoConfig?.extra?.canClearCookies) {
+    CookieManager.clearByName('https://portal.veinternational.org/', 'sessionid')
+      .then((success: any) => {
+        console.log('CookieManager.clearByName =>', success);
+      });
+      CookieManager.clearByName('https://portal.veinternational.org/', 'csrftoken')
+      .then((success: any) => {
+        console.log('CookieManager.clearByName =>', success);
+      });
+    }
     modalizeRef.current?.close();
   };
 
@@ -234,6 +246,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
       if (url.includes("/bankpaymentcompleted")) {
         setTimeout(() => {
           handleCloseWV();
+          console.log("Purchased Everything")
           // I Have TO IMPLEMENT THIS TODO
           // ******
           // navigation.navigate("PurchaseCompleted");
@@ -299,9 +312,46 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     }
   }, [isFocused]);
 
-  const onPageLoadEnd = () => {
-    // if all of the tab loading is done, then call the done function
-  };
+
+  const startWebView = async () => {
+    modalizeRef.current?.open();
+    webViewRef.current?.stopLoading()
+    const response = await loadAllPackUrls();
+    if (response) {
+      console.log(response)
+      modalizeRef.current?.close();
+      return
+    } else {
+      console.log("successful")
+      webViewRef.current?.reload();
+    }
+    
+  }
+
+  const loadAllPackUrls = async () => {
+    const buyUrls: any = {
+      "2pack": "https://portal.veinternational.org/buybuttons/us014300/btn/2-pack-0001/",
+      "4pack": "https://portal.veinternational.org/buybuttons/us014300/btn/4-pack-0002/",
+      "6pack": "https://portal.veinternational.org/buybuttons/us014300/btn/6-pack-0003/"
+    }
+    const fetchUrls: string[] = []
+    currentCartData.forEach((item: SavedCartItem) => {
+      if (item.quantity > 0) {
+        const buyUrlSearch = `${item.pack}pack`
+        for (let i = 0; i < item.quantity; i++) {
+          fetchUrls.push(buyUrls[buyUrlSearch])
+        }
+      }
+    })
+    console.log(fetchUrls)
+    for (let i = 0; i < fetchUrls.length; i++) {
+      try {
+        await fetch(fetchUrls[i])
+      } catch (e) {
+        return e
+      }
+    }
+  }
 
   const renderHeader = () => {
     return (
@@ -357,6 +407,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
 
   function handleBuyPress(): void {
     modalizeRef.current?.open();
+    startWebView()
   }
 
   const handleRemoveItems = (pack: number) => {
@@ -474,10 +525,15 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
         >
           <WebView
             ref={webViewRef}
-            source={{ uri: "https://odyssey-vei.com/" }}
-            onLoadStart={() => handleLoad("start")}
+            source={{ uri: "https://portal.veinternational.org/buybuttons/us014300/cart/" }}
+            onLoadStart={() => {
+                handleLoad("start")
+              }
+            }
             onLoadProgress={() => handleLoad("progress")}
             onLoadEnd={() => handleLoad("end")}
+            sharedCookiesEnabled={true}
+            cacheEnabled={true}
             onNavigationStateChange={handleNavigationStateChange}
             onMessage={handleMessage}
             startInLoadingState={true}
