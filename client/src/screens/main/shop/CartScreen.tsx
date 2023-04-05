@@ -38,10 +38,6 @@ import {
 import CartItem from "../../../components/mainComps/shop/CartItem";
 import Constants from "expo-constants";
 
-console.log("Expo constant", Constants.expoConfig?.extra?.canClearCookies)
-
-const CookieManager = Constants.expoConfig?.extra?.canClearCookies ? require("@react-native-cookies/cookies").default : null;
-
 const { width, height: initialHeight } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
 
@@ -202,16 +198,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
   };
 
   const handleCloseWV = () => { 
-    if (Constants.expoConfig?.extra?.canClearCookies) {
-    CookieManager.clearByName('https://portal.veinternational.org/', 'sessionid')
-      .then((success: any) => {
-        console.log('CookieManager.clearByName =>', success);
-      });
-      CookieManager.clearByName('https://portal.veinternational.org/', 'csrftoken')
-      .then((success: any) => {
-        console.log('CookieManager.clearByName =>', success);
-      });
-    }
+
     modalizeRef.current?.close();
   };
 
@@ -346,8 +333,9 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     console.log(fetchUrls)
     for (let i = 0; i < fetchUrls.length; i++) {
       try {
-        await fetch(fetchUrls[i])
+        await fetch(fetchUrls[i], {})
       } catch (e) {
+        alert(e)
         return e
       }
     }
@@ -522,6 +510,8 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
           scrollViewProps={{ showsVerticalScrollIndicator: false }}
           // make the modal not able to be dragged down
           panGestureEnabled={false}
+          // modalHeight={height * 0.8}
+          modalTopOffset={height * 0.07}
         >
           <WebView
             ref={webViewRef}
@@ -530,6 +520,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
                 handleLoad("start")
               }
             }
+            incognito={true}
             onLoadProgress={() => handleLoad("progress")}
             onLoadEnd={() => handleLoad("end")}
             sharedCookiesEnabled={true}
