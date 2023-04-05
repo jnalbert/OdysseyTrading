@@ -198,8 +198,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
   };
 
   const handleCloseWV = () => { 
-
-    modalizeRef.current?.close();
+      modalizeRef.current?.close();
   };
 
   const handleLoad = (status: "start" | "progress" | "end") => {
@@ -333,7 +332,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     console.log(fetchUrls)
     for (let i = 0; i < fetchUrls.length; i++) {
       try {
-        await fetch(fetchUrls[i], {})
+        await fetch(fetchUrls[i])
       } catch (e) {
         alert(e)
         return e
