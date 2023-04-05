@@ -113,7 +113,7 @@ import React, {
       }
   
       // THis is dev stuff comment when done
-        dispatch({ type: "SIGN_IN", token: "Dev" });
+        // dispatch({ type: "SIGN_IN", token: "Dev" });
   
       return null;
       

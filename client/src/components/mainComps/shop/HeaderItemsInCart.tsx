@@ -35,7 +35,7 @@ const NumberWrapper = styled.View`
 const NumberText = styled.Text`
   font-size: 12px;
   color: white;
-  font-size: ${GrandstanderSemiBold};
+  font-family: ${GrandstanderSemiBold};
 `
 
 

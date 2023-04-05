@@ -87,6 +87,7 @@ const App: FC<any> = () => {
       // cancels The image caching
       AsyncStorage.setItem("areImagesCached", "true");
     }
+    console.log(state.userUuid)
   }, [state.userUuid])
 
   const onLayoutRootView = useCallback(async () => {

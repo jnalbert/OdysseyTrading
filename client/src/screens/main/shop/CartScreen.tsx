@@ -146,7 +146,7 @@ const NothingInCartTextWrapper = styled.View`
 
 const NothingInCartText = styled.Text`
   text-align: center;
-  font-size: ${GrandstanderExtraBold};
+  font-family: ${GrandstanderExtraBold};
   color: ${Text400};
   font-size: 16px;
 `;

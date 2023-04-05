@@ -40,7 +40,6 @@ const TextInputStyled = styled.TextInput`
   max-width: 100%;
   flex: 1;
   font-size: 16px;
-  /* align-self: start; */
 `;
 
 interface Props {

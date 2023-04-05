@@ -195,7 +195,6 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
   const [enchantedForestPins, setEnchantedForestPins] = useState<PinTypeMyCollection[]>([]);
   const [seasonalPins, setSeasonalPins] = useState<PinTypeMyCollection[]>([]);
   const [currentWorld, setCurrentWorld] = useState<WorldNameEnum>(WorldNameEnum.DEEP_SEA)
-  const [causeReRender, setCauseReRender] = useState(false)
 
   const getPinData = async () => {
     // fetch data from server
@@ -208,10 +207,7 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
     // loop through fake data and sort it
     // const pinData: PinTypeMyCollection[] = FakePinData
     // sort the pins by isOwned
-    pinData.sort((a: any, b: any): any => {
-      if (a.isOwned && !b.isOwned) {
-        return -1;
-      }})
+    pinData.sort((a: any, b: any): any => b.isOwned - a.isOwned)
     // the coming soon world to an empty array
       // duplication of data for testing purposes
       // const Data: any = FakePinData[world as WorldNameEnum]
