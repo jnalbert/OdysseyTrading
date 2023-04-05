@@ -197,13 +197,10 @@ import React, {
           if (user) {
             userUuid = user.uid
           }
-  
           // Turn this off when not in dev mode
           // ******* TODO: REMOVE THIS WHEN DONE ********
           // userUuid = "dev"
-  
           // console.log(userUuid, "uuid")
-          
           await dispatch({ type: "RESTORE_TOKEN", token: userUuid });
          
         });

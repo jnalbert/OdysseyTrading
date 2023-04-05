@@ -69,6 +69,7 @@ const App: FC<any> = () => {
         // ***************
 
         loadInitialImagesToCache()
+        
 
       } catch (error) {
         console.warn(error);
@@ -76,7 +77,6 @@ const App: FC<any> = () => {
         setIsAppReady(true);
       }
     }
-
     loadData();
     getTokenAsync(dispatch);
 
