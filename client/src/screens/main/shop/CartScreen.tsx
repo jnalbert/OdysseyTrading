@@ -211,7 +211,7 @@ const realPacksBoughtCallbackScript = `
   });
 
   
-`
+`;
 const documentHeightCallbackScript = `
   function onElementHeightChange(elm, callback) {
     var lastHeight;
@@ -237,7 +237,6 @@ const documentHeightCallbackScript = `
     );
   });
 
-  ${realPacksBoughtCallbackScript}
 `;
 
 const CartScreen: FC<any> = ({ route, navigation }) => {
@@ -259,8 +258,8 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     setSubTotal(total);
   };
 
-  const handleCloseWV = () => { 
-      modalizeRef.current?.close();
+  const handleCloseWV = () => {
+    modalizeRef.current?.close();
   };
 
   const handleLoad = (status: "start" | "progress" | "end") => {
@@ -289,16 +288,29 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     }
   };
 
+  const handleSendToPurchaseCompleted = () => {
+    const TESTING_TO_SEND = [
+      { pack: 2, price: 20, quantity: 3 },
+      { pack: 4, price: 38, quantity: 4 },
+      { pack: 6, price: 55, quantity: 4 },
+    ];
+    console.log(actualPacksBought);
+    handleCloseWV();
+    console.log("Purchased Everything");
+    navigation.push("PurchaseCompleted", {
+    itemsBought: TESTING_TO_SEND,
+    });
+    setHasMadePurchase(false);
+    setCurrentCartData([]);
+  };
+
+  const [hasMadePurchase, setHasMadePurchase] = useState(false);
+
   const handleNavigationStateChange = useCallback(
     async ({ url, loading, navigationType }: WebViewNavigation) => {
       if (url.includes("/bankpaymentcompleted")) {
         setTimeout(() => {
-          handleCloseWV();
-          console.log("Purchased Everything")
-          // I Have TO IMPLEMENT THIS TODO
-          // ******
-          // send the actualPacksBought to the Purchase Completed Screen
-          // navigation.navigate("PurchaseCompleted");
+          handleSendToPurchaseCompleted();
         }, 1000);
       }
       if (!loading && !navigationType && isAndroid) {
@@ -310,27 +322,33 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     []
   );
 
-  const handleChangeDocumentHeight = useCallback((event: WebViewMessageEvent) => {
-    if (!isAndroid) {
-      return;
-    }
-    const data = JSON.parse(event.nativeEvent.data);
-    if (!data) {
-      return;
-    }
-    switch (data.event) {
-      case "documentHeight": {
-        if (data.documentHeight !== 0) {
-          setDocumentHeight(data.documentHeight);
-        }
-        break;
+  const handleChangeDocumentHeight = useCallback(
+    (event: WebViewMessageEvent) => {
+      if (!isAndroid) {
+        return;
       }
-    }
-  }, [])
+      const data = JSON.parse(event.nativeEvent.data);
+      if (!data) {
+        return;
+      }
+      switch (data.event) {
+        case "documentHeight": {
+          if (data.documentHeight !== 0) {
+            setDocumentHeight(data.documentHeight);
+          }
+          break;
+        }
+      }
+    },
+    []
+  );
 
-  const [actualPacksBought, setActualPacksBought] = useState<SavedCartItem[]>([])
+  const [actualPacksBought, setActualPacksBought] = useState<SavedCartItem[]>(
+    []
+  );
 
-  const handleUpdateRealPacksBought = useCallback((realPacksBoughtData: any) => {
+  const handleUpdateRealPacksBought = useCallback(
+    (realPacksBoughtData: any) => {
       let newCartData = currentCartData.map((item) => {
         if (item.pack === 2) {
           item.quantity = realPacksBoughtData.actualPacksBought.pack2;
@@ -340,10 +358,12 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
           item.quantity = realPacksBoughtData.actualPacksBought.pack6;
         }
         return item;
-      })
+      });
       setActualPacksBought(newCartData);
-      console.log("Actual Packs Bought", newCartData)
-  }, [])
+      console.log("Actual Packs Bought", newCartData);
+    },
+    []
+  );
 
   const handleMessage = useCallback((event: WebViewMessageEvent) => {
     const data = JSON.parse(event.nativeEvent.data);
@@ -389,47 +409,48 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     }
   }, [isFocused]);
 
-
   const startWebView = async () => {
     modalizeRef.current?.open();
-    webViewRef.current?.stopLoading()
+    webViewRef.current?.stopLoading();
     const response = await loadAllPackUrls();
     if (response) {
-      console.log(response)
+      console.log(response);
       modalizeRef.current?.close();
-      return
+      return;
     } else {
-      console.log("successful")
+      console.log("successful");
       webViewRef.current?.reload();
     }
-    
-  }
+  };
 
   const loadAllPackUrls = async () => {
     const buyUrls: any = {
-      "2pack": "https://portal.veinternational.org/buybuttons/us014300/btn/2-pack-0001/",
-      "4pack": "https://portal.veinternational.org/buybuttons/us014300/btn/4-pack-0002/",
-      "6pack": "https://portal.veinternational.org/buybuttons/us014300/btn/6-pack-0003/"
-    }
-    const fetchUrls: string[] = []
+      "2pack":
+        "https://portal.veinternational.org/buybuttons/us014300/btn/2-pack-0001/",
+      "4pack":
+        "https://portal.veinternational.org/buybuttons/us014300/btn/4-pack-0002/",
+      "6pack":
+        "https://portal.veinternational.org/buybuttons/us014300/btn/6-pack-0003/",
+    };
+    const fetchUrls: string[] = [];
     currentCartData.forEach((item: SavedCartItem) => {
       if (item.quantity > 0) {
-        const buyUrlSearch = `${item.pack}pack`
+        const buyUrlSearch = `${item.pack}pack`;
         for (let i = 0; i < item.quantity; i++) {
-          fetchUrls.push(buyUrls[buyUrlSearch])
+          fetchUrls.push(buyUrls[buyUrlSearch]);
         }
       }
-    })
-    console.log(fetchUrls)
+    });
+    console.log(fetchUrls);
     for (let i = 0; i < fetchUrls.length; i++) {
       try {
-        await fetch(fetchUrls[i])
+        await fetch(fetchUrls[i]);
       } catch (e) {
-        alert(e)
-        return e
+        alert(e);
+        return e;
       }
     }
-  }
+  };
 
   const renderHeader = () => {
     return (
@@ -485,7 +506,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
 
   function handleBuyPress(): void {
     modalizeRef.current?.open();
-    startWebView()
+    startWebView();
   }
 
   const handleRemoveItems = (pack: number) => {
@@ -535,7 +556,9 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
               </NothingInCartText>
             </NothingInCartTextWrapper>
           )}
-          data={(currentCartData || []).sort((a, b) => a.pack - b.pack).filter((item) => item.quantity > 0)}
+          data={(currentCartData || [])
+            .sort((a, b) => a.pack - b.pack)
+            .filter((item) => item.quantity > 0)}
           keyExtractor={(item) => item.pack.toString()}
           renderItem={({ item, index }) => {
             if (item.quantity > 0) {
@@ -549,7 +572,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
                 />
               );
             } else {
-              return <></>
+              return <></>;
             }
           }}
           ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
@@ -583,7 +606,8 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
                   fontSize: 22,
                   color: Peach,
                 }}
-                onPress={handleBuyPress}
+                // onPress={handleBuyPress}
+                onPress={handleSendToPurchaseCompleted}
                 border
                 boxShadow
               />
@@ -605,11 +629,12 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
         >
           <WebView
             ref={webViewRef}
-            source={{ uri: "https://portal.veinternational.org/buybuttons/us014300/cart/" }}
+            source={{
+              uri: "https://portal.veinternational.org/buybuttons/us014300/cart/",
+            }}
             onLoadStart={() => {
-                handleLoad("start")
-              }
-            }
+              handleLoad("start");
+            }}
             incognito={true}
             onLoadProgress={() => handleLoad("progress")}
             onLoadEnd={() => handleLoad("end")}
