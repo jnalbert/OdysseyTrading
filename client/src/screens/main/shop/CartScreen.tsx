@@ -149,9 +149,69 @@ const NothingInCartText = styled.Text`
   font-family: ${GrandstanderExtraBold};
   color: ${Text400};
   font-size: 16px;
+  line-height: 20px;
 `;
 
 // for android to get the high of the window
+
+interface RealPacksBoughtType {
+  event: string;
+  pack2: number;
+  pack4: number;
+  pack6: number;
+}
+
+const realPacksBoughtCallbackScript = ` 
+  document
+  .getElementById("id_checkout_btn")
+  .addEventListener("click", () => {
+    const keyValuePairs = [
+      {
+        key: "20.00",
+        value: "pack2",
+      },
+      {
+        key: "38.00",
+        value: "pack4",
+      },
+      {
+        key: "55.00",
+        value: "pack6",
+      },
+    ];
+
+    var packsBought = {
+      pack2: 0,
+      pack4: 0,
+      pack6: 0,
+    };
+    const tableRows = document.getElementById("id_details_table").rows;
+    for (let i = 1; i < tableRows.length; i++) {
+      const row = tableRows[i];
+      const possibleQuantityRow = row.getElementsByTagName("td")[2];
+      if (!possibleQuantityRow) break;
+      const qtyInput =
+        possibleQuantityRow.getElementsByTagName("input")[0];
+      if (!qtyInput) break;
+      const possiblePriceElement =
+        row.getElementsByClassName("text-right")[0];
+      if (!possiblePriceElement) break;
+      const price = possiblePriceElement.innerText;
+      const value = qtyInput.value;
+      const pack = keyValuePairs.find((pair) => pair.key === price);
+      packsBought[pack.value] = value;
+    }
+
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        event: "realPacksBought",
+        actualPacksBought: packsBought,
+      })
+    );
+  });
+
+  
+`
 const documentHeightCallbackScript = `
   function onElementHeightChange(elm, callback) {
     var lastHeight;
@@ -176,6 +236,8 @@ const documentHeightCallbackScript = `
       }),
     );
   });
+
+  ${realPacksBoughtCallbackScript}
 `;
 
 const CartScreen: FC<any> = ({ route, navigation }) => {
@@ -235,6 +297,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
           console.log("Purchased Everything")
           // I Have TO IMPLEMENT THIS TODO
           // ******
+          // send the actualPacksBought to the Purchase Completed Screen
           // navigation.navigate("PurchaseCompleted");
         }, 1000);
       }
@@ -247,7 +310,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     []
   );
 
-  const handleMessage = useCallback((event: WebViewMessageEvent) => {
+  const handleChangeDocumentHeight = useCallback((event: WebViewMessageEvent) => {
     if (!isAndroid) {
       return;
     }
@@ -263,6 +326,35 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
         break;
       }
     }
+  }, [])
+
+  const [actualPacksBought, setActualPacksBought] = useState<SavedCartItem[]>([])
+
+  const handleUpdateRealPacksBought = useCallback((realPacksBoughtData: any) => {
+      let newCartData = currentCartData.map((item) => {
+        if (item.pack === 2) {
+          item.quantity = realPacksBoughtData.actualPacksBought.pack2;
+        } else if (item.pack === 4) {
+          item.quantity = realPacksBoughtData.actualPacksBought.pack4;
+        } else if (item.pack === 6) {
+          item.quantity = realPacksBoughtData.actualPacksBought.pack6;
+        }
+        return item;
+      })
+      setActualPacksBought(newCartData);
+      console.log("Actual Packs Bought", newCartData)
+  }, [])
+
+  const handleMessage = useCallback((event: WebViewMessageEvent) => {
+    const data = JSON.parse(event.nativeEvent.data);
+    if (!data) {
+      return;
+    }
+    if (data.event === "documentHeight") {
+      handleChangeDocumentHeight(event);
+    } else if (data.event === "realPacksBought") {
+      handleUpdateRealPacksBought(data);
+    }
   }, []);
 
   const handleLayout = ({ layout }: { layout: LayoutRectangle }) => {
@@ -270,7 +362,6 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
   };
 
   const [currentCartData, setCurrentCartData] = useState<SavedCartItem[]>([]);
-  const [currentLoadingIndex, setCurrentLoadingIndex] = useState(0);
 
   const setInitialCartItems = async () => {
     // const cart = await getCartItems();
@@ -531,6 +622,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
             scrollEnabled={!isAndroid}
             containerStyle={{ paddingBottom: 10 }}
             style={{ height }}
+            injectedJavaScript={realPacksBoughtCallbackScript}
           />
         </Modalize>
       </Portal>

@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 .env
 server
+client/src/screens/main/shop/Test.html
 
 # macOS
 .DS_Store
