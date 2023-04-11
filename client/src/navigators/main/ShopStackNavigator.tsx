@@ -54,7 +54,7 @@ const ShopStackNavigator: FC = () => {
       <Stack.Screen
         name="Cart"
         component={CartScreen}
-        initialParams={{ cart: [] }}
+        initialParams={{ cart: [], actualBoughtData: [] }}
         options={({ route, navigation }: any) => ({
           headerLeft: () => {
             return (

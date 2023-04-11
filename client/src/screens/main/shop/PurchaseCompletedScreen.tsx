@@ -106,7 +106,6 @@ const PurchaseCompletedScreen: FC<Props> = ({
     route,
 }) => {
     const {itemsBought} = route.params;
-    console.log(itemsBought)
 
     const {height, width} = Dimensions.get('window');
 
@@ -126,12 +125,15 @@ const PurchaseCompletedScreen: FC<Props> = ({
     }
     const clearCart = async () => {
       await AsyncStorage.removeItem('cart')
+      await AsyncStorage.removeItem('actualItemsBought')
     }
     const [hasInitiallyLoaded, setHasInitiallyLoaded] = React.useState(false)
     useEffect(() => {
-      // addPinsToUsersAccount()
-      // clearCart()
-      // setHasInitiallyLoaded(true)
+        console.log("running use effect")
+        if (hasInitiallyLoaded) return
+      addPinsToUsersAccount()
+      clearCart()
+      setHasInitiallyLoaded(true)
     }, [])
 
 

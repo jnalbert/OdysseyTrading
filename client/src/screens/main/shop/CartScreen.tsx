@@ -37,6 +37,7 @@ import {
 } from "./ShopScreen";
 import CartItem from "../../../components/mainComps/shop/CartItem";
 import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height: initialHeight } = Dimensions.get("window");
 const isAndroid = Platform.OS === "android";
@@ -288,7 +289,22 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     }
   };
 
-  const handleSendToPurchaseCompleted = () => {
+  const setAllStateToDefault = () => {
+    setSubTotal(0);
+    setMounted(false);
+    setLayoutHeight(initialHeight);
+    setDocumentHeight(initialHeight);
+    setCurrentCartData([]);
+    setActualPacksBought([])
+    navigation.setParams({ cart: [], actualBoughtData: [] });
+  }
+
+  const handleSendToPurchaseCompleted = async (isLoading: boolean) => {
+    if (isLoading) return
+    setAllStateToDefault()
+    
+    const actualItemsBought = JSON.parse(await AsyncStorage.getItem("actualItemsBought") || "[]")
+    console.log("first", actualItemsBought)
     // const TESTING_TO_SEND = [
     //   { pack: 2, price: 20, quantity: 3 },
     //   { pack: 4, price: 38, quantity: 4 },
@@ -296,25 +312,21 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     // ];
 
     // CHANGE THISIIIIIIISISI********
-    if (hasMadePurchase) return
-    setHasMadePurchase(true);
+    handleCloseWV();
     console.log("Purchased Everything");
     navigation.push("PurchaseCompleted", {
-    itemsBought: actualPacksBought,
+    itemsBought: actualItemsBought,
     });
     
-    setCurrentCartData([]);
   };
-
-  const [hasMadePurchase, setHasMadePurchase] = useState(false);
 
   const handleNavigationStateChange = useCallback(
     async ({ url, loading, navigationType }: WebViewNavigation) => {
       if (url.includes("/bankpaymentcompleted")) {
           if (!loading) {
-            console.log("actual packs", actualPacksBought)
+            handleSendToPurchaseCompleted(loading)
           }
-          handleCloseWV();
+        //   handleCloseWV();
           
           // handleSendToPurchaseCompleted()
       }
@@ -349,12 +361,12 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     []
   );
 
-  const [actualPacksBought, setActualPacksBought] = useState<SavedCartItem[]>(
+  const [actualPacksBought, setActualPacksBought] = useState<any>(
     []
   );
 
-  const handleUpdateRealPacksBought = useCallback(
-    (realPacksBoughtData: any) => {
+  const handleUpdateRealPacksBought = 
+    async (realPacksBoughtData: any) => {
       // let newCartData = [{"pack": 2, "price": 20, "quantity": "2"}, {"pack": 4, "price": 38, "quantity": "4"}]
       let actualBoughtData: SavedCartItem[] = [{
         pack: 2,
@@ -374,11 +386,10 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
     ]
       actualBoughtData = actualBoughtData.filter((item) => item.quantity > 0);
       // console.log(newCartData)
+      await AsyncStorage.setItem("actualItemsBought", JSON.stringify(actualBoughtData));
       setActualPacksBought(actualBoughtData);
-      console.log("Actual Packs Bought", actualBoughtData);
-    },
-    []
-  );
+    //   console.log("Actual Packs Bought", actualBoughtData);
+    }
 
   const handleMessage = useCallback((event: WebViewMessageEvent) => {
     const data = JSON.parse(event.nativeEvent.data);
