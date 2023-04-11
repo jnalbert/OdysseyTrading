@@ -464,7 +464,7 @@ export const constGetPinsForTrading = async (userUuid: string) => {
     allPins.forEach((pin: any) => {
       const userPin = userPins.find(userPin => userPin.pinUuid === pin.uuid)
       if (userPin) {
-        pinsToReturn.push(pin)
+        pinsToReturn.push({...pin, duplicates: userPin.duplicates})
       }
     })
     return pinsToReturn
