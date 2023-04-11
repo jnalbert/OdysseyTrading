@@ -289,18 +289,20 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
   };
 
   const handleSendToPurchaseCompleted = () => {
-    const TESTING_TO_SEND = [
-      { pack: 2, price: 20, quantity: 3 },
-      { pack: 4, price: 38, quantity: 4 },
-      { pack: 6, price: 55, quantity: 4 },
-    ];
-    console.log(actualPacksBought);
-    handleCloseWV();
+    // const TESTING_TO_SEND = [
+    //   { pack: 2, price: 20, quantity: 3 },
+    //   { pack: 4, price: 38, quantity: 4 },
+    //   { pack: 6, price: 55, quantity: 4 },
+    // ];
+
+    // CHANGE THISIIIIIIISISI********
+    if (hasMadePurchase) return
+    setHasMadePurchase(true);
     console.log("Purchased Everything");
     navigation.push("PurchaseCompleted", {
-    itemsBought: TESTING_TO_SEND,
+    itemsBought: actualPacksBought,
     });
-    setHasMadePurchase(false);
+    
     setCurrentCartData([]);
   };
 
@@ -309,10 +311,14 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
   const handleNavigationStateChange = useCallback(
     async ({ url, loading, navigationType }: WebViewNavigation) => {
       if (url.includes("/bankpaymentcompleted")) {
-        setTimeout(() => {
-          handleSendToPurchaseCompleted();
-        }, 1000);
+          if (!loading) {
+            console.log("actual packs", actualPacksBought)
+          }
+          handleCloseWV();
+          
+          // handleSendToPurchaseCompleted()
       }
+      console.log(url, loading)
       if (!loading && !navigationType && isAndroid) {
         if (webViewRef.current) {
           webViewRef.current.injectJavaScript(documentHeightCallbackScript);
@@ -349,18 +355,27 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
 
   const handleUpdateRealPacksBought = useCallback(
     (realPacksBoughtData: any) => {
-      let newCartData = currentCartData.map((item) => {
-        if (item.pack === 2) {
-          item.quantity = realPacksBoughtData.actualPacksBought.pack2;
-        } else if (item.pack === 4) {
-          item.quantity = realPacksBoughtData.actualPacksBought.pack4;
-        } else if (item.pack === 6) {
-          item.quantity = realPacksBoughtData.actualPacksBought.pack6;
-        }
-        return item;
-      });
-      setActualPacksBought(newCartData);
-      console.log("Actual Packs Bought", newCartData);
+      // let newCartData = [{"pack": 2, "price": 20, "quantity": "2"}, {"pack": 4, "price": 38, "quantity": "4"}]
+      let actualBoughtData: SavedCartItem[] = [{
+        pack: 2,
+        price: 20,
+        quantity: realPacksBoughtData.actualPacksBought.pack2
+      },
+      {
+        pack: 4,
+        price: 38,
+        quantity: realPacksBoughtData.actualPacksBought.pack4
+      }, 
+      {
+        pack: 6,
+        price: 55,
+        quantity: realPacksBoughtData.actualPacksBought.pack6
+      }
+    ]
+      actualBoughtData = actualBoughtData.filter((item) => item.quantity > 0);
+      // console.log(newCartData)
+      setActualPacksBought(actualBoughtData);
+      console.log("Actual Packs Bought", actualBoughtData);
     },
     []
   );
@@ -607,7 +622,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
                   color: Peach,
                 }}
                 // onPress={handleBuyPress}
-                onPress={handleSendToPurchaseCompleted}
+                onPress={handleBuyPress}
                 border
                 boxShadow
               />

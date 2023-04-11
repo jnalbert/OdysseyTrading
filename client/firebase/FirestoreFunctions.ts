@@ -667,3 +667,16 @@ export const getAllPinSrcs = async () => {
     console.log(error)
   }
 }
+
+export const addPinsToOpenToUserAccount = async (userUuid: string, count: number) => {
+  try {
+    console.log(userUuid)
+    console.log(count)
+    const docRef = doc(db, "users", userUuid)
+    await updateDoc(docRef, {
+      unopenedPinsCount: increment(count),
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
