@@ -302,9 +302,9 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
   const handleSendToPurchaseCompleted = async (isLoading: boolean) => {
     if (isLoading) return
     setAllStateToDefault()
-    
+
     const actualItemsBought = JSON.parse(await AsyncStorage.getItem("actualItemsBought") || "[]")
-    console.log("first", actualItemsBought)
+    // console.log("first", actualItemsBought)
     // const TESTING_TO_SEND = [
     //   { pack: 2, price: 20, quantity: 3 },
     //   { pack: 4, price: 38, quantity: 4 },
@@ -313,7 +313,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
 
     // CHANGE THISIIIIIIISISI********
     handleCloseWV();
-    console.log("Purchased Everything");
+    // console.log("Purchased Everything");
     navigation.push("PurchaseCompleted", {
     itemsBought: actualItemsBought,
     });
@@ -330,7 +330,6 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
           
           // handleSendToPurchaseCompleted()
       }
-      console.log(url, loading)
       if (!loading && !navigationType && isAndroid) {
         if (webViewRef.current) {
           webViewRef.current.injectJavaScript(documentHeightCallbackScript);
@@ -467,7 +466,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
         }
       }
     });
-    console.log(fetchUrls);
+    // console.log(fetchUrls);
     for (let i = 0; i < fetchUrls.length; i++) {
       try {
         await fetch(fetchUrls[i]);

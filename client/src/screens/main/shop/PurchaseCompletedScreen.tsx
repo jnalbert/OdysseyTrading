@@ -129,7 +129,7 @@ const PurchaseCompletedScreen: FC<Props> = ({
     }
     const [hasInitiallyLoaded, setHasInitiallyLoaded] = React.useState(false)
     useEffect(() => {
-        console.log("running use effect")
+        // console.log("running use effect")
         if (hasInitiallyLoaded) return
       addPinsToUsersAccount()
       clearCart()
