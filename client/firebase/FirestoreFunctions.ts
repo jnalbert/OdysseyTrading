@@ -309,12 +309,29 @@ export const getPacksToOpenData = async (userUuid: string) => {
     const numberToOpen = await getNumberOfPacksToOpen(userUuid) || 0
     // console.log(numberToOpen)
     // get 10% of seasonal pins and get the rest split between deep sea and forest
-    const countOfEachWorld: { [key: string]: number; } = {"Seasonal": Math.floor((numberToOpen * 0.1) + 1), "Enchanted Forest": Math.floor((numberToOpen * 0.45) + 1), "Deep Sea": Math.floor((numberToOpen * 0.45) + 1)}
+    const countOfEachWorld: { [key: string]: number; } = {"Seasonal": 1, "Enchanted Forest": 0, "Deep Sea": 0, "Sky World": 0, "Carnival": 0}
+    // go through the count of each world and randomly remove some pins from the count until the total is equal to the numberToOpen
+    for (let i = 0; i < numberToOpen; i++) {
+      // get a random number between 0 and 100
+      const randomNum = Math.floor(Math.random() * 100)
+      if (randomNum >= 0 && randomNum <= 12) {
+        countOfEachWorld["Seasonal"] += 1
+      } else if (randomNum > 12 && randomNum <= 34) {
+        countOfEachWorld["Enchanted Forest"] += 1
+      } else if (randomNum > 34 && randomNum <= 56) {
+        countOfEachWorld["Deep Sea"] += 1
+      } else if (randomNum > 56 && randomNum <= 78) {
+        countOfEachWorld["Sky World"] += 1
+      } else if (randomNum > 78 && randomNum <= 100) {
+        countOfEachWorld["Carnival"] += 1
+      }
+    }
     console.log(countOfEachWorld)
     const allPins = await getAllPins()
     if (!allPins) return
     let worldsWithPins: WorldPinsToOpenType[] = []
     for (const world in countOfEachWorld) {
+      if (countOfEachWorld[world] === 0) continue
       const filteredWorldDBPins = allPins.filter((pin: any) => pin.worldName === world)
       const pinsToOpen: PickedPinsType[] = []
       for (let i = 0; i < countOfEachWorld[world]; i++) {
