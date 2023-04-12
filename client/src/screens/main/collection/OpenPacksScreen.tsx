@@ -72,11 +72,14 @@ const FakePinDeepSea = [
 //   },
 // ];
 
+export interface PickedPinsType extends PinTypeDB {
+  isShown: boolean;
+}
 export interface WorldPinsToOpenType {
   world: string;
   color: string;
   worldIcon: string;
-  pickedPins: PinTypeDB[];
+  pickedPins: PickedPinsType[];
 }
 
 const OpenPacksScreen: FC<any> = ({ navigation }) => {
@@ -101,7 +104,15 @@ const OpenPacksScreen: FC<any> = ({ navigation }) => {
     const pinsToAdd: PinTypeDB[] = []
     packsToOpen?.forEach((world) => {
       world.pickedPins.forEach((pin) => {
-        pinsToAdd.push(pin)
+        pinsToAdd.push({
+          uuid: pin.uuid,
+          worldUuid: pin.worldUuid,
+          worldName: pin.worldName,
+          name: pin.name,
+          description: pin.description,
+          src: pin.src,
+          isAvailableForOpening: false,
+        })
       })
     })
     // add pins to the user collection
@@ -113,7 +124,15 @@ const OpenPacksScreen: FC<any> = ({ navigation }) => {
   }, []);
 
   const handleOpenPacks = async () => {
+    // set all pins to have a shown value of true
+    const newWorldPinsToOpen = [...worldPinsToOpen!];
+    newWorldPinsToOpen.forEach((world) => {
+      world.pickedPins.forEach((pin) => {
+        pin.isShown = true;
+      });
+    });
     setPinsAreOpen(true);
+    setWorldPinsToOpen(newWorldPinsToOpen);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setBackToHomeDisabled(false);
   };
@@ -122,6 +141,27 @@ const OpenPacksScreen: FC<any> = ({ navigation }) => {
     // TODO SEND DATA ABOUT PINS TO SERVER ********
     navigation.navigate("MyCollection", { screen: "MyCollection" });
   };
+
+  const flipIndividualPin = async(worldIndex: number, pinIndex: number) => {
+    const newWorldPinsToOpen = [...worldPinsToOpen!];
+    newWorldPinsToOpen[worldIndex].pickedPins[pinIndex].isShown =
+      !newWorldPinsToOpen[worldIndex].pickedPins[pinIndex].isShown;
+    setWorldPinsToOpen(newWorldPinsToOpen);
+    // check if all of the pins have a shown value of true
+    let allPinsAreShown = true;
+    newWorldPinsToOpen.forEach((world) => {
+      world.pickedPins.forEach((pin) => {
+        if (!pin.isShown) {
+          allPinsAreShown = false;
+        }
+      });
+    });
+    if (allPinsAreShown) {
+      setPinsAreOpen(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setBackToHomeDisabled(false);
+    }
+  }
 
   return (
     <ScreenWrapperComp scrollView>
@@ -159,7 +199,7 @@ const OpenPacksScreen: FC<any> = ({ navigation }) => {
       <ActivityIndicatorWrapper isLoading={isFirebaseLoading}>
         <PinsToOpenWrapper>
           {worldPinsToOpen?.map((world, index) => {
-            return <WorldPackSection isShown={pinsAreOpen} key={index} {...world} />;
+            return <WorldPackSection worldIndex={index} flipIndividualPin={flipIndividualPin} key={index} {...world} />;
           })}
         </PinsToOpenWrapper>
       </ActivityIndicatorWrapper>

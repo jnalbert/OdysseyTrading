@@ -28,7 +28,8 @@ const PinsSectionHeaderWrapper = styled.View`
 `
 
 interface Props extends WorldPinsToOpenType {
-  isShown: boolean;
+  flipIndividualPin: (worldIndex: number, pinIndex: number) => void;
+  worldIndex: number;
 }
 
 
@@ -37,18 +38,24 @@ const WorldPackSection: FC<Props> = ({
   color,
   pickedPins,
   worldIcon,
-  isShown
+  flipIndividualPin,
+  worldIndex
 }) => {
 
   const pinLotteryObjects = () => {
     const lotteryObjects = []
     // look through the pickedPins object and make a PinLotterySlider for each pin
     for (let i = 0; i < pickedPins.length; i++) {
+
       lotteryObjects.push(
-        <PinLotterySlider key={pickedPins[i].uuid + "" + i}
+        <PinLotterySlider 
+        pinIndex={i}
+        worldIndex={worldIndex}
+        flipIndividualPin={flipIndividualPin}
+        key={pickedPins[i].uuid + "" + i}
           pinSrc={pickedPins[i].src}
           worldIcon={worldIcon}
-          isShown={isShown}
+          isShown={pickedPins[i].isShown}
         />
       )
     }

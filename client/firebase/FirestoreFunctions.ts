@@ -21,7 +21,7 @@ import { UserDataType } from "./types/UserType";
 import { Platform } from "react-native";
 import { deleteUser, getAuth, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { PinTypeDB, WorldTypeDB, UserOwnedPinTypeDB } from './types/PinAndWorldType';
-import { WorldPinsToOpenType } from '../src/screens/main/collection/OpenPacksScreen';
+import { WorldPinsToOpenType, PickedPinsType } from '../src/screens/main/collection/OpenPacksScreen';
 import { PinsDataMyCollection, WorldsAttributesType } from "../src/screens/main/collection/MyCollectionScreen";
 import { WorldNameEnum } from '../src/shared/MiscTypes';
 import { PastTradeType } from './types/PastTradeType';
@@ -316,10 +316,10 @@ export const getPacksToOpenData = async (userUuid: string) => {
     let worldsWithPins: WorldPinsToOpenType[] = []
     for (const world in countOfEachWorld) {
       const filteredWorldDBPins = allPins.filter((pin: any) => pin.worldName === world)
-      const pinsToOpen: PinTypeDB[] = []
+      const pinsToOpen: PickedPinsType[] = []
       for (let i = 0; i < countOfEachWorld[world]; i++) {
         const randomPin = filteredWorldDBPins.sort(() => Math.random() - 0.5)[0]
-        pinsToOpen.push(randomPin)
+        pinsToOpen.push({...randomPin, isShown: false})
       }
       // console.log("here")
       const currentWorldData = await getWorld(pinsToOpen[0].worldUuid)

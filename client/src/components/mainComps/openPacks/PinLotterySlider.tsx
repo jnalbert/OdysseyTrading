@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 import { Peach } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
 
-const PinLotterySectionWrapper = styled.View`
+const PinLotterySectionWrapper = styled.Pressable`
   height: 80px;
   width: 70px;
   margin: 0% 2% 0% 2%;
@@ -23,12 +23,18 @@ interface PinLotterySliderProps {
   pinSrc: string;
   worldIcon: string;
   isShown: boolean;
+  flipIndividualPin: (worldIndex: number, pinIndex: number) => void;
+  pinIndex: number;
+  worldIndex: number;
 }
 
 const PinLotterySlider: FC<PinLotterySliderProps> = ({
+  pinIndex,
+  worldIndex,
   pinSrc,
   worldIcon,
   isShown,
+  flipIndividualPin
 }) => {
 
   const flipAnimation = useRef(new Animated.Value(0)).current;
@@ -83,7 +89,7 @@ const PinLotterySlider: FC<PinLotterySliderProps> = ({
   // const displayOfPin = isShown ? "flex" : "none"
   
   return (
-    <PinLotterySectionWrapper>
+    <PinLotterySectionWrapper onPress={() => !isShown && flipIndividualPin(worldIndex, pinIndex)}>
       <Animated.View
         style={{
           backfaceVisibility: "hidden",
