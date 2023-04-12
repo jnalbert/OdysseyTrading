@@ -437,6 +437,10 @@ const switchCaseToGetWorld = (world: string) => {
       return WorldNameEnum.DEEP_SEA
     case "Seasonal":
       return WorldNameEnum.SEASONAL
+    case "Sky World":
+      return WorldNameEnum.SKY_WORLD
+    case "Carnival":
+      return WorldNameEnum.CARNIVAL
     default:
       return WorldNameEnum.COMING_SOON
   }

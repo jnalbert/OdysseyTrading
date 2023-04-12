@@ -171,6 +171,10 @@ const switchCaseToGetWorld = (world: WorldNameEnum) => {
       return "Deep Sea"
     case WorldNameEnum.SEASONAL:
       return "Seasonal"
+    case WorldNameEnum.SKY_WORLD:
+      return "Sky World"
+    case WorldNameEnum.CARNIVAL:
+      return "Carnival"
     default:
       return "Coming Soon"
   }
@@ -194,6 +198,9 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
   const [deepSeaPins, setDeepSeaPins] = useState<PinTypeMyCollection[]>([]);
   const [enchantedForestPins, setEnchantedForestPins] = useState<PinTypeMyCollection[]>([]);
   const [seasonalPins, setSeasonalPins] = useState<PinTypeMyCollection[]>([]);
+  const [skyWorldPins, setSkyWorldPins] = useState<PinTypeMyCollection[]>([]);
+  const [carnivalPins, setCarnivalPins] = useState<PinTypeMyCollection[]>([]);
+
   const [currentWorld, setCurrentWorld] = useState<WorldNameEnum>(WorldNameEnum.DEEP_SEA)
 
   const getPinData = async () => {
@@ -208,6 +215,7 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
     // const pinData: PinTypeMyCollection[] = FakePinData
     // sort the pins by isOwned
     pinData.sort((a: any, b: any): any => b.isOwned - a.isOwned)
+    // console.log(pinData)
     // the coming soon world to an empty array
       // duplication of data for testing purposes
       // const Data: any = FakePinData[world as WorldNameEnum]
@@ -216,11 +224,16 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
     const deepSeaPins = pinData.filter((pin: any) => pin.worldName === "Deep Sea")
     const enchantedForestPins = pinData.filter((pin: any) => pin.worldName === "Enchanted Forest")
     const seasonalPins = pinData.filter((pin: any) => pin.worldName === "Seasonal")
+    const skyWorldPins = pinData.filter((pin: any) => pin.worldName === "Sky World")
+    const carnivalPins = pinData.filter((pin: any) => pin.worldName === "Carnival")
     // set the current pins to the new array
     setDeepSeaPins(deepSeaPins)
     setEnchantedForestPins(enchantedForestPins)
     setSeasonalPins(seasonalPins)
+    setSkyWorldPins(skyWorldPins)
+    setCarnivalPins(carnivalPins)
     setAllPinsData(pinData);
+
   };
 
   const getWorldAttributes = async () => {
@@ -290,6 +303,10 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
       return enchantedForestPins;
     } else if (currentWorld === WorldNameEnum.SEASONAL) {
       return seasonalPins;
+    } else if (currentWorld === WorldNameEnum.SKY_WORLD) {
+      return skyWorldPins;
+    } else if (currentWorld === WorldNameEnum.CARNIVAL) {
+      return carnivalPins;
     } else {
       return [];
     }

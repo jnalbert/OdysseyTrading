@@ -113,18 +113,18 @@ const WorldSelector: FC<Props> = ({
         <WorldIconCircle
           style={[{
             transform: MiddleTransforms("right")
-          }, checkActive(WorldNameEnum.COMING_SOON)]}
-          onPress={() => handleWorldChange(WorldNameEnum.COMING_SOON)}
+          }, checkActive(WorldNameEnum.SKY_WORLD)]}
+          onPress={() => handleWorldChange(WorldNameEnum.SKY_WORLD)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/comingSoonIcon.png" />
+          <MyCachedImage style={{width: 24, height: 14}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/Sky%20World%20Icon-min.png" />
         </WorldIconCircle>
         <WorldIconCircle
           style={[{
             transform: EndTransforms()
-          }, checkActive(WorldNameEnum.COMING_SOON)]}
-          onPress={() => handleWorldChange(WorldNameEnum.COMING_SOON)}
+          }, checkActive(WorldNameEnum.CARNIVAL)]}
+          onPress={() => handleWorldChange(WorldNameEnum.CARNIVAL)}
         >
-          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/comingSoonIcon.png" />
+          <MyCachedImage style={{width: 20, height: 20}} src="https://storage.googleapis.com/odyssey-28652.appspot.com/world-icons/carnival%20icon-min.png" />
         </WorldIconCircle>
       </WorldIconsWrapper>
       <WorldText
