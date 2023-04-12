@@ -67,7 +67,6 @@ const PinPickCard: FC<Props> = ({
       }
     }
   }
-  console.log(pin.duplicates)
   return (
     <OverallWrapper style={[backgroundStyles]} onPress={() => handleClick(pin)}>
         {pin.duplicates && pin.duplicates > 1 && (
