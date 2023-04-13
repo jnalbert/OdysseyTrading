@@ -1,4 +1,5 @@
 export interface PinTypeDB {
+    duplicates?: number;
   uuid: string;
   worldUuid: string;
   worldName: string;

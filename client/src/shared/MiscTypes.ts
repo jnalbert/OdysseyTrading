@@ -4,6 +4,6 @@ export enum WorldNameEnum {
   ENCHANTED_FOREST = 'EnchantedForest',
   SEASONAL = 'Seasonal',
   CARNIVAL = 'Carnival',
-  SKY_LAND = 'SkyLand',
+  SKY_WORLD = 'SkyWorld',
   COMING_SOON = 'ComingSoon',
 }

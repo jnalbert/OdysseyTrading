@@ -29,6 +29,7 @@ import {
 } from "./src/AppContext";
 import { loadInitialImagesToCache } from "./firebase/CachingFunctions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Host } from 'react-native-portalize';
 
 const AppWrapperView = styled.View`
   flex: 1;
@@ -68,6 +69,7 @@ const App: FC<any> = () => {
         // ***************
 
         loadInitialImagesToCache()
+        
 
       } catch (error) {
         console.warn(error);
@@ -75,7 +77,6 @@ const App: FC<any> = () => {
         setIsAppReady(true);
       }
     }
-
     loadData();
     getTokenAsync(dispatch);
 
@@ -86,6 +87,7 @@ const App: FC<any> = () => {
       // cancels The image caching
       AsyncStorage.setItem("areImagesCached", "true");
     }
+    console.log(state.userUuid)
   }, [state.userUuid])
 
   const onLayoutRootView = useCallback(async () => {
@@ -102,9 +104,11 @@ const App: FC<any> = () => {
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer onReady={onLayoutRootView}>
-        <AppWrapperView>
-          {state?.userUuid === null ? <AuthNavigator /> : <MainTabNavigator />}
-        </AppWrapperView>
+        <Host>
+          <AppWrapperView>
+            {state?.userUuid === null ? <AuthNavigator /> : <MainTabNavigator />}
+          </AppWrapperView>
+        </Host>
       </NavigationContainer>
     </AuthContext.Provider>
   );

@@ -184,7 +184,7 @@ const SignUpScreen: FC<any> = ({ navigation }) => {
           placeHolderText="Bio (optional)"
           name="bio"
           icon="bio"
-          otherOptions={{ multiline: true, numberOfLines: 3, style: {alignSelf: "start"} }}
+          otherOptions={{ multiline: true, numberOfLines: 3, style: {alignSelf: "flex-start"} }}
           styles={{ height: 80 }}
         />
 

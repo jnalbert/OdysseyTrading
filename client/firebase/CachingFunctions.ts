@@ -58,6 +58,12 @@ export const getPinsDataFromCache = async () => {
     // // AsyncStorage.setItem("Testing1234", JSON.stringify([{id: "1234", title: "Testing1234"}]))
     // const getTestingItem = JSON.parse(await AsyncStorage.getItem("Testing1234") || "")
     // console.log(getTestingItem)
+    // checking if the pins have been updated
+    const havePinsBeenUpdated = await AsyncStorage.getItem("hasLoadedInAwhile")
+    if (!havePinsBeenUpdated) {
+      await AsyncStorage.setItem("hasLoadedInAwhile", "true");
+      return null
+    }
 
     // check if pin cache time to expire exists or has past it's time
     const pinCacheTimeToExpire = await AsyncStorage.getItem("pinCacheTimeToExpire")

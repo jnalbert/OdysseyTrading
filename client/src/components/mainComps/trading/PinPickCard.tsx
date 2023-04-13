@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import styled from 'styled-components/native'
 import { PinTypeDB } from '../../../../firebase/types/PinAndWorldType';
 import { PinsType } from '../../../screens/main/trading/TradingInProgressScreen';
-import { Pink } from '../../../shared/colors';
+import { GrandstanderSemiBold, Pink } from '../../../shared/colors';
 import MyCachedImage from '../../../shared/MyCachedImage';
 
 const OverallWrapper = styled.TouchableOpacity`
@@ -18,6 +18,23 @@ const OverallWrapper = styled.TouchableOpacity`
 const PinWrapper = styled.View`
   height: 80%;
   width: 80%;
+`
+const QuantityWrapper = styled.View`
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    border-radius: 9px;
+    top: 0;
+    right: 0;
+    background-color: ${Pink};
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+`
+const QuantityText = styled.Text`
+    font-size: 12px;
+    color: white;
+    font-family: ${GrandstanderSemiBold};
 `
 
 interface Props {
@@ -52,6 +69,12 @@ const PinPickCard: FC<Props> = ({
   }
   return (
     <OverallWrapper style={[backgroundStyles]} onPress={() => handleClick(pin)}>
+        {pin.duplicates && pin.duplicates > 1 && (
+            <QuantityWrapper>
+            <QuantityText>{pin.duplicates}</QuantityText>
+        </QuantityWrapper>
+        )}
+        
       <PinWrapper> 
         { pin.src && (
           <MyCachedImage style={{width: "100%", height: "100%"}} resizeMode={"contain"} src={pin.src} />

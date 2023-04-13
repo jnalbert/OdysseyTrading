@@ -5,10 +5,10 @@ import { Black, BlueGreen, backgroundColor, Peach, GrandstanderExtraBold, Grands
 
 import { AntDesign, Feather } from "@expo/vector-icons";
 import CollectionStackNavigator from "./CollectionStackNavigator";
-import ShopScreen from "../../screens/main/ShopScreen"
 import TradingStackNavigator from "./TradingStackNavigator";
 import SocialMediaScreen from "../../screens/main/socialMedia/SocialMediaScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
+import ShopStackNavigator from "./ShopStackNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -55,9 +55,9 @@ const MainTabNavigator: FC = () => {
         component={CollectionStackNavigator}
       />
       <Tab.Screen 
-      options={{}}
-      name="Shop"
-       component={ShopScreen} />
+      options={{headerShown: false}}
+      name="ShopNav"
+       component={ShopStackNavigator} />
       <Tab.Screen
         options={{ headerTitle: "Trading", headerShown: false }}
         name="TradingNav"

@@ -44,7 +44,7 @@ const CollectionPercent: FC<Props> = ({
   world
 }) => {
   let worldName = ''
-  let color = ''
+  let color = 'black'
   let percentage = 0
   if (world) {
     worldName = world?.worldName

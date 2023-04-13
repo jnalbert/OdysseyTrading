@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "Odyssey Trading",
     slug: "odyssey-trading",
-    version: "1.0.1",
+    version: "1.0.2",
     orientation: "portrait",
     icon: "./assets/OdysseyIcon.png",
     userInterfaceStyle: "light",
@@ -20,7 +20,7 @@ export default {
     ios: {
       supportsTablet: false,
       bundleIdentifier: "com.jnalbert879.odysseytrading",
-      buildNumber: "6",
+      buildNumber: "4",
     },
     android: {
       adaptiveIcon: {
@@ -56,6 +56,7 @@ export default {
         firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
         firebaseAppId: process.env.FIREBASE_APP_ID,
         firebaseMeasurementId: process.env.FIREBASE_MEASUREMENT_ID,
+        canClearCookies: process.env.EAS_BUILD
       }
   },
 };
