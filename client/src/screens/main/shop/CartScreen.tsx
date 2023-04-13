@@ -572,7 +572,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
 
   return (
     <>
-      <ScreenWrapperComp>
+      <ScreenWrapperComp isScreenProtected>
         <FlatList
           ListEmptyComponent={() => (
             <NothingInCartTextWrapper>
@@ -619,7 +619,7 @@ const CartScreen: FC<any> = ({ route, navigation }) => {
             <TotalPrice>${subTotal ? subTotal + 10 : 0}.00</TotalPrice>
             <CheckoutButtonWrapper>
               <BasicButton
-                title="CHECK OUT"
+                title="CHECKOUT"
                 style={{
                   width: 180,
                   height: 50,
