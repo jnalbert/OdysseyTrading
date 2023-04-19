@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
-import { View, Text, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Text, RefreshControl, ActivityIndicator, Platform } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import CollectionPercent from "../../../components/mainComps/collection/CollectionPercent";
@@ -317,6 +317,8 @@ const MyCollectionScreen: FC<any> = ({ navigation }) => {
     getNotifications()
   }, [isFocused]);
 
+  const isPadStyles: any = (Platform.OS === "ios" && Platform.isPad) ? { marginBottom: "2%"} : {};
+
   return (
     <>
       {/* <StackHeaderNotifications name="My Collection" showNotification={isNotificationVisible}/> */}
@@ -384,7 +386,7 @@ refreshing={worldIsChanging}
 ) }
         
 
-        <WorldPickingWrapper>
+        <WorldPickingWrapper style={[isPadStyles]}>
           {currentWorld && worldAttributes && (
             <WorldSelector
               currentWorld={currentWorld || {}}
